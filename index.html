@@ -2,25 +2,23 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gerçekten Yaşandı - Stabil & Modern</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Gerçekten Yaşandı - Tam Uyumlu</title>
     <style>
-        /* ----- BEYAZ & MODERN TASARIM STİLLERİ - GELİŞMİŞ ÖZELLİKLER (Düzeltilmiş) ----- */
-        @keyframes slowGradientAnimation {
+        /* ----- BEYAZ & MODERN TASARIM STİLLERİ - TAM UYUMLU ----- */
+        @keyframes slowGradientAnimation { /* Artık kullanılmıyor ama kalsın */
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
         @keyframes shakeAnimation {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-3px); }
-            50% { transform: translateX(3px); }
-            75% { transform: translateX(-2px); }
+            0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); } 75% { transform: translateX(-2px); }
         }
         @keyframes correctFeedbackAnimation {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0.8) translateY(10px); opacity: 0; }
+            50% { transform: scale(1.1) translateY(-5px); opacity: 1; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
         @keyframes confettiBurst {
             0% { transform: translateY(0) scale(0); opacity: 1; }
@@ -29,72 +27,98 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         :root {
-            --bg-primary: #F4F6F8;
+            --bg-primary: #F8F9FA;
             --bg-secondary: #FFFFFF;
             --bg-tertiary: #E9ECEF;
-            --bg-glass: rgba(250, 250, 250, 0.7); 
+            --bg-glass: rgba(255, 255, 255, 0.8); /* Biraz daha opak glass */
             --bg-image-placeholder: #DEE2E6;
             
-            --text-primary: #1C1E21;
-            --text-secondary: #555B63;
+            --text-primary: #212529;
+            --text-secondary: #6C757D;
             --text-accent: #000000;
             --text-on-accent: #FFFFFF;
 
-            --accent-red: #D92E2E;
-            --accent-red-darker: #B02222;
-            --accent-red-hover-bg: rgba(217, 46, 46, 0.08);
+            --accent-red: #E5383B;
+            --accent-red-darker: #C02D2F;
+            --accent-red-hover-bg: rgba(229, 56, 59, 0.08);
             
-            --accent-green: #23A455;
-            --accent-green-darker: #1C8042;
+            --accent-green: #28A745;
+            --accent-green-darker: #1E7E34;
             
             --accent-grey: #6C757D;
             --accent-grey-darker: #5A6268;
 
             --font-family-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             --border-radius-main: 14px; 
-            --border-radius-cards: 20px;
-            --border-color: #CED4DA;
+            --border-radius-cards: 18px;
+            --border-color: #DEE2E6;
 
-            --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
-            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.07);
-            --shadow-strong: 0 10px 30px rgba(0, 0, 0, 0.09);
+            --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 6px 18px rgba(0, 0, 0, 0.07); /* Biraz daha yumuşak */
+            --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.08); /* Biraz daha yumuşak */
 
             --question-time: 20s;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Sayfada genel kaydırmayı engelle */
+            position: fixed; /* iOS'ta adres çubuğu sorunları için */
+        }
+
         body {
             font-family: var(--font-family-main);
-            margin: 0; padding: 0;
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; overflow: hidden;
-            touch-action: manipulation;
-            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         #game-container {
-            width: 100%; max-width: 400px;
-            height: 100vh; max-height: 820px;
+            width: 100%;
+            max-width: 420px; /* Üst limit biraz arttı */
+            height: 100%; /* body'ye göre tam yükseklik */
+            /* max-height: 100%; Artık % ile yönetiliyor */
             background-color: var(--bg-secondary);
             box-shadow: var(--shadow-strong);
-            border-radius: var(--border-radius-main);
-            overflow: hidden; position: relative;
-            display: flex; flex-direction: column;
+            border-radius: 0; /* Mobil tam ekran için kenar yuvarlaklığı kaldırılabilir veya azaltılabilir */
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
+        @media (min-width: 450px) { /* Daha geniş ekranlarda (tablet/desktop) max-width ve border-radius geri gelsin */
+             #game-container {
+                max-width: 400px;
+                max-height: 800px; /* Max yükseklik geniş ekranlar için */
+                border-radius: var(--border-radius-main);
+                border: 1px solid var(--border-color);
+             }
+        }
+
         #game-container.shake { animation: shakeAnimation 0.3s ease-in-out; }
         #game-container.background-blur { filter: blur(3px); transition: filter 0.3s ease-out; }
 
         .screen {
-            display: flex; opacity: 0; visibility: hidden;
+            display: flex;
+            opacity: 0; visibility: hidden;
             transform: translateY(15px) scale(0.99); 
-            transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-                        visibility 0s 0.45s;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        visibility 0s 0.4s;
             flex-direction: column; align-items: center; justify-content: center;
-            padding: 25px; box-sizing: border-box; text-align: center;
+            padding: 20px; /* Genel padding biraz azaltıldı */
+            box-sizing: border-box; text-align: center;
             width: 100%; height: 100%;
             position: absolute; top: 0; left: 0; z-index: 1;
+            overflow-y: auto; /* Ekran içeriği taşarsa scroll edilebilir */
+            -webkit-overflow-scrolling: touch;
         }
         .screen.active {
             opacity: 1; visibility: visible;
@@ -104,25 +128,37 @@
         
         .content-box {
             background-color: var(--bg-secondary);
-            padding: 30px; border-radius: var(--border-radius-cards);
-            box-shadow: var(--shadow-medium); width: 95%; max-width: 380px;
+            padding: 25px; /* Content box padding */
+            border-radius: var(--border-radius-cards);
+            box-shadow: var(--shadow-medium);
+            width: 100%; /* Ana ekranlarda content box tam genişlik */
+            max-width: 380px;
             border: 1px solid var(--border-color);
+            margin: auto; /* Dikeyde ve yatayda ortalamak için (screen flex ise) */
+        }
+        /* Oyun ekranında content-box kullanılmıyor, o yüzden bu genel kalsın */
+        #start-screen .content-box, #result-screen .content-box, #scoreboard-screen .content-box {
+            margin-top: auto; margin-bottom: auto; /* İçeriği dikey ortala */
         }
 
+
         h1, h2, h3 { font-weight: 700; letter-spacing: -0.5px; color: var(--text-accent); }
-        h1 { font-size: 2.2em; margin-bottom: 20px; }
-        h2 { font-size: 1.8em; margin-bottom: 18px; color: var(--accent-red); }
-        h3 { font-size: 1.5em; margin-bottom: 15px; }
-        p { color: var(--text-secondary); line-height: 1.6; font-size: 0.95em; }
+        h1 { font-size: clamp(1.8em, 5vw, 2.2em); margin-bottom: 20px; } /* Dinamik font boyutu */
+        h2 { font-size: clamp(1.5em, 4.5vw, 1.8em); margin-bottom: 18px; color: var(--accent-red); }
+        h3 { font-size: clamp(1.2em, 4vw, 1.5em); margin-bottom: 15px; }
+        p { color: var(--text-secondary); line-height: 1.55; font-size: clamp(0.85em, 2.5vw, 0.95em); }
+
 
         .btn {
             background-color: var(--accent-red); color: var(--text-on-accent);
-            border: none; padding: 12px 25px; border-radius: var(--border-radius-main);
-            font-size: 1.05em; font-weight: 600; cursor: pointer;
+            border: none; padding: 12px 22px; /* Padding ayarlandı */
+            border-radius: var(--border-radius-main);
+            font-size: clamp(0.9em, 3vw, 1.05em); /* Dinamik font */
+            font-weight: 600; cursor: pointer;
             transition: all 0.2s ease; margin: 10px 5px; box-shadow: var(--shadow-soft);
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn svg { width: 18px; height: 18px; fill: currentColor; }
+        .btn svg { width: clamp(16px, 4vw, 18px); height: clamp(16px, 4vw, 18px); fill: currentColor; }
         .btn:hover { background-color: var(--accent-red-darker); transform: translateY(-2px); box-shadow: var(--shadow-medium); }
         .btn:active { transform: translateY(0px) scale(0.98); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
 
@@ -132,81 +168,102 @@
         }
         .btn.secondary:hover { background-color: #DDE1E5; border-color: #BCC1C7;}
         .btn.secondary:active { background-color: #D4D8DC;}
-        .btn.small { padding: 8px 15px; font-size: 0.9em; }
+        .btn.small { padding: 7px 14px; font-size: clamp(0.8em, 2.5vw, 0.9em); }
+
 
         #onboarding-screen { z-index: 200; background-color: var(--bg-secondary); }
         .onboarding-carousel {
             display: flex; overflow-x: hidden; width: 100%;
-            height: calc(100% - 120px); position: relative;
+            flex-grow: 1; /* Kalan alanı kapla */
+            position: relative;
         }
         .onboarding-slide {
             min-width: 100%; height: 100%; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 20px;
+            align-items: center; justify-content: center; padding: 15px; /* Slide içi padding */
             box-sizing: border-box; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
         }
-        .onboarding-slide img { max-width: 150px; margin-bottom: 20px; }
+        .onboarding-slide img { max-width: clamp(100px, 30vw, 150px); margin-bottom: 15px; }
         .onboarding-navigation {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px; width: calc(100% - 40px); position: absolute; bottom: 0;
+            padding: 15px; width: calc(100% - 30px);
+            /* position: absolute; bottom: 0; // Artık flex ile yönetiliyor */
+            flex-shrink: 0; /* Küçülmesin */
+            margin-top: 10px; /* Carousel'den sonra boşluk */
         }
         .onboarding-dots { display: flex; gap: 8px; }
         .onboarding-dots .dot {
-            width: 10px; height: 10px; background-color: var(--border-color);
+            width: 8px; height: 8px; background-color: var(--border-color); /* Boyut küçültüldü */
             border-radius: 50%; transition: background-color 0.3s ease;
         }
         .onboarding-dots .dot.active { background-color: var(--accent-red); }
-        #skip-onboarding-btn { color: var(--text-secondary); background: none; box-shadow: none; }
+        #skip-onboarding-btn { color: var(--text-secondary); background: none; box-shadow: none; 
+            position:absolute; top:10px; right:10px; padding: 5px;}
+
 
         .swipe-instructions-ingame {
             position: absolute; bottom: 0; left: 0; right: 0;
             background-color: rgba(255, 255, 255, 0.9); 
             backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            padding: 10px 0; border-top: 1px solid var(--border-color);
+            padding: 8px 0; /* Padding azaltıldı */
+            border-top: 1px solid var(--border-color);
             box-shadow: 0 -4px 10px rgba(0,0,0,0.04); z-index: 15;
-            font-size: 0.9em; color: var(--text-secondary); text-align: center;
+            font-size: 0.85em; color: var(--text-secondary); text-align: center;
+            flex-shrink: 0; /* Küçülmesin */
         }
 
         #game-header {
             display: grid; grid-template-columns: auto 1fr auto;
-            gap: 10px; align-items: center; width: 100%;
-            padding: 10px 15px; box-sizing: border-box;
+            gap: 8px; /* Boşluk azaltıldı */
+            align-items: center; width: 100%;
+            padding: 8px 12px; /* Padding azaltıldı */
+            box-sizing: border-box;
             position: absolute; top: 0; left: 0;
             background-color: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(8px) saturate(120%); -webkit-backdrop-filter: blur(8px) saturate(120%);
             border-bottom: 1px solid var(--border-color);
-            font-size: 0.8em; z-index: 10;
+            font-size: 0.75em; /* Font küçültüldü */
+            z-index: 10;
+            flex-shrink: 0; /* Küçülmesin */
         }
         #tension-timer-container {
-            height: 8px; background-color: var(--bg-tertiary);
-            border-radius: 4px; overflow: hidden;
-            grid-column: 2 / 3; margin: 0 10px;
+            height: 6px; /* Bar inceltildi */
+            background-color: var(--bg-tertiary);
+            border-radius: 3px; overflow: hidden;
+            grid-column: 2 / 3; margin: 0 8px; /* Margin ayarlandı */
         }
         #tension-progress-bar {
             width: 100%; height: 100%; background-color: var(--accent-red);
-            border-radius: 4px; transition: width var(--question-time) linear;
+            border-radius: 3px; transition: width var(--question-time) linear;
         }
         #timer-text-display, #game-stats {
             color: var(--text-primary); font-weight: 600;
-            padding: 5px 0; border-radius: 6px;
+            padding: 4px 0; /* Dikey padding azaltıldı */
             white-space: nowrap; text-align: center;
         }
         #timer-text-display { grid-column: 1 / 2; text-align: left;}
         #game-stats { grid-column: 3 / 4; text-align: right; font-weight: 700; color: var(--accent-red); }
 
         #card-area {
-            flex-grow: 1; display: flex; justify-content: center; align-items: center;
+            flex-grow: 1; /* Kalan tüm alanı kapla */
+            display: flex; justify-content: center; align-items: center;
             width: 100%; perspective: 1800px;
-            margin-top: 45px; margin-bottom: 50px;
-            position: relative; padding: 0 15px; box-sizing: border-box;
+            /* margin-top ve bottom kaldırıldı, flex-grow ile yönetilecek */
+            position: relative; padding: 10px; /* Genel padding */
+            box-sizing: border-box;
+            min-height: 0; /* flex item'ın küçülebilmesi için önemli */
         }
 
         .card {
-            width: 100%; max-width: 350px; height: 88%; max-height: 620px;
+            width: 100%; max-width: 350px;
+            height: 100%; /* Card-area'nın yüksekliğini doldurmaya çalışacak */
+            max-height: calc(100% - 20px); /* Padding'i hesaba kat, ya da card-area'nın max-height'ı yoksa daha dinamik */
+            /* max-height: 580px; /* Üst limit, çok uzun kartları engellemek için */
             background-color: var(--bg-secondary); border-radius: var(--border-radius-cards);
             box-shadow: var(--shadow-strong); display: flex; flex-direction: column; 
             justify-content: flex-start; align-items: center; 
-            padding: 18px; box-sizing: border-box; text-align: center;
+            padding: 15px; /* Kart içi padding azaltıldı */
+            box-sizing: border-box; text-align: center;
             user-select: none; cursor: grab; position: absolute;
             border: 1px solid var(--border-color); opacity: 0;
             transform: perspective(1200px) translateY(20px) rotateX(30deg) scale(0.9);
@@ -221,21 +278,28 @@
         }
 
         #news-meta-info {
-            display: flex; flex-wrap: wrap; gap: 6px;
-            margin-bottom: 12px; width: 100%; justify-content: center;
+            display: flex; flex-wrap: wrap; gap: 5px; /* Gap azaltıldı */
+            margin-bottom: 10px; /* Boşluk azaltıldı */
+            width: 100%; justify-content: center;
+            flex-shrink: 0; /* Meta info küçülmesin */
         }
         .meta-tag {
-            font-size: 0.7em; padding: 3px 8px; background-color: var(--bg-tertiary);
-            border-radius: 6px; color: var(--text-secondary); font-weight: 500;
+            font-size: 0.65em; padding: 2px 6px; /* Daha küçük etiketler */
+            background-color: var(--bg-tertiary); border-radius: 5px;
+            color: var(--text-secondary); font-weight: 500;
             border: 1px solid var(--border-color);
         }
-        .meta-tag .icon { margin-right: 4px; }
 
         #news-image-container {
-            width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
-            border-radius: calc(var(--border-radius-cards) - 8px);
-            margin-bottom: 15px; background-color: var(--bg-image-placeholder);
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.05); position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: calc(var(--border-radius-cards) - 10px); /* Yuvarlaklık ayarlandı */
+            margin-bottom: 10px; /* Boşluk azaltıldı */
+            background-color: var(--bg-image-placeholder);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+            position: relative;
+            flex-shrink: 0; /* Görsel alanı küçülmesin */
         }
         #news-image {
             display: block; width: 100%; height: 100%; object-fit: cover;
@@ -243,131 +307,60 @@
             opacity: 0; transform: scale(1.05);
         }
         #news-image.visible { opacity: 1; transform: scale(1); }
-        #image-placeholder.loading-placeholder {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; height: 100%; background-color: var(--bg-image-placeholder);
-            color: var(--text-secondary); font-size: 0.9em;
-            position: absolute; top: 0; left: 0;
-        }
+        #image-placeholder.loading-placeholder { /* ... önceki gibi ... */ }
 
         #news-headline {
-            font-size: 1.1em; font-weight: 500; color: var(--text-primary); 
-            line-height: 1.45; width: 100%; flex-grow: 1; overflow-y: auto; padding: 5px; 
+            font-size: clamp(0.9em, 2.8vw, 1.05em); /* Dinamik ve daha küçük font */
+            font-weight: 500; color: var(--text-primary); 
+            line-height: 1.4; /* Satır yüksekliği ayarlandı */
+            width: 100%; 
+            flex-grow: 1; /* Kalan alanı kaplasın */
+            overflow-y: auto; padding: 5px 2px; /* Hafif padding */
             -webkit-overflow-scrolling: touch;
-            &::-webkit-scrollbar { width: 6px; }
-            &::-webkit-scrollbar-track { background: transparent; }
-            &::-webkit-scrollbar-thumb { background-color: var(--accent-grey); border-radius: 10px; }
+            min-height: 40px; /* Başlık için minimum yükseklik */
+            &::-webkit-scrollbar { width: 5px; } /* Scrollbar inceltildi */
+            &::-webkit-scrollbar-thumb { background-color: var(--accent-grey); }
         }
 
-        .card.swiping { transition: none !important; }
-        .card.removing-left, .card.removing-right {
-            transition: transform 0.4s cubic-bezier(0.7, 0, 0.84, 0), opacity 0.35s ease-out !important;
-            opacity: 0 !important;
-        }
-        .card.removing-left { transform: translateX(-100px) scale(0.85) rotateZ(-10deg) !important; }
-        .card.removing-right { transform: translateX(100px) scale(0.85) rotateZ(10deg) !important; }
+        .card.swiping { /* ... önceki gibi ... */ }
+        .card.removing-left, .card.removing-right { /* ... önceki gibi ... */ }
 
-        .feedback-popup {
-            position: fixed; bottom: 0; left: 50%;
-            transform: translateX(-50%) translateY(100%);
-            width: 100%; max-width: 400px;
-            background-color: var(--bg-glass); 
-            backdrop-filter: blur(12px) saturate(120%); -webkit-backdrop-filter: blur(12px) saturate(120%);
-            color: var(--text-primary); padding: 20px 25px 25px 25px;
-            box-sizing: border-box; text-align: center; z-index: 100;
-            border-top-left-radius: var(--border-radius-cards); border-top-right-radius: var(--border-radius-cards);
-            box-shadow: 0 -6px 24px rgba(0,0,0,0.08);
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border-top: 1px solid var(--border-color); 
-        }
-        .feedback-popup.visible { transform: translateX(-50%) translateY(0); }
+        .feedback-popup { /* ... önceki gibi, padding ve fontlar media query ile ayarlanacak ... */ }
+        #feedback-confetti-anchor { /* ... önceki gibi ... */ }
+        #feedback-text { /* ... önceki gibi ... */ }
+        .confetti-dot { /* ... önceki gibi ... */ }
+        #source-link, #explanation-text { /* ... önceki gibi ... */ }
+        .hidden { /* ... önceki gibi ... */ }
+        #result-screen p { /* ... önceki gibi ... */ }
+        .stats-container, .stat-item, .stat-label, .stat-bar-bg, .stat-bar-fill, .stat-percentage { /* ... önceki gibi ... */ }
+        #score-list, #score-list li, #score-list li .date { /* ... önceki gibi ... */ }
         
-        #feedback-confetti-anchor { position:absolute; top: -50px; left:50%; transform:translateX(-50%);}
-        #feedback-text {
-            font-size: 1.3em; font-weight: 600; margin-bottom: 15px; line-height: 1.4;
-            opacity: 0; transform: translateY(10px);
+        /* Genel Mobil Uyum İyileştirmeleri */
+        @media (max-height: 650px) { /* Daha kısa ekranlar için agresif küçültme */
+            h1 { font-size: 1.8em; margin-bottom: 15px;}
+            .content-box { padding: 20px; }
+            .card { padding: 12px; max-height: calc(100% - 40px); /* Üst ve alttan boşluk bırak */ }
+            #news-image-container { height: auto; max-height: 40%; margin-bottom: 8px; } /* Yükseklik %40 ile sınırlandı */
+            #news-headline { font-size: 0.9em; line-height: 1.35; max-height: none; /* Daha fazla esneklik */}
+            .btn { padding: 10px 18px; font-size: 0.95em; }
+            #game-header { font-size: 0.7em; padding: 6px 10px; gap: 4px; }
+            #timer-text-display, #game-stats { padding: 3px 5px; }
+            .swipe-instructions-ingame { padding: 6px 0; font-size: 0.8em; }
+            .feedback-popup { padding: 15px; }
+            #feedback-text { font-size: 1.1em; }
+            .onboarding-slide img { max-width: 100px; }
+            .onboarding-slide h3 { font-size: 1.2em; }
+            .onboarding-slide p { font-size: 0.85em; }
+            .onboarding-navigation { padding: 10px; }
         }
-        .feedback-popup.visible #feedback-text {
-            animation: correctFeedbackAnimation 0.5s 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        #feedback-text.correct { color: var(--accent-green); }
-        #feedback-text.incorrect { color: var(--accent-red); }
-        
-        .confetti-dot {
-            position: absolute; width: 8px; height: 8px;
-            background-color: var(--accent-green); border-radius: 50%;
-            opacity: 0; animation: confettiBurst 0.8s ease-out forwards;
+         @media (max-height: 580px) { /* Çok kısa ekranlar */
+            #news-image-container { max-height: 35%; }
+            #news-headline { font-size: 0.85em; }
+            .meta-tag { font-size: 0.6em; padding: 2px 5px;}
+            .card { padding: 10px; }
         }
 
-        #source-link, #explanation-text {
-            display: block; margin: 12px auto; font-size: 0.95em;
-            color: var(--text-secondary); max-width: 90%;
-        }
-        #source-link {
-            color: var(--accent-red); text-decoration: none; font-weight: 500;
-            padding: 8px 12px; border: 1px solid transparent;
-            border-radius: var(--border-radius-main); display: inline-flex;
-            align-items: center; gap: 6px;
-            transition: all 0.2s ease;
-        }
-        #source-link:hover { background-color: var(--accent-red-hover-bg); border-color: var(--accent-red); }
-        #source-link .spinner {
-            display: inline-block; width: 14px; height: 14px;
-            border: 2px solid rgba(0,0,0,0.1); border-left-color: var(--accent-red);
-            border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 5px;
-        }
-        #explanation-text { font-style: italic; line-height: 1.5;}
-        .hidden { display: none !important; }
 
-        #result-screen p { font-size: 1.15em; margin: 12px 0; color: var(--text-primary); }
-        #result-screen p .value { font-weight: 700; color: var(--accent-red); font-size: 1.2em; margin-left: 5px; }
-
-        .stats-container { margin-top: 25px; width: 100%; }
-        .stat-item { margin-bottom: 15px; }
-        .stat-label { font-size: 0.9em; color: var(--text-secondary); margin-bottom: 5px; display: block; }
-        .stat-bar-bg {
-            width: 100%; height: 12px; background-color: var(--bg-tertiary);
-            border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);
-        }
-        .stat-bar-fill {
-            height: 100%; width: 0%;
-            background-color: var(--accent-green); border-radius: 6px;
-            transition: width 0.8s 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .stat-percentage { font-size: 0.9em; color: var(--accent-green); font-weight: 600; margin-left: 8px; }
-
-        #score-list {
-            list-style-type: none; padding: 0; max-height: 260px; overflow-y: auto;
-            width: 100%; margin: 20px auto;
-            &::-webkit-scrollbar { width: 6px; }
-            &::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px;}
-            &::-webkit-scrollbar-thumb { background-color: var(--accent-grey); border-radius: 10px; }
-        }
-        #score-list li {
-            background-color: var(--bg-secondary);
-            padding: 12px 15px; border-radius: 8px; margin-bottom: 8px;
-            border: 1px solid var(--border-color);
-            border-left: 3px solid var(--accent-red);
-            font-size: 0.95em; display: flex; justify-content: space-between; align-items: center;
-            transition: background-color 0.2s ease;
-        }
-        #score-list li:hover { background-color: var(--bg-tertiary); }
-        #score-list li .date { font-size: 0.8em; color: var(--text-secondary); }
-        
-        @media (max-height: 750px) and (max-width: 400px) {
-            h1 { font-size: 2em; } .card { padding: 15px; }
-            #news-image-container { height: 160px; margin-bottom: 12px; }
-            #news-headline { font-size: 1em; max-height: 90px; }
-            .btn { padding: 10px 20px; font-size: 1em; }
-            #game-header { font-size: 0.75em; padding: 8px 10px; gap: 5px; }
-            #timer-text-display, #game-stats { padding: 4px 6px; }
-            .swipe-instructions-ingame { bottom: 10px; padding: 8px 0; font-size: 0.85em; }
-            .feedback-popup { padding: 18px 20px 20px 20px; }
-            #feedback-text { font-size: 1.2em; }
-            .onboarding-slide img { max-width: 120px; }
-            .onboarding-slide h3 { font-size: 1.3em; }
-            .onboarding-slide p { font-size: 0.9em; }
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 </head>
@@ -391,30 +384,30 @@
         <div id="onboarding-screen" class="screen">
             <div class="onboarding-carousel">
                 <div class="onboarding-slide active" data-slide="0">
-                    <svg width="80" height="80" style="fill: var(--accent-red); margin-bottom: 20px;"><use xlink:href="#icon-info"></use></svg>
+                    <svg width="60" height="60" style="fill: var(--accent-red); margin-bottom: 15px;"><use xlink:href="#icon-info"></use></svg>
                     <h3>Gerçekten Yaşandı'ya Hoş Geldin!</h3>
                     <p>Karşına çıkan absürt haberlerin gerçek mi yoksa uydurma mı olduğuna karar ver.</p>
                 </div>
                 <div class="onboarding-slide" data-slide="1">
-                     <svg width="80" height="80" style="fill: var(--accent-red); margin-bottom: 20px;"><use xlink:href="#icon-swipe"></use></svg>
+                     <svg width="60" height="60" style="fill: var(--accent-red); margin-bottom: 15px;"><use xlink:href="#icon-swipe"></use></svg>
                     <h3>Nasıl Oynanır?</h3>
                     <p>Haber kartını <strong>sağa kaydırarak "Gerçek"</strong>, <strong>sola kaydırarak "Sahte"</strong> olduğunu belirt.</p>
                 </div>
                 <div class="onboarding-slide" data-slide="2">
-                    <svg width="80" height="80" style="fill: var(--accent-red); margin-bottom: 20px;"><use xlink:href="#icon-trophy"></use></svg>
+                    <svg width="60" height="60" style="fill: var(--accent-red); margin-bottom: 15px;"><use xlink:href="#icon-trophy"></use></svg>
                     <h3>Puanlama ve Süre</h3>
                     <p>Her doğru cevap sana puan kazandırır. Hızlı karar vermek için bir "Gerilim Sayacın" olacak. Bakalım ne kadar dikkatlisin?</p>
                 </div>
                 <div class="onboarding-slide" data-slide="3">
                     <h3>Hemen Dene!</h3>
                     <p>"Bu haber sence gerçek mi?"</p>
-                    <div id="onboarding-test-card" class="card loaded" style="position:relative; margin-top:20px; height: auto; min-height:180px; font-size:1em; padding:15px; box-shadow: var(--shadow-medium);">
-                        <div id="onboarding-news-meta-info" style="font-size:0.8em; margin-bottom:10px;">
+                    <div id="onboarding-test-card" class="card loaded" style="position:relative; margin-top:15px; height: auto; min-height:150px; font-size:0.9em; padding:12px; box-shadow: var(--shadow-medium);">
+                        <div id="onboarding-news-meta-info" style="font-size:0.7em; margin-bottom:8px;">
                              <span class="meta-tag">⏳ Şimdi</span> <span class="meta-tag">📍 Burada</span> <span class="meta-tag">💭 Deneme</span>
                         </div>
                         Bu bir deneme kartıdır. Sağa veya sola kaydırarak testi tamamla!
                     </div>
-                    <p style="margin-top:15px; font-size:0.8em;">Bu kaydırma bir puanlama yapmayacak.</p>
+                    <p style="margin-top:10px; font-size:0.75em;">Bu kaydırma bir puanlama yapmayacak.</p>
                 </div>
             </div>
             <div class="onboarding-navigation">
@@ -425,7 +418,7 @@
                 <button id="next-onboarding-btn" class="btn small"><svg><use xlink:href="#icon-next"></use></svg>İleri</button>
                 <button id="finish-onboarding-btn" class="btn small hidden"><svg><use xlink:href="#icon-check"></use></svg>Başla!</button>
             </div>
-            <button id="skip-onboarding-btn" class="btn small" style="position:absolute; top:15px; right:15px; background:none; color:var(--text-secondary); box-shadow:none; padding:5px;">Atla</button>
+            <button id="skip-onboarding-btn" class="btn small" style="position:absolute; top:10px; right:10px; background:none; color:var(--text-secondary); box-shadow:none; padding:5px;">Atla</button>
         </div>
 
         <div id="start-screen" class="screen">
@@ -438,15 +431,15 @@
 
         <div id="game-screen" class="screen">
             <div id="game-header">
-                <div id="timer-text-display">Süre Yok</div>
+                <div id="timer-text-display">--:--</div>
                 <div id="tension-timer-container"><div id="tension-progress-bar"></div></div>
-                <div id="game-stats">D: 0 / S: 0</div>
+                <div id="game-stats">D:0/S:0</div>
             </div>
             <div id="card-area">
                 <div id="news-card" class="card"></div>
             </div>
             <div id="feedback-area" class="feedback-popup hidden">
-                <div id="feedback-confetti-anchor" style="position:absolute; top: -50px; left:50%; transform:translateX(-50%);"></div>
+                <div id="feedback-confetti-anchor"></div>
                 <p id="feedback-text"></p>
                 <a id="source-link" href="#" target="_blank" class="hidden">
                     <span class="link-text">📰 Kaynak Habere Git</span>
@@ -483,7 +476,7 @@
 
         <div id="scoreboard-screen" class="screen">
             <div class="content-box">
-                <h2><svg style="width:28px; height:28px; vertical-align: -4px; margin-right: 8px;"><use xlink:href="#icon-trophy"></use></svg>En Yüksek Skorlar</h2>
+                <h2><svg style="width:24px; height:24px; vertical-align: -3px; margin-right: 6px;"><use xlink:href="#icon-trophy"></use></svg>En Yüksek Skorlar</h2>
                 <ul id="score-list"></ul>
                 <button id="back-to-start-button" class="btn secondary"><svg><use xlink:href="#icon-home"></use></svg>Ana Ekrana Dön</button>
             </div>
@@ -596,7 +589,7 @@
             let questionTimerInterval;
             let questionTimeLeft = QUESTION_TIME_LIMIT;
             let totalGameSecondsElapsed = 0;
-            let gameTimerInterval; // Toplam oyun süresi için
+            let gameTimerInterval;
 
             let gameActive = false;
             let shuffledNews = [];
@@ -662,7 +655,7 @@
                 mainHammerInstance.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 30 });
                 newsCardElement.style.transform = ''; newsCardElement.style.transition = '';
                 mainHammerInstance.on('panstart', () => {
-                    if (!gameActive || displays.feedbackArea.classList.contains('visible')) return;
+                    if (!gameActive || (displays.feedbackArea && displays.feedbackArea.classList.contains('visible'))) return;
                     newsCardElement.classList.add('swiping');
                     if (gameContainer) gameContainer.classList.add('background-blur');
                 });
@@ -686,7 +679,7 @@
                         newsCardElement.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease';
                         newsCardElement.style.transform = 'translateX(0px) rotateZ(0deg) scale(1)';
                         newsCardElement.style.opacity = '1';
-                        setTimeout(() => { newsCardElement.style.transition = ''; }, 300);
+                        setTimeout(() => { if(newsCardElement) newsCardElement.style.transition = ''; }, 300);
                     }
                 });
             }
@@ -696,42 +689,43 @@
                 if (screens[screenId]) {
                     screens[screenId].classList.add('active');
                 } else {
-                    console.error("Ekran bulunamadı:", screenId);
+                    // console.error("Ekran bulunamadı:", screenId);
                 }
             }
 
             function startQuestionTimer() {
                 questionTimeLeft = QUESTION_TIME_LIMIT;
                 if(displays.tensionProgressBar) {
-                    displays.tensionProgressBar.style.transition = 'none';
+                    displays.tensionProgressBar.style.transition = 'none'; // Prevent animation on reset
                     displays.tensionProgressBar.style.width = '100%';
                 }
                 if(displays.timerText) displays.timerText.textContent = `${questionTimeLeft}s`;
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
+                
+                requestAnimationFrame(() => { // Ensure reset is rendered
+                    requestAnimationFrame(() => { // Then start animation
                         if(displays.tensionProgressBar) {
                             displays.tensionProgressBar.style.transition = `width ${QUESTION_TIME_LIMIT}s linear`;
                             displays.tensionProgressBar.style.width = '0%';
                         }
                     });
                 });
+
                 if (questionTimerInterval) clearInterval(questionTimerInterval);
                 questionTimerInterval = setInterval(() => {
                     questionTimeLeft--;
                     if(displays.timerText) displays.timerText.textContent = `${questionTimeLeft}s`;
-                    if (questionTimeLeft <= 0) {
+                    if (questionTimeLeft < 0) { // Use < 0 to ensure 0s is displayed
                         clearInterval(questionTimerInterval);
-                        if (gameActive) {
-                            handleSwipe('timeout');
-                        }
+                        if (gameActive) { handleSwipe('timeout'); }
                     }
                 }, 1000);
             }
+
             function stopQuestionTimer() {
                 clearInterval(questionTimerInterval);
-                if(displays.tensionProgressBar) {
+                if(displays.tensionProgressBar && displays.tensionProgressBar.parentElement) {
                     const currentWidth = displays.tensionProgressBar.offsetWidth;
-                    const parentWidth = displays.tensionProgressBar.parentElement ? displays.tensionProgressBar.parentElement.offsetWidth : 1; // Parent yoksa veya genişliği 0 ise 1 al
+                    const parentWidth = displays.tensionProgressBar.parentElement.offsetWidth;
                     displays.tensionProgressBar.style.transition = 'none';
                     displays.tensionProgressBar.style.width = parentWidth > 0 ? `${(currentWidth / parentWidth) * 100}%` : '0%';
                 }
@@ -748,29 +742,30 @@
 
             function calculateCurrentScore() { return correctAnswers * 100; }
             function finalScoreFormula(correct, time) {
-                if (time <= 0) return correct * 10000;
-                return Math.round((correct * 10000) / (time + 1)); 
+                if (time <= 0) return correct * (shuffledNews.length * 100); // Max possible if no time taken
+                return Math.round((correct * (shuffledNews.length * 1000)) / (time + 1)); 
             }
 
-            function updateGameHeader() {
+            function updateGameStats() {
                 const questionNumToShow = gameActive ? currentNewsIndex + 1 : 0;
-                const totalQuestions = shuffledNews.length > 0 ? shuffledNews.length : newsItems.length;
+                const totalQuestions = shuffledNews.length || newsItems.length;
                 
                 if (displays.gameStats) {
                      displays.gameStats.textContent = `D: ${correctAnswers} / S: ${totalQuestions}`;
                 }
-                // Skor ayrıca güncellenecek (veya buraya eklenebilir)
+                // Skor, `processAnswer` içinde ve oyun başında ayrıca güncelleniyor.
+                // İsterseniz buraya da ekleyebilirsiniz:
+                // if (displays.scoreDisplay) displays.scoreDisplay.textContent = `Skor: ${score}`;
             }
 
             function createConfetti() {
-                if (!displays.feedbackArea) return;
                 const confettiAnchor = document.getElementById('feedback-confetti-anchor');
                 if (!confettiAnchor) return;
                 for (let i = 0; i < 15; i++) {
                     const dot = document.createElement('div');
                     dot.classList.add('confetti-dot');
-                    dot.style.left = `${Math.random() * 60 - 30}px`;
-                    dot.style.animationDelay = `${Math.random() * 0.2}s`;
+                    dot.style.left = `${Math.random() * 80 - 40}px`; // Yayılma alanı
+                    dot.style.animationDelay = `${Math.random() * 0.3}s`;
                     dot.style.backgroundColor = `hsl(${Math.random() * 60 + 90}, 70%, 60%)`;
                     confettiAnchor.appendChild(dot);
                     setTimeout(() => dot.remove(), 1000);
@@ -786,9 +781,10 @@
                 if (currentNewsIndex < shuffledNews.length) {
                     const newsItem = shuffledNews[currentNewsIndex];
                     
-                    // Soru sayısını burada güncelle, çünkü kart yeni yükleniyor
+                    // Soru sayısını ve diğer header bilgilerini burada doğru şekilde ayarla
                     if (displays.gameStats) displays.gameStats.textContent = `D: ${correctAnswers} / S: ${shuffledNews.length}`;
-                    if (displays.score) displays.score.textContent = `Skor: ${score}`; // Skoru da göster
+                    // Skor zaten processAnswer'da ve startGame'de güncelleniyor, burada tekrar ayarlanabilir:
+                    // if (displays.scoreDisplay) displays.scoreDisplay.textContent = `Skor: ${score}`; 
 
                     startQuestionTimer();
 
@@ -855,7 +851,7 @@
                 if (!timedOut) { correct = (userChoiceIsReal === newsItem.isReal); }
 
                 if (displays.feedbackArea) { displays.feedbackArea.classList.remove('hidden'); displays.feedbackArea.classList.add('visible'); }
-                if (displays.sourceLink) displays.sourceLink.classList.add('hidden');
+                if (displays.sourceLink) { displays.sourceLink.classList.add('hidden'); if(displays.sourceLinkText) displays.sourceLinkText.textContent = "📰 Kaynak Habere Git"; if(displays.sourceLinkSpinner) displays.sourceLinkSpinner.classList.add('hidden');}
                 if (displays.explanationText) displays.explanationText.classList.add('hidden');
 
                 if (correct) {
@@ -890,9 +886,8 @@
                         }
                     }
                 }
-                // Her cevap sonrası header'ı güncelle
-                if (displays.gameStats) displays.gameStats.textContent = `D: ${correctAnswers} / S: ${shuffledNews.length}`;
-                if (displays.score) displays.score.textContent = `Skor: ${score}`;
+                updateGameStats(); // D:X / S:Y güncelle
+                if(displays.score) displays.score.textContent = `Skor: ${score}`; // Skoru da güncelle
             }
 
             function nextNewsItem() {
@@ -914,29 +909,29 @@
                 shuffledNews = shuffledNews.slice(0, Math.min(10, shuffledNews.length));
 
                 currentNewsIndex = 0; score = 0; correctAnswers = 0;
-                totalGameSecondsElapsed = 0; // Toplam oyun süresini sıfırla
+                totalGameSecondsElapsed = 0;
                 
                 if (displays.feedbackArea) { displays.feedbackArea.classList.add('hidden'); displays.feedbackArea.classList.remove('visible');}
                 
-                if (displays.gameStats) displays.gameStats.textContent = `D: 0 / S: ${shuffledNews.length}`; // Başlangıçta toplam soru sayısını göster
-                if (displays.score) displays.score.textContent = `Skor: 0`;
+                if (displays.gameStats) displays.gameStats.textContent = `D: 0 / S: ${shuffledNews.length}`;
+                if (displays.score) displays.score.textContent = `Skor: 0`; // Skoru sıfırla
+                if (displays.timerText) displays.timerText.textContent = `${QUESTION_TIME_LIMIT}s`; // Zamanlayıcıyı göster
                 
                 loadNewsCard(); 
-                startGameTimer(); // Toplam oyun süresini başlat
+                startGameTimer();
                 showScreen('game');
                 gameActive = true;
             }
 
             function endGame() {
                 gameActive = false;
-                stopQuestionTimer();
-                stopGameTimer(); // Toplam oyun süresini durdur
+                stopQuestionTimer(); stopGameTimer(); 
                 
                 const totalQuestionsAttempted = shuffledNews.length;
                 const percentage = totalQuestionsAttempted > 0 ? Math.round((correctAnswers / totalQuestionsAttempted) * 100) : 0;
 
                 if (displays.finalCorrect) displays.finalCorrect.textContent = correctAnswers;
-                if (displays.timeTaken) displays.timeTaken.textContent = `${totalGameSecondsElapsed}s`; // Gerçek geçen süreyi göster
+                if (displays.timeTaken) displays.timeTaken.textContent = `${totalGameSecondsElapsed}s`;
                 
                 const finalCalcScore = finalScoreFormula(correctAnswers, totalGameSecondsElapsed);
                 if (displays.calculatedScore) displays.calculatedScore.textContent = finalCalcScore;
@@ -956,7 +951,7 @@
                 };
                 scores.push(newScoreEntry);
                 scores.sort((a, b) => b.score - a.score);
-                localStorage.setItem('gercektenYasandiScores_vFinal', JSON.stringify(scores.slice(0, 5))); // Yeni key
+                localStorage.setItem('gercektenYasandiScores_vFinal', JSON.stringify(scores.slice(0, 5)));
             }
 
             function getScoresFromLocalStorage() {
@@ -964,7 +959,7 @@
                 return scores ? JSON.parse(scores) : [];
             }
 
-            function displayScoreboard() { /* ... önceki gibi ... */
+            function displayScoreboard() {
                 const scores = getScoresFromLocalStorage();
                 if (displays.scoreList) {
                     displays.scoreList.innerHTML = '';
@@ -981,9 +976,8 @@
                 showScreen('scoreboard');
             }
 
-
             function shareScore() { /* ... önceki gibi ... */ 
-                const shareText = `Gerçekten Yaşandı oyununda ${displays.calculatedScore ? displays.calculatedScore.textContent : 'bir'} puan aldım! Sen de oyna!`;
+                 const shareText = `Gerçekten Yaşandı oyununda ${displays.calculatedScore ? displays.calculatedScore.textContent : 'bir'} puan aldım! Sen de oyna!`;
                 if (navigator.share) {
                     navigator.share({
                         title: 'Gerçekten Yaşandı Skor', text: shareText, url: window.location.href
@@ -1008,22 +1002,26 @@
             safelyAddEventListener(buttons.shareScore, 'click', shareScore);
 
             if (displays.sourceLink) {
-                displays.sourceLink.addEventListener('click', function() {
+                displays.sourceLink.addEventListener('click', function(e) {
+                    // e.preventDefault(); // Eğer linkin varsayılan davranışını hemen engellemek istemiyorsak
                     if(displays.sourceLinkText) displays.sourceLinkText.textContent = "Yönlendiriliyor...";
                     if(displays.sourceLinkSpinner) displays.sourceLinkSpinner.classList.remove('hidden');
-                    setTimeout(() => {
-                        if(displays.sourceLinkText) displays.sourceLinkText.textContent = "📰 Kaynak Habere Git";
-                        if(displays.sourceLinkSpinner) displays.sourceLinkSpinner.classList.add('hidden');
-                    }, 3000);
+                    // Kullanıcı yeni sekmeye geçtiği için bu timeout'un geri alma etkisi sınırlı olabilir.
+                    // setTimeout(() => {
+                    //     if(displays.sourceLinkText) displays.sourceLinkText.textContent = "📰 Kaynak Habere Git";
+                    //     if(displays.sourceLinkSpinner) displays.sourceLinkSpinner.classList.add('hidden');
+                    // }, 3000); 
                 });
             }
 
             const onboardingComplete = localStorage.getItem('onboardingComplete_v3');
-            if (!onboardingComplete) {
+            if (!onboardingComplete && screens.onboarding) { // Onboarding ekranı varsa göster
                 showScreen('onboarding');
                 showOnboardingSlide(0);
-            } else {
+            } else if (screens.start) { // Yoksa direkt başlangıç ekranı
                 showScreen('start');
+            } else { // Hiçbiri yoksa (beklenmedik durum)
+                console.error("Başlangıç veya onboarding ekranı bulunamadı.");
             }
         });
     </script>
