@@ -1,781 +1,250 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Gerçekten Yaşandı - Güncel Haberler</title>
+    <meta charset="utf-8"/>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&family=Lexend%3Awght%40400%3B500%3B700%3B900&family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+
+    <title>NewsSwipe - Verify News with a Swipe</title> <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        /* ----- BEYAZ & MODERN TASARIM STİLLERİ ----- */
-        @keyframes spin { to { transform: rotate(360deg); } }
-        /* Diğer @keyframes tanımlamalarınız buraya eklenebilir */
-
-        :root {
-            --bg-primary: #F8F9FA; --bg-secondary: #FFFFFF; --bg-tertiary: #E9ECEF;
-            --bg-glass: rgba(255, 255, 255, 0.88); --bg-image-placeholder: #DEE2E6;
-            --text-primary: #212529; --text-secondary: #6C757D; --text-accent: #000000;
-            --text-on-accent: #FFFFFF;
-            --accent-red: #E5383B; --accent-red-darker: #C02D2F;
-            --accent-green: #28A745;
-            --font-family-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            --border-radius-main: 14px; --border-radius-cards: 18px; --border-color: #DEE2E6;
-            --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.06);
-            --shadow-medium: 0 6px 18px rgba(0, 0, 0, 0.07);
+        /* Ana Ekran Stilleri */
+        .material-icons { /* Bu, hem normal hem de outlined ikonlar için genel bir boyut ayarı olabilir */
+          font-size: 28px;
+        }
+        .btn-primary {
+          background-color: #3B82F6; /* Tailwind blue-500 */
+          color: white;
+        }
+        .btn-secondary {
+          background-color: #E5E7EB; /* Tailwind slate-200 */
+          color: #1F2937; /* Tailwind slate-800 */
+        }
+        .lexend-font { /* Bu sınıfı body'de ve gerekirse spesifik elementlerde kullanıyoruz */
+          font-family: 'Lexend', "Noto Sans", sans-serif;
+        }
+        
+        /* Oyun Ekranı Stilleri */
+        .card-gradient {
+          background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.8) 100%);
+        }
+        .primary-color-text { /* Oyun ekranı için özel renk */
+          color: #0c7ff2;
+        }
+        .primary-color-bg { /* Oyun ekranı için özel renk */
+          background-color: #0c7ff2;
+        }
+        .primary-color-border { /* Oyun ekranı için özel renk */
+          border-color: #0c7ff2;
+        }
+        .fake-news-button {
+          background-color: #FF3B30;
+        }
+        .real-news-button {
+          background-color: #34C759;
         }
 
-        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; position: fixed; font-family: var(--font-family-main); background-color: var(--bg-primary); color: var(--text-primary);}
-        body { display: flex; justify-content: center; align-items: center; }
-
-        #game-container {
-            width: 100%; height: 100%;
-            max-width: 100%; max-height: 100%;
-            background-color: var(--bg-primary);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+        /* Genel body stili */
+        body {
+          min-height: max(884px, 100dvh);
         }
-        @media (min-width: 450px) {
-            #game-container { max-width: 400px; max-height: 800px; border-radius: var(--border-radius-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-medium); }
-        }
-
-        #app-top-sponsors {
-            width: 100%;
-            background-color: var(--bg-tertiary);
-            padding: 5px 0;
-            text-align: center;
-            box-sizing: border-box;
-            z-index: 100;
-            border-bottom: 1px solid var(--border-color);
-        }
-        #app-top-sponsors #promo-banner-top {
-            display: block;
-            width: 100%;
-            max-height: 45px;
-            object-fit: cover;
-        }
-        #app-top-sponsors #sponsor-logo-main {
-            display: block;
-            max-height: 25px;
-            margin: 5px auto 0 auto;
-        }
-
-        .screens-wrapper {
-            flex-grow: 1;
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .screen {
-            display: flex; opacity: 0; visibility: hidden;
-            transform: translateY(15px) scale(0.99);
-            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                        visibility 0s 0.4s;
-            flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px;
-            box-sizing: border-box; text-align: center;
-            width: 100%; height: 100%;
-            position: absolute; top: 0; left: 0; z-index: 1;
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-            background-color: var(--bg-primary);
-        }
-        .screen.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); transition-delay: 0s; z-index: 10; }
-
-        .content-box { background-color: var(--bg-secondary); padding: 25px; border-radius: var(--border-radius-cards); box-shadow: var(--shadow-soft); text-align: center; width: 90%; max-width: 350px; }
-        h1 { font-size: 1.8em; margin-bottom: 15px; } h2 { font-size: 1.5em; margin-bottom: 15px;}
-        h3 { font-size: 1.2em; margin-bottom: 10px;} p { font-size: 1em; color: var(--text-secondary); line-height: 1.6; margin-bottom: 15px;}
-
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center;
-            padding: 12px 24px; font-size: 1em; font-weight: 600;
-            background-color: var(--accent-red); color: var(--text-on-accent);
-            border: none; border-radius: var(--border-radius-main);
-            cursor: pointer; text-decoration: none;
-            box-shadow: var(--shadow-soft);
-            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-        }
-        .btn svg { width: 20px; height: 20px; margin-left: 8px; fill: currentColor; }
-        .btn:hover { background-color: var(--accent-red-darker); box-shadow: var(--shadow-medium); }
-        .btn:active { transform: scale(0.97); box-shadow: none; }
-        .btn.secondary { background-color: var(--bg-tertiary); color: var(--text-primary); }
-        .btn.secondary:hover { background-color: #DDE2E6; }
-        .btn.small { padding: 8px 16px; font-size: 0.9em; }
-
-        #onboarding-screen { z-index: 200; background-color: var(--bg-secondary); justify-content: space-between; padding: 0; }
-        .onboarding-carousel { display: flex; overflow: hidden; width: 100%; flex-grow: 1; position: relative; cursor: grab; }
-        .onboarding-slides-wrapper { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .onboarding-slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 25px; box-sizing: border-box; text-align: center; }
-        .onboarding-slide img.slide-icon { max-width: clamp(100px, 25vh, 150px); margin-bottom: 20px; }
-        .onboarding-slide h3 { font-size: 1.4em; color: var(--text-accent); }
-        .onboarding-slide p { font-size: 0.95em; color: var(--text-secondary); }
-        .onboarding-navigation { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 15px 20px; width: 100%; box-sizing: border-box; flex-shrink: 0; background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); }
-        #prev-onboarding-btn { justify-self: start; }
-        .onboarding-dots { display: flex; gap: 8px; justify-self: center; }
-        .onboarding-dots .dot { width: 8px; height: 8px; background-color: var(--border-color); border-radius: 50%; transition: background-color 0.3s ease, transform 0.3s ease; }
-        .onboarding-dots .dot.active { background-color: var(--accent-red); transform: scale(1.2); }
-        #next-onboarding-btn, #finish-onboarding-btn { justify-self: end; }
-        #skip-onboarding-btn { position:absolute; top:15px; right:15px; background:none; color:var(--text-secondary); box-shadow:none; padding:5px; z-index: 205; font-size: 0.9em; }
-        #skip-onboarding-btn:hover { color: var(--accent-red); }
-
-        #game-header {
-            width: 100%; padding:10px 15px; box-sizing:border-box;
-            background:var(--bg-tertiary); display:flex; justify-content:space-between; align-items:center;
-            position:absolute; top:0; left:0;
-            z-index:15; border-bottom: 1px solid var(--border-color);
-        }
-        #card-area {
-            display:flex; flex-direction:column; justify-content:center; align-items:center;
-            flex-grow:1; width:100%;
-            padding-top:60px; 
-            padding-bottom: 100px; 
-            box-sizing: border-box;
-        }
-        #news-card {
-            width:90%; max-width:340px; min-height:350px; background:var(--bg-secondary);
-            border-radius:var(--border-radius-cards); box-shadow:var(--shadow-medium);
-            display:flex; flex-direction:column; position:relative;
-            opacity:0; transform: scale(0.95) translateY(10px);
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-        }
-        #news-image-container { width:100%; height:180px; background-color:var(--bg-image-placeholder); border-top-left-radius:var(--border-radius-cards); border-top-right-radius:var(--border-radius-cards); position:relative; overflow:hidden;}
-        #news-image { width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 0.4s ease-in-out;}
-        #image-placeholder { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; background-color: var(--bg-image-placeholder);}
-        .spinner { width:30px; height:30px; border:3px solid rgba(0,0,0,0.1); border-top-color:var(--accent-red); border-radius:50%; animation: spin 1s linear infinite;}
-        #news-meta-info { padding:10px 15px 5px 15px; font-size:0.75em; color:var(--text-secondary); display:flex; justify-content:space-between; text-transform: uppercase; letter-spacing: 0.5px;}
-        #news-headline { padding:5px 15px 15px 15px; font-size:1.15em; line-height:1.4; color:var(--text-primary); flex-grow:1; overflow-y:auto; margin:0; text-align:left;}
-        .swipe-instructions-ingame { font-size:0.85em; color:var(--text-secondary); margin-top:15px; position:absolute; bottom: 70px; text-align:center; width:100%;}
-
-        #feedback-area {
-            position:absolute; bottom:0; left:0; width:100%;
-            padding:15px 20px; box-sizing:border-box; background-color:var(--bg-glass);
-            backdrop-filter: blur(8px); border-top: 1px solid var(--border-color);
-            z-index:20; transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .feedback-popup { text-align:left; }
-        #feedback-text { font-weight:bold; font-size:1.1em; margin:0; }
-        #explanation-text { font-size:0.9em; margin-bottom:10px; line-height:1.5;}
-        #source-link { display:none; align-items:center;}
-        #source-link .spinner {display:none; width:16px; height:16px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation: spin 1s linear infinite; margin-left:8px;}
-        #next-button { margin-left:10px; }
-
-        .ingame-sponsor-logo-container, .result-sponsor-logo-container {
-            width: 100%;
-            text-align: center;
-            padding: 10px 0;
-            margin-top: 15px;
-        }
-        .ingame-sponsor-logo-container img, .result-sponsor-logo-container img {
-            max-height: 30px;
-            opacity: 0.8;
-        }
-
-        .hidden { display: none !important; }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 </head>
-<body>
-    <svg width="0" height="0" style="position:absolute"> <defs>
-        <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
-        <symbol id="icon-restart" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></symbol>
-        <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A7.003 7.003 0 0 0 12 22a7.003 7.003 0 0 0 4.61-11.06C19.08 10.63 21 8.55 21 6V5c0-1.1-.9-2-2-2zm-9-1h4v1h-4V4zm7 7.26c-1.49.68-2.69 1.92-3.44 3.43A5.012 5.012 0 0 1 12 20a5.012 5.012 0 0 1-1.56-6.31c-.75-1.51-1.95-2.75-3.44-3.43C5.3 9.89 4 8.07 4 6V5.05C4 5.03 4.01 5 4.01 5H12h7.99c0 .02.01.03.01.05V6c0 2.07-1.3 3.89-3 4.26z"/></symbol>
-        <symbol id="icon-share" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.18c.52.47 1.2.77 1.96.77 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.52 9.34 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.52-.34 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></symbol>
-        <symbol id="icon-next" viewBox="0 0 24 24"><path d="m12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8l-8-8z"/></symbol>
-        <symbol id="icon-prev" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></symbol>
-        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8h5z"/></symbol>
-        <symbol id="icon-info" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path></symbol>
-        <symbol id="icon-swipe" viewBox="0 0 24 24"><path d="M3.5 12.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S5.83 11 5 11s-1.5.67-1.5 1.5zm4 0c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S9.83 11 9 11s-1.5.67-1.5 1.5zm4 0c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S13.83 11 13 11s-1.5.67-1.5 1.5zm9.48-3.16c-.04-.16-.09-.31-.15-.45l-2.61-6.3c-.2-.48-.65-.8-1.18-.8H7.47c-.53 0-.99.32-1.18.8l-2.61 6.3c-.06.14-.11.29-.15.45C1.01 10.63 0 12.73 0 15.59 0 19.13 2.87 22 6.41 22H17.6c3.53 0 6.4-2.87 6.4-6.41 0-2.86-1.01-4.96-2.52-6.25zM17.59 20H6.41C3.99 20 2 18.01 2 15.59c0-1.94.77-3.59 1.93-4.74.08-.08.16-.16.25-.24H7.6v2.79c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V10.61h3.81v2.79c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V10.61h3.42c.09.08.17.16.25.24 1.16 1.15 1.93 2.8 1.93 4.74 0 2.42-1.99 4.41-4.41 4.41zM10.18 8.61h3.64L12 4.21 10.18 8.61zM7.91 8.61l1.82-4.4L6.09 8.61h1.82zm5.99 0h1.82L13.9 4.21l1.82 4.4z"></path></symbol>
-        <symbol id="icon-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></symbol>
-        <symbol id="icon-link" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"></path></symbol>
-    </defs></svg>
+<body class="bg-slate-50 lexend-font"> <div id="appRoot" class="relative size-full min-h-screen flex-col group/design-root overflow-x-hidden">
 
-    <div id="game-container">
-        <div id="app-top-sponsors">
-            <img id="promo-banner-top" src="https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/e12abcf0-0425-4503-ab4a-531de9382322.png" alt="Promosyon Banner">
-            <img id="sponsor-logo-main" src="https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/ebcb2ccf-bd61-4e27-a1f7-44d70916ca0b.png" alt="Sponsor Ana Logo">
-        </div>
-
-        <div class="screens-wrapper">
-            <div id="onboarding-screen" class="screen">
-                <button id="skip-onboarding-btn" class="btn small">Atla</button>
-                <div class="onboarding-carousel">
-                    <div class="onboarding-slides-wrapper">
-                        <div class="onboarding-slide">
-                            <img class="slide-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23E5383B'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E" alt="Hoş Geldin İkonu">
-                            <h3>Gerçekten Yaşandı Mı?</h3>
-                            <p>Oyunumuza hoş geldiniz! Haber başlıklarının gerçek mi kurgu mu olduğunu ayırt etmeye hazır mısınız?</p>
-                        </div>
-                        <div class="onboarding-slide">
-                            <svg viewBox="0 0 24 24" width="100" height="100" style="margin-bottom:20px; color:var(--accent-red);"><use href="#icon-swipe"></use></svg>
-                            <h3>Nasıl Oynanır?</h3>
-                            <p>Kartı gerçekse sağa, kurguysa sola kaydırın. Hızlı ve doğru cevaplar size daha çok puan kazandırır!</p>
-                        </div>
-                        <div class="onboarding-slide">
-                             <svg viewBox="0 0 24 24" width="100" height="100" style="margin-bottom:20px; color:var(--accent-green);"><use href="#icon-check"></use></svg>
-                            <h3>Hazır Mısın?</h3>
-                            <p>Hadi başlayalım ve ne kadar dikkatli bir haber okuru olduğunu görelim!</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="onboarding-navigation">
-                    <button id="prev-onboarding-btn" class="btn secondary">
-                        <svg viewBox="0 0 24 24"><use href="#icon-prev"></use></svg>
-                    </button>
-                    <div class="onboarding-dots">
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                    </div>
-                    <button id="next-onboarding-btn" class="btn">
-                        <svg viewBox="0 0 24 24"><use href="#icon-next"></use></svg>
-                    </button>
-                    <button id="finish-onboarding-btn" class="btn hidden">Başla!</button>
-                </div>
-            </div>
-
-            <div id="start-screen" class="screen">
-                <div class="content-box">
-                    <svg viewBox="0 0 24 24" style="width: 64px; height: 64px; color: var(--accent-red); margin-bottom: 20px;">
-                        <use href="#icon-play"></use></svg>
-                    <h1>Gerçekten Yaşandı Mı?</h1>
-                    <p>Haber başlıklarının gerçek mi kurgu mu olduğunu tahmin etmeye hazır mısın?</p>
-                    <button id="start-button" class="btn" style="width: 100%; padding: 15px; font-size: 1.1em; margin-bottom:15px;">
-                        Oyuna Başla
-                        <svg viewBox="0 0 24 24"><use href="#icon-next"></use></svg>
-                    </button>
-                    <button id="view-scores-button" class="btn secondary" style="width: 100%; padding: 12px; font-size: 1em;">
-                        <svg viewBox="0 0 24 24" style="width:18px; height:18px; margin-right:8px;"><use href="#icon-trophy"></use></svg>
-                        Yüksek Skorlar
+        <div id="homeScreen">
+            <header id="homeHeader" class="bg-white shadow-sm sticky top-0 z-10">
+                <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+                    <div class="w-10"></div> 
+                    <h1 class="text-xl font-bold text-slate-800 text-center">NewsSwipe</h1>
+                    <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        <span class="material-icons">settings</span>
                     </button>
                 </div>
-            </div>
-
-            <div id="game-screen" class="screen" style="padding:0;">
-                <div id="game-header">
-                    <div id="game-stats" style="font-size:0.9em;">Soru: <span id="current-question-stat">0</span>/<span id="total-questions-stat">0</span> | Skor: <span id="current-score-stat">0</span></div>
-                    <div id="tension-timer-container" style="position:relative; width:80px; height:18px; background:var(--border-color); border-radius:9px; overflow:hidden;">
-                        <div id="tension-progress-bar" style="width:100%; height:100%; background:var(--accent-green); border-radius:9px; transition: width 0.1s linear;"></div>
-                        <div id="timer-text-display" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:0.75em; color:var(--text-primary); font-weight:500;">0s</div>
+            </header>
+            <main id="homeMain" class="flex-grow container mx-auto px-6 py-8 text-center">
+                <div class="max-w-md mx-auto">
+                    <img alt="NewsSwipe App Icon" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
+                    <h2 class="text-3xl font-bold text-slate-800 mb-3">Welcome to NewsSwipe!</h2>
+                    <p class="text-slate-600 text-lg mb-10">Test your news literacy. Swipe left for fake, right for real.</p>
+                    <div class="space-y-4">
+                        <button id="playNowBtn" class="btn-primary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:bg-blue-700 transition-colors duration-150">
+                            <span class="material-icons mr-2">play_arrow</span>
+                            Play Now
+                        </button>
+                        <button class="btn-secondary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
+                            <span class="material-icons mr-2">leaderboard</span>
+                            View Scores
+                        </button>
+                        <button id="howToPlayBtn" class="btn-secondary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
+                            <span class="material-icons mr-2">help_outline</span>
+                            How to Play
+                        </button>
                     </div>
                 </div>
-
-                <div id="card-area">
-                    <div id="news-card">
-                        <div id="news-image-container">
-                            <img id="news-image" src="" alt="Haber Görseli">
-                            <div id="image-placeholder"><div class="spinner"></div></div>
-                        </div>
-                        <div id="news-meta-info">
-                            <span class="meta-tag"></span>
-                            <span class="meta-source"></span>
-                        </div>
-                        <h2 id="news-headline"></h2>
+            </main>
+            <footer id="homeFooter" class="bg-white border-t border-slate-200 sticky bottom-0 z-10">
+                <nav class="container mx-auto px-4 h-16 flex justify-around items-center">
+                    <a class="flex flex-col items-center justify-center text-blue-600 hover:text-blue-700 transition-colors duration-150 p-2 rounded-lg" href="#">
+                        <span class="material-icons">home</span>
+                        <span class="text-xs font-medium">Home</span>
+                    </a>
+                    <a class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg" href="#">
+                        <span class="material-icons">bar_chart</span>
+                        <span class="text-xs font-medium">Scores</span>
+                    </a>
+                    <a class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg" href="#">
+                        <span class="material-icons">person_outline</span>
+                        <span class="text-xs font-medium">Profile</span>
+                    </a>
+                </nav>
+            </footer>
+        </div> <div id="gameScreen" class="hidden">
+            <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Lexend, "Noto Sans", sans-serif;'>
+                <header class="sticky top-0 z-10 bg-white shadow-sm">
+                    <div class="flex items-center p-4 pb-3">
+                        <button id="closeGameBtn" class="text-gray-700 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100">
+                            <span class="material-icons-outlined">close</span>
+                        </button>
+                        <h1 class="text-gray-900 text-xl font-semibold leading-tight tracking-tight flex-1 text-center pr-10">News Verification</h1>
                     </div>
-                    <p class="swipe-instructions-ingame">Gerçekse sağa, değilse sola kaydır.</p>
-                     <div class="ingame-sponsor-logo-container">
-                        <img src="https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/ebcb2ccf-bd61-4e27-a1f7-44d70916ca0b.png" alt="Sponsor Logo">
-                    </div>
-                </div>
-
-                <div id="feedback-area">
-                     <div class="feedback-popup">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                            <p id="feedback-text"></p>
-                            <button id="next-button" class="btn small">Devam Et</button>
+                    <div class="px-4 pb-3">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <p class="text-gray-700 text-sm font-medium">Question <span class="font-bold text-gray-900">1</span>/7</p>
+                            <p class="text-gray-700 text-sm font-medium"><span class="font-bold text-gray-900">Score: 0</span></p>
                         </div>
-                        <p id="explanation-text"></p>
-                        <a id="source-link" href="#" target="_blank" class="btn small secondary">
-                            <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right:6px;"><use href="#icon-link"></use></svg>
-                            <span class="link-text">Kaynağı Gör</span>
-                            <span class="spinner"></span>
+                        <div class="h-2.5 rounded-full bg-gray-200">
+                            <div class="h-2.5 rounded-full primary-color-bg" style="width: 14%;"></div>
+                        </div>
+                    </div>
+                </header>
+                <main class="flex-1 overflow-y-auto p-4 space-y-6">
+                    <div class="flex gap-3 justify-center">
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
+                                <p class="text-gray-900 text-3xl font-bold">00</p>
+                            </div>
+                            <p class="text-gray-600 text-xs font-medium">Minutes</p>
+                        </div>
+                        <div class="flex items-center text-gray-400 text-2xl font-bold pt-1 pb-5">:</div>
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
+                                <p class="text-gray-900 text-3xl font-bold">15</p>
+                            </div>
+                            <p class="text-gray-600 text-xs font-medium">Seconds</p>
+                        </div>
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden shadow-lg aspect-[3/4] min-h-[300px] max-h-[500px] mx-auto w-full max-w-md">
+                        <img alt="News article image" class="absolute inset-0 h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByU9lacn6K_FHOIMxM1uY7HjPdQFZ__M6DvLLXJ6kSOpQMeDOH-BIDmg_Kk9dpr5axSo2stf3VYHOYQQSB42AQjwWn9Lh1lS-lRS2LWGJT_M_RsM2F0veurVNVE6VCQSu65HocXyxr-qS8PiVAmNbkkZ_VyOzOGfwZpdgm4Kb3FeweyldN5OBrNAWl-3bfi6pX2gyS4DliiSgGilkxK-4oN4aY1oS38m9h5OrCJX-IUhm_aFOsjvJwQ_OZutosopo_8IvEzNASr6_0"/>
+                        <div class="absolute inset-0 card-gradient flex flex-col justify-end p-5 space-y-2">
+                            <h2 class="text-white text-2xl font-bold leading-tight drop-shadow-md">Breaking: New Study Links Coffee Consumption to Increased Lifespan</h2>
+                            <p class="text-gray-200 text-sm font-normal leading-relaxed line-clamp-4 drop-shadow-sm">
+                                A recent study published in the Journal of Nutritional Science claims that regular coffee consumption is associated with a longer lifespan. Researchers followed
+                                over 100,000 participants for 10 years, finding that those who drank 2-4 cups of coffee daily had a lower risk of mortality compared to non-coffee drinkers. The
+                                study controlled for various lifestyle factors, including diet and exercise, suggesting a direct link between coffee and longevity. However, experts caution that
+                                more research is needed to confirm these findings and understand the underlying mechanisms.
+                            </p>
+                            <button class="text-xs text-white font-medium underline self-start pt-1 opacity-80 hover:opacity-100 transition-opacity">Verify Source</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-around items-center pt-2 space-x-4">
+                        <button class="flex flex-col items-center justify-center size-20 rounded-full fake-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95">
+                            <span class="material-icons-outlined text-3xl">close</span>
+                            <span class="text-xs font-semibold tracking-wide">FAKE</span>
+                        </button>
+                        <button class="flex flex-col items-center justify-center size-20 rounded-full real-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95">
+                            <span class="material-icons-outlined text-3xl">check</span>
+                            <span class="text-xs font-semibold tracking-wide">REAL</span>
+                        </button>
+                    </div>
+                </main>
+                <nav class="sticky bottom-0 bg-white border-t border-gray-200 pb-safe">
+                    <div class="flex justify-around items-center h-16">
+                        <a class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3" href="#">
+                            <span class="material-icons-outlined text-2xl">cottage</span>
+                            <span class="text-xs font-medium">Home</span>
+                        </a>
+                        <a class="flex flex-col items-center justify-center gap-0.5 primary-color-text hover:primary-color-text transition-colors w-1/3" href="#">
+                            <span class="material-icons-outlined text-2xl">gamepad</span>
+                            <span class="text-xs font-medium">Game</span>
+                        </a>
+                        <a class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3" href="#">
+                            <span class="material-icons-outlined text-2xl">leaderboard</span>
+                            <span class="text-xs font-medium">Scores</span>
                         </a>
                     </div>
-                </div>
+                </nav>
             </div>
-
-            <div id="result-screen" class="screen">
-                <div class="content-box">
-                    <h2>Oyun Bitti!</h2>
-                    <p id="final-correct">Doğru Sayısı: <span class="value">0</span></p>
-                    <p id="time-taken">Toplam Süre: <span class="value">0s</span></p>
-                    <p id="calculated-score" style="font-size:1.5em; font-weight:bold; color:var(--accent-red);">Puan: <span class="value">0</span></p>
-                    <button id="restart-button" class="btn" style="margin-top:20px; width:100%;">Tekrar Oyna</button>
-                    <button id="back-to-start-button-result" class="btn secondary" style="margin-top:10px; width:100%;">Ana Sayfa</button>
-                    <button id="share-score-button" class="btn secondary" style="margin-top:10px; width:100%;">Skoru Paylaş</button>
-                    <div class="result-sponsor-logo-container">
-                        <img src="https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/ebcb2ccf-bd61-4e27-a1f7-44d70916ca0b.png" alt="Sponsor Logo">
-                    </div>
-                </div>
+        </div> <div id="howToPlayModal" class="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 hidden z-50">
+          <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-2xl font-bold text-slate-800 lexend-font">Nasıl Oynanır?</h3>
+              <button id="closeModalBtn" class="text-slate-500 hover:text-slate-700">
+                <span class="material-icons">close</span>
+              </button>
             </div>
-
-            <div id="scoreboard-screen" class="screen">
-                <div class="content-box" style="width:95%; max-width:380px;">
-                    <h2>Yüksek Skorlar</h2>
-                    <ul id="score-list" style="list-style:none; padding:0; margin:0 0 20px 0; text-align:left;">
-                        <li style="padding:8px 0; border-bottom:1px solid var(--border-color);">Yükleniyor...</li>
-                    </ul>
-                    <button id="back-to-start-button-scoreboard" class="btn secondary" style="width:100%;">Ana Sayfa</button>
-                </div>
+            <div class="text-slate-600 space-y-3 lexend-font">
+              <p>NewsSwipe çok basit!</p>
+              <p>1. Sunulan haber başlığını ve kısa bir özetini okuyun.</p>
+              <p>2. Haberin GERÇEK mi FAKE mi olduğuna karar verin.</p>
+              <p>3. GERÇEK olduğunu düşünüyorsanız SAĞA kaydırın.</p>
+              <p>4. FAKE olduğunu düşünüyorsanız SOLA kaydırın.</p>
+              <p>Haber okuryazarlığınızı test edin ve ne kadar yüksek puan alabileceğinizi görün!</p>
             </div>
-        </div>
-    </div>
+          </div>
+        </div> </div> <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // --- Modal ("How to Play") Logic ---
+        const howToPlayButton = document.getElementById('howToPlayBtn');
+        const modal = document.getElementById('howToPlayModal');
+        const closeModalButton = document.getElementById('closeModalBtn');
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof Hammer === 'undefined') { console.error('Hammer.js kütüphanesi yüklenemedi!'); return; }
+        if (howToPlayButton && modal && closeModalButton) {
+          howToPlayButton.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+          });
 
-        const QUESTION_TIME_LIMIT = 20;
-        const gameContainer = document.getElementById('game-container');
-        const screensWrapper = document.querySelector('.screens-wrapper');
-        const appTopSponsors = document.getElementById('app-top-sponsors');
+          closeModalButton.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+          });
 
-        const screens = {
-            onboarding: document.getElementById('onboarding-screen'),
-            start: document.getElementById('start-screen'),
-            game: document.getElementById('game-screen'),
-            result: document.getElementById('result-screen'),
-            scoreboard: document.getElementById('scoreboard-screen')
-        };
-        const buttons = {
-            prevOnboarding: document.getElementById('prev-onboarding-btn'),
-            nextOnboarding: document.getElementById('next-onboarding-btn'),
-            finishOnboarding: document.getElementById('finish-onboarding-btn'),
-            skipOnboarding: document.getElementById('skip-onboarding-btn'),
-            start: document.getElementById('start-button'),
-            next: document.getElementById('next-button'),
-            restart: document.getElementById('restart-button'),
-            viewScores: document.getElementById('view-scores-button'),
-            backToStartResult: document.getElementById('back-to-start-button-result'),
-            backToStartScoreboard: document.getElementById('back-to-start-button-scoreboard'),
-            shareScore: document.getElementById('share-score-button'),
-        };
-        const displays = {
-            timerText: document.getElementById('timer-text-display'),
-            tensionProgressBar: document.getElementById('tension-progress-bar'),
-            gameStats: document.getElementById('game-stats'),
-            feedbackArea: document.getElementById('feedback-area'),
-            feedbackText: document.getElementById('feedback-text'),
-            sourceLink: document.getElementById('source-link'),
-            sourceLinkText: document.querySelector('#source-link .link-text'),
-            sourceLinkSpinner: document.querySelector('#source-link .spinner'),
-            explanationText: document.getElementById('explanation-text'),
-            finalCorrect: document.querySelector('#final-correct .value'),
-            timeTaken: document.querySelector('#time-taken .value'),
-            calculatedScore: document.querySelector('#calculated-score .value'),
-            scoreList: document.getElementById('score-list'),
-            onboardingCarousel: document.querySelector('#onboarding-screen .onboarding-carousel'),
-            onboardingSlidesWrapper: document.querySelector('#onboarding-screen .onboarding-slides-wrapper'),
-            onboardingSlides: document.querySelectorAll('#onboarding-screen .onboarding-slide'),
-            onboardingDots: document.querySelectorAll('#onboarding-screen .onboarding-dots .dot'),
-            currentQuestionStat: document.getElementById('current-question-stat'),
-            totalQuestionsStat: document.getElementById('total-questions-stat'),
-            currentScoreStat: document.getElementById('current-score-stat'),
-        };
-        const newsCardElement = document.getElementById('news-card');
-
-        const newsItems = [
-            {
-                id: 1,
-                headline: "Konya’da Adam, Kendisini Aldatan Sevgilisini ChatGPT’ye Şikayet Etti",
-                image: "https://via.placeholder.com/300x180/E0E0E0/000000?text=ChatGPT+Şikayet",
-                source_link: null, // Veya "#"
-                isReal: false,
-                explanation: "“Adalet artık yapay zekâda” sözleriyle gündem oldu. Bu haber kurgudur.",
-                sourceName: "Kurgu Haber",
-                isAdvertorial: false
-            },
-            {
-                id: 2,
-                headline: "Fatih'te sokakta yürüyen bir kişinin üzerine binanın çatısından çanak anten düştü.",
-                image: "https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/3298448e-4e6c-4caa-a020-b0a81f6d1831.png",
-                source_link: "https://www.hurriyet.com.tr/video/fatihte-sokakta-yururken-uzerine-canak-anten-dustu-o-anlar-kamerada-42810547",
-                isReal: true,
-                explanation: "Hafif yaralanan adamın yardımına çevredekiler koştu. Bu haber gerçektir.",
-                sourceName: "Hürriyet Video",
-                isAdvertorial: false
-            },
-            {
-                id: 3,
-                headline: "Zonguldak’ta Belediye, Boş Arsaya ‘Görsel Olarak Düşünün’ Yazıp Açılış Yaptı.",
-                image: "https://via.placeholder.com/300x180/D0D0D0/000000?text=Boş+Arsa+Açılışı",
-                source_link: null,
-                isReal: false,
-                explanation: "Arsaya kurdele keserek açılış yapan başkan, “İleri görüş budur” dedi. Bu haber kurgudur.",
-                sourceName: "Kurgu Haber",
-                isAdvertorial: false
-            },
-            {
-                id: 4,
-                headline: "NEVŞEHİR'in Avanos İlçesi'nde kahvede okey oynayanların üzerine inek düştü.",
-                image: "https://via.placeholder.com/300x180/C0C0C0/000000?text=İnek+Düștü", // İnek görseli için placeholder
-                source_link: "https://www.hurriyet.com.tr/gundem/okeycilerin-basina-inek-dustu-3434",
-                isReal: true,
-                explanation: "Okey oynayanların üzerine çatıdan inek düşmesi olayı gerçektir.",
-                sourceName: "Hürriyet",
-                isAdvertorial: false
-            },
-            {
-                id: 5,
-                headline: "İstanbul'da bir kişi, ücretsiz aldığı ikinci el koltuğun içinde 600 bin lira buldu.",
-                image: "https://via.placeholder.com/300x180/B0B0B0/000000?text=Koltukta+Para",
-                source_link: "https://www.haberler.com/dunya/bedava-aldigi-koltuktan-600-bin-lira-para-cikti-14998707-",
-                isReal: true,
-                explanation: "Parayı bulan kişi, durumu yetkililere bildirdi. Haber ABD kaynaklı olsa da gerçektir.",
-                sourceName: "Haberler.com",
-                isAdvertorial: false
-            },
-            {
-                id: 6,
-                headline: "Sivas’ta Çoban, Sürüsüne Spotify Premium Alarak Müzik Dinletti.",
-                image: "https://via.placeholder.com/300x180/A0A0A0/000000?text=Müzik+Dinleyen+Sürü",
-                source_link: null,
-                isReal: false,
-                explanation: "“Hayvanlar klasik müziğe daha sakin tepki veriyor” dedi. Bu haber kurgudur.",
-                sourceName: "Kurgu Haber",
-                isAdvertorial: false
-            },
-            {
-                id: 7,
-                headline: "Bir ahırda, ineklerin gaz çıkarması sonucu biriken metan gazı patlamaya neden oldu.",
-                image: "https://via.placeholder.com/300x180/909090/FFFFFF?text=Ahır+Patlaması",
-                source_link: "https://onedio.com/haber/inekler-gaz-cikardi-ahir-patladi-243426",
-                isReal: true,
-                explanation: "İneklerin çıkardığı metan gazının birikerek ahırda patlamaya yol açması olayı gerçektir.",
-                sourceName: "Onedio",
-                isAdvertorial: false
+          modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+              modal.classList.add('hidden');
+              modal.classList.remove('flex');
             }
-        ];
-
-        const feedbackTexts = {
-            correctReal: ["Doğru Bildin!", "Harika!", "Tam İsabet!"],
-            incorrectReal: ["Yanlış Tahmin!", "Dikkatli Ol!", "Bu Gerçekti!"],
-            correctFake: ["Doğru, Bu Kurgu!", "Aferin!", "Yakaladın!"],
-            incorrectFake: ["Maalesef Yanlış!", "Bu Kurguydu!", "Daha Dikkatli!"],
-            timeout: ["Süre Doldu!"]
-        };
-
-        let currentNewsIndex = 0; let score = 0; let correctAnswers = 0;
-        let questionTimerInterval; let questionTimeLeft = QUESTION_TIME_LIMIT;
-        let totalGameSecondsElapsed = 0; let gameTimerInterval;
-        let gameActive = false; let shuffledNews = [];
-        let mainHammerInstance; let onboardingHammerInstance; let onboardingCarouselHammer;
-        let currentOnboardingSlide = 0;
-
-        function showScreen(screenId) {
-            if (!screens[screenId]) {
-                console.error(`Ekran bulunamadı: ${screenId}`);
-                const initialScreen = localStorage.getItem('onboardingComplete_v4') ? screens.start : screens.onboarding;
-                if (initialScreen) initialScreen.classList.add('active');
-                return;
-            }
-            Object.values(screens).forEach(screen => {
-                if (screen) screen.classList.remove('active');
-            });
-            screens[screenId].classList.add('active');
-
-            if (appTopSponsors) {
-                if (screenId === 'onboarding' || screenId === 'scoreboard') { // Bu ekranlarda sponsor banner'ını gizle
-                    appTopSponsors.style.display = 'none';
-                } else {
-                    appTopSponsors.style.display = 'block';
-                }
-            }
-        }
-
-        function showOnboardingSlide(index) {
-             if (!displays.onboardingSlidesWrapper || !displays.onboardingSlides || displays.onboardingSlides.length === 0 || !displays.onboardingDots || displays.onboardingDots.length === 0 || !buttons.prevOnboarding || !buttons.nextOnboarding || !buttons.finishOnboarding) {
-                console.error("Onboarding elemanları eksik.");
-                if (!localStorage.getItem('onboardingComplete_v4')) finishOnboarding();
-                return;
-            }
-            const numSlides = displays.onboardingSlides.length;
-            index = Math.max(0, Math.min(index, numSlides - 1));
-            displays.onboardingSlidesWrapper.style.transform = `translateX(-${index * 100}%)`;
-            displays.onboardingDots.forEach((dot, i) => { if(dot) dot.classList.toggle('active', i === index); });
-            buttons.prevOnboarding.style.visibility = (index === 0) ? 'hidden' : 'visible';
-            const onActualLastSlide = index === numSlides - 1;
-            buttons.nextOnboarding.classList.toggle('hidden', onActualLastSlide);
-            buttons.finishOnboarding.classList.toggle('hidden', !onActualLastSlide);
-            currentOnboardingSlide = index;
-            setupOnboardingCarouselSwipe();
-        }
-
-        function setupOnboardingCarouselSwipe() {
-            if (typeof Hammer === 'undefined' || !displays.onboardingCarousel) return;
-            if (onboardingCarouselHammer) { onboardingCarouselHammer.destroy(); }
-            onboardingCarouselHammer = new Hammer(displays.onboardingCarousel);
-            onboardingCarouselHammer.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 50 });
-            onboardingCarouselHammer.on('panleft', () => {
-                if (currentOnboardingSlide < displays.onboardingSlides.length - 1) showOnboardingSlide(currentOnboardingSlide + 1);
-            });
-            onboardingCarouselHammer.on('panright', () => {
-                if (currentOnboardingSlide > 0) showOnboardingSlide(currentOnboardingSlide - 1);
-            });
-        }
-        function finishOnboarding() {
-            localStorage.setItem('onboardingComplete_v4', 'true');
-            showScreen('start');
-        }
-
-        if (buttons.nextOnboarding) buttons.nextOnboarding.addEventListener('click', () => {
-            if (currentOnboardingSlide < displays.onboardingSlides.length - 1) showOnboardingSlide(currentOnboardingSlide + 1);
-        });
-        if (buttons.prevOnboarding) buttons.prevOnboarding.addEventListener('click', () => {
-            if (currentOnboardingSlide > 0) showOnboardingSlide(currentOnboardingSlide - 1);
-        });
-        if (buttons.finishOnboarding) buttons.finishOnboarding.addEventListener('click', finishOnboarding);
-        if (buttons.skipOnboarding) buttons.skipOnboarding.addEventListener('click', finishOnboarding);
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function updateGameStatsDisplay() {
-            if (displays.currentQuestionStat) displays.currentQuestionStat.textContent = shuffledNews.length > 0 ? currentNewsIndex + 1 : 0;
-            if (displays.totalQuestionsStat) displays.totalQuestionsStat.textContent = shuffledNews.length;
-            if (displays.currentScoreStat) displays.currentScoreStat.textContent = score;
-        }
-        function finalScoreFormula(correct, totalTime, totalQuestions) {
-            if (totalQuestions === 0) return 0;
-            const baseScorePerCorrect = 100;
-            const timeBonusFactor = Math.max(0, (totalQuestions * QUESTION_TIME_LIMIT) - totalTime) * 0.5;
-            return (correct * baseScorePerCorrect) + Math.floor(timeBonusFactor);
-        }
-
-        function startGame() {
-            currentNewsIndex = 0; score = 0; correctAnswers = 0;
-            totalGameSecondsElapsed = 0; gameActive = true;
-            if (!newsItems || newsItems.length === 0) {
-                alert("Oyun verileri yüklenemedi."); showScreen('start'); return;
-            }
-            shuffledNews = shuffleArray([...newsItems]);
-            if (shuffledNews.length === 0) {
-                alert("Oyun başlatılamıyor: Soru bulunamadı."); showScreen('start'); return;
-            }
-            if (displays.feedbackArea) displays.feedbackArea.style.transform = 'translateY(100%)';
-            if (newsCardElement) {
-                 newsCardElement.classList.remove('removing-left', 'removing-right', 'swiping', 'loaded');
-                 newsCardElement.style.opacity = '0';
-                 newsCardElement.style.transform = 'scale(0.95) translateY(10px)';
-            }
-            showScreen('game');
-            updateGameStatsDisplay();
-            loadNewsCard();
-            startGameTimer();
-        }
-
-        function loadNewsCard() {
-            if (!gameActive && currentNewsIndex >= shuffledNews.length) {
-                 if(gameActive) endGame(); return;
-            }
-            if (currentNewsIndex >= shuffledNews.length) { endGame(); return; }
-            if (displays.feedbackArea) displays.feedbackArea.style.transform = 'translateY(100%)';
-            const newsItem = shuffledNews[currentNewsIndex];
-            if (!newsItem) { endGame(); return; }
-
-            const headlineEl = document.getElementById('news-headline');
-            const imageEl = document.getElementById('news-image');
-            const imagePlaceholderEl = document.getElementById('image-placeholder');
-            const metaTagEl = document.querySelector('#news-meta-info .meta-tag');
-            const metaSourceEl = document.querySelector('#news-meta-info .meta-source');
-
-            if (!newsCardElement || !headlineEl || !imageEl || !imagePlaceholderEl || !metaTagEl || !metaSourceEl) {
-                console.error("Haber kartı için HTML elementleri eksik!"); endGame(); return;
-            }
-            newsCardElement.style.opacity = '0';
-            newsCardElement.style.transform = 'scale(0.95) translateY(10px) translateX(0)';
-            newsCardElement.classList.remove('loaded', 'swiping', 'removing-left', 'removing-right');
-
-            headlineEl.textContent = newsItem.headline;
-            metaTagEl.textContent = newsItem.isAdvertorial ? "TANITIM" : "HABER";
-            metaSourceEl.textContent = newsItem.sourceName || "";
-
-            imagePlaceholderEl.style.display = 'flex';
-            imageEl.style.opacity = '0'; imageEl.src = "";
-            imageEl.onload = () => { imageEl.style.opacity = '1'; imagePlaceholderEl.style.display = 'none'; };
-            imageEl.onerror = () => { imagePlaceholderEl.style.display = 'flex'; imageEl.style.opacity = '0'; };
-            imageEl.src = newsItem.image;
-
-            setTimeout(() => {
-                newsCardElement.style.opacity = '1';
-                newsCardElement.style.transform = 'scale(1) translateY(0)';
-                newsCardElement.classList.add('loaded');
-                startQuestionTimer();
-                setupMainSwipeControls();
-            }, 50);
-            updateGameStatsDisplay();
-        }
-        function startQuestionTimer() {
-            stopQuestionTimer();
-            questionTimeLeft = QUESTION_TIME_LIMIT;
-            if (displays.timerText) displays.timerText.textContent = `${questionTimeLeft}s`;
-            if (displays.tensionProgressBar) {
-                displays.tensionProgressBar.style.width = '100%';
-                displays.tensionProgressBar.style.backgroundColor = 'var(--accent-green)';
-            }
-            questionTimerInterval = setInterval(() => {
-                questionTimeLeft--;
-                if (displays.timerText) displays.timerText.textContent = `${questionTimeLeft}s`;
-                if (displays.tensionProgressBar) displays.tensionProgressBar.style.width = `${(questionTimeLeft / QUESTION_TIME_LIMIT) * 100}%`;
-                if (questionTimeLeft <= 5 && displays.tensionProgressBar) {
-                     displays.tensionProgressBar.style.backgroundColor = 'var(--accent-red)';
-                }
-                if (questionTimeLeft <= 0) {
-                    stopQuestionTimer();
-                    processAnswer(null, shuffledNews[currentNewsIndex], true);
-                }
-            }, 1000);
-        }
-        function stopQuestionTimer() { clearInterval(questionTimerInterval); }
-
-        function startGameTimer() {
-            stopGameTimer(); totalGameSecondsElapsed = 0;
-            gameTimerInterval = setInterval(() => { totalGameSecondsElapsed++; }, 1000);
-        }
-        function stopGameTimer() { clearInterval(gameTimerInterval); }
-
-        function processAnswer(userChoiceIsReal, newsItem, timedOut = false) {
-            if (!gameActive && !timedOut) return; // Sadece zaman aşımı değilse ve oyun aktif değilse çık
-            stopQuestionTimer();
-            gameActive = false;
-
-            const correct = timedOut ? false : userChoiceIsReal === newsItem.isReal;
-            if (correct && !timedOut) {
-                score += 10 + Math.max(0, questionTimeLeft);
-                correctAnswers++;
-            }
-
-            if (displays.feedbackText) {
-                let feedbackKey;
-                if (timedOut) feedbackKey = 'timeout';
-                else if (correct) feedbackKey = newsItem.isReal ? 'correctReal' : 'correctFake';
-                else feedbackKey = newsItem.isReal ? 'incorrectReal' : 'incorrectFake';
-                const feedbackOptions = feedbackTexts[feedbackKey] || ["Yanıt İşlendi"];
-                displays.feedbackText.textContent = feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)];
-                displays.feedbackText.className = correct && !timedOut ? 'correct' : 'incorrect'; // timeout durumunda da incorrect classı
-            }
-            if (displays.explanationText) displays.explanationText.textContent = newsItem.explanation || "";
-            if (displays.sourceLink) {
-                if (newsItem.source_link && newsItem.source_link !== "#" && !newsItem.source_link.toLowerCase().includes("sahte haber")) {
-                    displays.sourceLink.href = newsItem.source_link;
-                    displays.sourceLink.style.display = 'inline-flex';
-                    if (displays.sourceLinkText) displays.sourceLinkText.textContent = "Kaynağı Gör";
-                } else {
-                    displays.sourceLink.style.display = 'none';
-                }
-            }
-            if (displays.feedbackArea) displays.feedbackArea.style.transform = 'translateY(0%)';
-            if (buttons.next) buttons.next.focus();
-        }
-
-        function nextNewsItem() {
-            currentNewsIndex++;
-            gameActive = true;
-            if (currentNewsIndex < shuffledNews.length) {
-                loadNewsCard();
-            } else {
-                endGame();
-            }
-        }
-        function endGame() {
-            stopGameTimer(); gameActive = false;
-            const finalCalculatedScore = finalScoreFormula(correctAnswers, totalGameSecondsElapsed, shuffledNews.length);
-            if(displays.finalCorrect) displays.finalCorrect.textContent = correctAnswers;
-            if(displays.timeTaken) displays.timeTaken.textContent = `${totalGameSecondsElapsed}s`;
-            if(displays.calculatedScore) displays.calculatedScore.textContent = finalCalculatedScore;
-            saveScoreToLocalStorage(finalCalculatedScore, correctAnswers, totalGameSecondsElapsed);
-            showScreen('result');
-        }
-         function saveScoreToLocalStorage(playerScore, correct, time) {
-            const maxScores = 5;
-            let scores = JSON.parse(localStorage.getItem('gercektenYasandiScores_vFinalFix2') || '[]');
-            const newScoreEntry = { score: playerScore, correct: correct, time: time, date: new Date().toLocaleDateString('tr-TR') };
-            scores.push(newScoreEntry);
-            scores.sort((a, b) => b.score - a.score || a.time - b.time);
-            scores = scores.slice(0, maxScores);
-            localStorage.setItem('gercektenYasandiScores_vFinalFix2', JSON.stringify(scores));
-        }
-        function getScoresFromLocalStorage() {
-            return localStorage.getItem('gercektenYasandiScores_vFinalFix2');
-        }
-
-        function displayScoreboard() {
-            const scores = JSON.parse(getScoresFromLocalStorage() || '[]');
-            if (displays.scoreList) {
-                displays.scoreList.innerHTML = '';
-                if (scores.length === 0) {
-                    displays.scoreList.innerHTML = '<li>Henüz kayıtlı skor yok.</li>';
-                } else {
-                    scores.forEach(s => {
-                        const li = document.createElement('li');
-                        li.style.padding = "10px 5px";
-                        li.style.borderBottom = "1px solid var(--border-color)";
-                        li.innerHTML = `<strong>${s.score} Puan</strong> - ${s.correct} Doğru (${s.time}s) <span style="float:right; font-size:0.8em; color:var(--text-secondary);">${s.date}</span>`;
-                        displays.scoreList.appendChild(li);
-                    });
-                }
-            }
-            showScreen('scoreboard');
-        }
-
-        function setupMainSwipeControls() {
-            if (mainHammerInstance) { mainHammerInstance.destroy(); }
-            if (!newsCardElement) return;
-            mainHammerInstance = new Hammer(newsCardElement);
-            mainHammerInstance.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 40 });
-            mainHammerInstance.on('panstart', (ev) => { if (!gameActive) return; });
-            mainHammerInstance.on('panmove', (ev) => {
-                if (!gameActive) return;
-                newsCardElement.style.transform = `translateX(${ev.deltaX}px) rotate(${ev.deltaX / 20}deg) scale(1)`;
-                newsCardElement.classList.add('swiping');
-            });
-            mainHammerInstance.on('panend', (ev) => {
-                if (!gameActive) return;
-                newsCardElement.classList.remove('swiping');
-                const threshold = newsCardElement.offsetWidth * 0.35; // Kaydırma eşiği biraz düşürüldü
-                if (Math.abs(ev.deltaX) > threshold) {
-                    const direction = ev.deltaX > 0 ? 'right' : 'left';
-                    newsCardElement.classList.add(direction === 'right' ? 'removing-right' : 'removing-left');
-                    setTimeout(() => { // CSS animasyonunun bitmesini bekle
-                        processAnswer(direction === 'right', shuffledNews[currentNewsIndex]);
-                    }, 250); // CSS transition süresine yakın
-                } else {
-                    newsCardElement.style.transform = 'translateX(0) rotate(0deg) scale(1)'; // Kartı geri yerine al
-                }
-            });
-        }
-
-        function safelyAddEventListener(button, event, handler) { if (button) button.addEventListener(event, handler); }
-        safelyAddEventListener(buttons.start, 'click', startGame);
-        safelyAddEventListener(buttons.next, 'click', nextNewsItem);
-        safelyAddEventListener(buttons.restart, 'click', startGame);
-        safelyAddEventListener(buttons.viewScores, 'click', displayScoreboard);
-        safelyAddEventListener(buttons.backToStartResult, 'click', () => showScreen('start'));
-        safelyAddEventListener(buttons.backToStartScoreboard, 'click', () => showScreen('start'));
-
-        const onboardingComplete = localStorage.getItem('onboardingComplete_v4');
-        if (!onboardingComplete && screens.onboarding) {
-            showScreen('onboarding');
-            if (displays.onboardingSlidesWrapper && displays.onboardingSlides.length > 0) {
-                 showOnboardingSlide(0);
-            } else { finishOnboarding(); }
-        } else if (screens.start) {
-            showScreen('start');
-        } else if (screens.onboarding) { // Fallback
-             showScreen('onboarding');
-             if (displays.onboardingSlidesWrapper && displays.onboardingSlides.length > 0) {
-                 showOnboardingSlide(0);
-            }
+          });
         } else {
-            console.error("Başlangıç ekranları bulunamadı.");
-            if(gameContainer) gameContainer.innerHTML = "<p style='color:red; text-align:center; padding:20px;'>Uygulama yüklenemedi.</p>";
+          console.error('Modal için HTML elementleri bulunamadı. IDleri kontrol edin: howToPlayBtn, howToPlayModal, closeModalBtn');
         }
-    });
+
+        // --- Ekran Değiştirme Logic ---
+        const playNowButton = document.getElementById('playNowBtn');
+        const homeScreenDiv = document.getElementById('homeScreen');
+        const gameScreenDiv = document.getElementById('gameScreen');
+        const closeGameButton = document.getElementById('closeGameBtn');
+
+        if (playNowButton && homeScreenDiv && gameScreenDiv && closeGameButton) {
+          playNowButton.addEventListener('click', () => {
+            homeScreenDiv.classList.add('hidden');
+            gameScreenDiv.classList.remove('hidden'); 
+            // gameScreenDiv zaten kendi içinde flex container olduğu için ayrıca .add('flex') yapmaya gerek yok.
+            // Sayfa başına scroll etmeyi düşünebilirsiniz: window.scrollTo(0, 0);
+          });
+
+          closeGameButton.addEventListener('click', () => {
+            gameScreenDiv.classList.add('hidden');
+            homeScreenDiv.classList.remove('hidden');
+            // Sayfa başına scroll etmeyi düşünebilirsiniz: window.scrollTo(0, 0);
+          });
+        } else {
+          console.error('Ekran değiştirme elementleri bulunamadı. IDleri kontrol edin: playNowBtn, homeScreen, gameScreen, closeGameBtn');
+        }
+      });
     </script>
 </body>
 </html>
