@@ -3,1027 +3,779 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Gerçekten Yaşandı - Tam Uyumlu</title>
+    <title>Gerçekten Yaşandı - Güncel Haberler</title>
     <style>
-        /* ----- BEYAZ & MODERN TASARIM STİLLERİ - TAM UYUMLU ----- */
-        @keyframes slowGradientAnimation { /* Artık kullanılmıyor ama kalsın */
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes shakeAnimation {
-            0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); }
-            50% { transform: translateX(3px); } 75% { transform: translateX(-2px); }
-        }
-        @keyframes correctFeedbackAnimation {
-            0% { transform: scale(0.8) translateY(10px); opacity: 0; }
-            50% { transform: scale(1.1) translateY(-5px); opacity: 1; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-        @keyframes confettiBurst {
-            0% { transform: translateY(0) scale(0); opacity: 1; }
-            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
-        }
+        /* ----- BEYAZ & MODERN TASARIM STİLLERİ ----- */
         @keyframes spin { to { transform: rotate(360deg); } }
+        /* Diğer @keyframes tanımlamalarınız buraya eklenebilir */
 
         :root {
-            --bg-primary: #F8F9FA;
-            --bg-secondary: #FFFFFF;
-            --bg-tertiary: #E9ECEF;
-            --bg-glass: rgba(255, 255, 255, 0.8); /* Biraz daha opak glass */
-            --bg-image-placeholder: #DEE2E6;
-            
-            --text-primary: #212529;
-            --text-secondary: #6C757D;
-            --text-accent: #000000;
+            --bg-primary: #F8F9FA; --bg-secondary: #FFFFFF; --bg-tertiary: #E9ECEF;
+            --bg-glass: rgba(255, 255, 255, 0.88); --bg-image-placeholder: #DEE2E6;
+            --text-primary: #212529; --text-secondary: #6C757D; --text-accent: #000000;
             --text-on-accent: #FFFFFF;
-
-            --accent-red: #E5383B;
-            --accent-red-darker: #C02D2F;
-            --accent-red-hover-bg: rgba(229, 56, 59, 0.08);
-            
+            --accent-red: #E5383B; --accent-red-darker: #C02D2F;
             --accent-green: #28A745;
-            --accent-green-darker: #1E7E34;
-            
-            --accent-grey: #6C757D;
-            --accent-grey-darker: #5A6268;
-
             --font-family-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            --border-radius-main: 14px; 
-            --border-radius-cards: 18px;
-            --border-color: #DEE2E6;
-
+            --border-radius-main: 14px; --border-radius-cards: 18px; --border-color: #DEE2E6;
             --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.06);
-            --shadow-medium: 0 6px 18px rgba(0, 0, 0, 0.07); /* Biraz daha yumuşak */
-            --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.08); /* Biraz daha yumuşak */
-
-            --question-time: 20s;
+            --shadow-medium: 0 6px 18px rgba(0, 0, 0, 0.07);
         }
 
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* Sayfada genel kaydırmayı engelle */
-            position: fixed; /* iOS'ta adres çubuğu sorunları için */
-        }
-
-        body {
-            font-family: var(--font-family-main);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; position: fixed; font-family: var(--font-family-main); background-color: var(--bg-primary); color: var(--text-primary);}
+        body { display: flex; justify-content: center; align-items: center; }
 
         #game-container {
-            width: 100%;
-            max-width: 420px; /* Üst limit biraz arttı */
-            height: 100%; /* body'ye göre tam yükseklik */
-            /* max-height: 100%; Artık % ile yönetiliyor */
-            background-color: var(--bg-secondary);
-            box-shadow: var(--shadow-strong);
-            border-radius: 0; /* Mobil tam ekran için kenar yuvarlaklığı kaldırılabilir veya azaltılabilir */
-            overflow: hidden;
+            width: 100%; height: 100%;
+            max-width: 100%; max-height: 100%;
+            background-color: var(--bg-primary);
             position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
-        @media (min-width: 450px) { /* Daha geniş ekranlarda (tablet/desktop) max-width ve border-radius geri gelsin */
-             #game-container {
-                max-width: 400px;
-                max-height: 800px; /* Max yükseklik geniş ekranlar için */
-                border-radius: var(--border-radius-main);
-                border: 1px solid var(--border-color);
-             }
+        @media (min-width: 450px) {
+            #game-container { max-width: 400px; max-height: 800px; border-radius: var(--border-radius-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-medium); }
         }
 
-        #game-container.shake { animation: shakeAnimation 0.3s ease-in-out; }
-        #game-container.background-blur { filter: blur(3px); transition: filter 0.3s ease-out; }
+        #app-top-sponsors {
+            width: 100%;
+            background-color: var(--bg-tertiary);
+            padding: 5px 0;
+            text-align: center;
+            box-sizing: border-box;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #app-top-sponsors #promo-banner-top {
+            display: block;
+            width: 100%;
+            max-height: 45px;
+            object-fit: cover;
+        }
+        #app-top-sponsors #sponsor-logo-main {
+            display: block;
+            max-height: 25px;
+            margin: 5px auto 0 auto;
+        }
+
+        .screens-wrapper {
+            flex-grow: 1;
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
 
         .screen {
-            display: flex;
-            opacity: 0; visibility: hidden;
-            transform: translateY(15px) scale(0.99); 
-            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+            display: flex; opacity: 0; visibility: hidden;
+            transform: translateY(15px) scale(0.99);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                         transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                         visibility 0s 0.4s;
             flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px; /* Genel padding biraz azaltıldı */
+            padding: 20px;
             box-sizing: border-box; text-align: center;
             width: 100%; height: 100%;
             position: absolute; top: 0; left: 0; z-index: 1;
-            overflow-y: auto; /* Ekran içeriği taşarsa scroll edilebilir */
-            -webkit-overflow-scrolling: touch;
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+            background-color: var(--bg-primary);
         }
-        .screen.active {
-            opacity: 1; visibility: visible;
-            transform: translateY(0) scale(1);
-            transition-delay: 0s;
-        }
-        
-        .content-box {
-            background-color: var(--bg-secondary);
-            padding: 25px; /* Content box padding */
-            border-radius: var(--border-radius-cards);
-            box-shadow: var(--shadow-medium);
-            width: 100%; /* Ana ekranlarda content box tam genişlik */
-            max-width: 380px;
-            border: 1px solid var(--border-color);
-            margin: auto; /* Dikeyde ve yatayda ortalamak için (screen flex ise) */
-        }
-        /* Oyun ekranında content-box kullanılmıyor, o yüzden bu genel kalsın */
-        #start-screen .content-box, #result-screen .content-box, #scoreboard-screen .content-box {
-            margin-top: auto; margin-bottom: auto; /* İçeriği dikey ortala */
-        }
+        .screen.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); transition-delay: 0s; z-index: 10; }
 
-
-        h1, h2, h3 { font-weight: 700; letter-spacing: -0.5px; color: var(--text-accent); }
-        h1 { font-size: clamp(1.8em, 5vw, 2.2em); margin-bottom: 20px; } /* Dinamik font boyutu */
-        h2 { font-size: clamp(1.5em, 4.5vw, 1.8em); margin-bottom: 18px; color: var(--accent-red); }
-        h3 { font-size: clamp(1.2em, 4vw, 1.5em); margin-bottom: 15px; }
-        p { color: var(--text-secondary); line-height: 1.55; font-size: clamp(0.85em, 2.5vw, 0.95em); }
-
+        .content-box { background-color: var(--bg-secondary); padding: 25px; border-radius: var(--border-radius-cards); box-shadow: var(--shadow-soft); text-align: center; width: 90%; max-width: 350px; }
+        h1 { font-size: 1.8em; margin-bottom: 15px; } h2 { font-size: 1.5em; margin-bottom: 15px;}
+        h3 { font-size: 1.2em; margin-bottom: 10px;} p { font-size: 1em; color: var(--text-secondary); line-height: 1.6; margin-bottom: 15px;}
 
         .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 12px 24px; font-size: 1em; font-weight: 600;
             background-color: var(--accent-red); color: var(--text-on-accent);
-            border: none; padding: 12px 22px; /* Padding ayarlandı */
-            border-radius: var(--border-radius-main);
-            font-size: clamp(0.9em, 3vw, 1.05em); /* Dinamik font */
-            font-weight: 600; cursor: pointer;
-            transition: all 0.2s ease; margin: 10px 5px; box-shadow: var(--shadow-soft);
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            border: none; border-radius: var(--border-radius-main);
+            cursor: pointer; text-decoration: none;
+            box-shadow: var(--shadow-soft);
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
         }
-        .btn svg { width: clamp(16px, 4vw, 18px); height: clamp(16px, 4vw, 18px); fill: currentColor; }
-        .btn:hover { background-color: var(--accent-red-darker); transform: translateY(-2px); box-shadow: var(--shadow-medium); }
-        .btn:active { transform: translateY(0px) scale(0.98); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        .btn svg { width: 20px; height: 20px; margin-left: 8px; fill: currentColor; }
+        .btn:hover { background-color: var(--accent-red-darker); box-shadow: var(--shadow-medium); }
+        .btn:active { transform: scale(0.97); box-shadow: none; }
+        .btn.secondary { background-color: var(--bg-tertiary); color: var(--text-primary); }
+        .btn.secondary:hover { background-color: #DDE2E6; }
+        .btn.small { padding: 8px 16px; font-size: 0.9em; }
 
-        .btn.secondary {
-             background-color: var(--bg-tertiary); color: var(--text-primary);
-             border: 1px solid var(--border-color);
-        }
-        .btn.secondary:hover { background-color: #DDE1E5; border-color: #BCC1C7;}
-        .btn.secondary:active { background-color: #D4D8DC;}
-        .btn.small { padding: 7px 14px; font-size: clamp(0.8em, 2.5vw, 0.9em); }
-
-
-        #onboarding-screen { z-index: 200; background-color: var(--bg-secondary); }
-        .onboarding-carousel {
-            display: flex; overflow-x: hidden; width: 100%;
-            flex-grow: 1; /* Kalan alanı kapla */
-            position: relative;
-        }
-        .onboarding-slide {
-            min-width: 100%; height: 100%; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 15px; /* Slide içi padding */
-            box-sizing: border-box; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-        }
-        .onboarding-slide img { max-width: clamp(100px, 30vw, 150px); margin-bottom: 15px; }
-        .onboarding-navigation {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px; width: calc(100% - 30px);
-            /* position: absolute; bottom: 0; // Artık flex ile yönetiliyor */
-            flex-shrink: 0; /* Küçülmesin */
-            margin-top: 10px; /* Carousel'den sonra boşluk */
-        }
-        .onboarding-dots { display: flex; gap: 8px; }
-        .onboarding-dots .dot {
-            width: 8px; height: 8px; background-color: var(--border-color); /* Boyut küçültüldü */
-            border-radius: 50%; transition: background-color 0.3s ease;
-        }
-        .onboarding-dots .dot.active { background-color: var(--accent-red); }
-        #skip-onboarding-btn { color: var(--text-secondary); background: none; box-shadow: none; 
-            position:absolute; top:10px; right:10px; padding: 5px;}
-
-
-        .swipe-instructions-ingame {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background-color: rgba(255, 255, 255, 0.9); 
-            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            padding: 8px 0; /* Padding azaltıldı */
-            border-top: 1px solid var(--border-color);
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.04); z-index: 15;
-            font-size: 0.85em; color: var(--text-secondary); text-align: center;
-            flex-shrink: 0; /* Küçülmesin */
-        }
+        #onboarding-screen { z-index: 200; background-color: var(--bg-secondary); justify-content: space-between; padding: 0; }
+        .onboarding-carousel { display: flex; overflow: hidden; width: 100%; flex-grow: 1; position: relative; cursor: grab; }
+        .onboarding-slides-wrapper { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .onboarding-slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 25px; box-sizing: border-box; text-align: center; }
+        .onboarding-slide img.slide-icon { max-width: clamp(100px, 25vh, 150px); margin-bottom: 20px; }
+        .onboarding-slide h3 { font-size: 1.4em; color: var(--text-accent); }
+        .onboarding-slide p { font-size: 0.95em; color: var(--text-secondary); }
+        .onboarding-navigation { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 15px 20px; width: 100%; box-sizing: border-box; flex-shrink: 0; background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); }
+        #prev-onboarding-btn { justify-self: start; }
+        .onboarding-dots { display: flex; gap: 8px; justify-self: center; }
+        .onboarding-dots .dot { width: 8px; height: 8px; background-color: var(--border-color); border-radius: 50%; transition: background-color 0.3s ease, transform 0.3s ease; }
+        .onboarding-dots .dot.active { background-color: var(--accent-red); transform: scale(1.2); }
+        #next-onboarding-btn, #finish-onboarding-btn { justify-self: end; }
+        #skip-onboarding-btn { position:absolute; top:15px; right:15px; background:none; color:var(--text-secondary); box-shadow:none; padding:5px; z-index: 205; font-size: 0.9em; }
+        #skip-onboarding-btn:hover { color: var(--accent-red); }
 
         #game-header {
-            display: grid; grid-template-columns: auto 1fr auto;
-            gap: 8px; /* Boşluk azaltıldı */
-            align-items: center; width: 100%;
-            padding: 8px 12px; /* Padding azaltıldı */
-            box-sizing: border-box;
-            position: absolute; top: 0; left: 0;
-            background-color: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(8px) saturate(120%); -webkit-backdrop-filter: blur(8px) saturate(120%);
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.75em; /* Font küçültüldü */
-            z-index: 10;
-            flex-shrink: 0; /* Küçülmesin */
+            width: 100%; padding:10px 15px; box-sizing:border-box;
+            background:var(--bg-tertiary); display:flex; justify-content:space-between; align-items:center;
+            position:absolute; top:0; left:0;
+            z-index:15; border-bottom: 1px solid var(--border-color);
         }
-        #tension-timer-container {
-            height: 6px; /* Bar inceltildi */
-            background-color: var(--bg-tertiary);
-            border-radius: 3px; overflow: hidden;
-            grid-column: 2 / 3; margin: 0 8px; /* Margin ayarlandı */
-        }
-        #tension-progress-bar {
-            width: 100%; height: 100%; background-color: var(--accent-red);
-            border-radius: 3px; transition: width var(--question-time) linear;
-        }
-        #timer-text-display, #game-stats {
-            color: var(--text-primary); font-weight: 600;
-            padding: 4px 0; /* Dikey padding azaltıldı */
-            white-space: nowrap; text-align: center;
-        }
-        #timer-text-display { grid-column: 1 / 2; text-align: left;}
-        #game-stats { grid-column: 3 / 4; text-align: right; font-weight: 700; color: var(--accent-red); }
-
         #card-area {
-            flex-grow: 1; /* Kalan tüm alanı kapla */
-            display: flex; justify-content: center; align-items: center;
-            width: 100%; perspective: 1800px;
-            /* margin-top ve bottom kaldırıldı, flex-grow ile yönetilecek */
-            position: relative; padding: 10px; /* Genel padding */
+            display:flex; flex-direction:column; justify-content:center; align-items:center;
+            flex-grow:1; width:100%;
+            padding-top:60px; 
+            padding-bottom: 100px; 
             box-sizing: border-box;
-            min-height: 0; /* flex item'ın küçülebilmesi için önemli */
         }
+        #news-card {
+            width:90%; max-width:340px; min-height:350px; background:var(--bg-secondary);
+            border-radius:var(--border-radius-cards); box-shadow:var(--shadow-medium);
+            display:flex; flex-direction:column; position:relative;
+            opacity:0; transform: scale(0.95) translateY(10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+        #news-image-container { width:100%; height:180px; background-color:var(--bg-image-placeholder); border-top-left-radius:var(--border-radius-cards); border-top-right-radius:var(--border-radius-cards); position:relative; overflow:hidden;}
+        #news-image { width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity 0.4s ease-in-out;}
+        #image-placeholder { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; background-color: var(--bg-image-placeholder);}
+        .spinner { width:30px; height:30px; border:3px solid rgba(0,0,0,0.1); border-top-color:var(--accent-red); border-radius:50%; animation: spin 1s linear infinite;}
+        #news-meta-info { padding:10px 15px 5px 15px; font-size:0.75em; color:var(--text-secondary); display:flex; justify-content:space-between; text-transform: uppercase; letter-spacing: 0.5px;}
+        #news-headline { padding:5px 15px 15px 15px; font-size:1.15em; line-height:1.4; color:var(--text-primary); flex-grow:1; overflow-y:auto; margin:0; text-align:left;}
+        .swipe-instructions-ingame { font-size:0.85em; color:var(--text-secondary); margin-top:15px; position:absolute; bottom: 70px; text-align:center; width:100%;}
 
-        .card {
-            width: 100%; max-width: 350px;
-            height: 100%; /* Card-area'nın yüksekliğini doldurmaya çalışacak */
-            max-height: calc(100% - 20px); /* Padding'i hesaba kat, ya da card-area'nın max-height'ı yoksa daha dinamik */
-            /* max-height: 580px; /* Üst limit, çok uzun kartları engellemek için */
-            background-color: var(--bg-secondary); border-radius: var(--border-radius-cards);
-            box-shadow: var(--shadow-strong); display: flex; flex-direction: column; 
-            justify-content: flex-start; align-items: center; 
-            padding: 15px; /* Kart içi padding azaltıldı */
-            box-sizing: border-box; text-align: center;
-            user-select: none; cursor: grab; position: absolute;
-            border: 1px solid var(--border-color); opacity: 0;
-            transform: perspective(1200px) translateY(20px) rotateX(30deg) scale(0.9);
-            transform-origin: center top;
-            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                        opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-            z-index: 5;
+        #feedback-area {
+            position:absolute; bottom:0; left:0; width:100%;
+            padding:15px 20px; box-sizing:border-box; background-color:var(--bg-glass);
+            backdrop-filter: blur(8px); border-top: 1px solid var(--border-color);
+            z-index:20; transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .card.loaded {
-             opacity: 1;
-             transform: perspective(1200px) translateY(0px) rotateX(0deg) scale(1);
-        }
+        .feedback-popup { text-align:left; }
+        #feedback-text { font-weight:bold; font-size:1.1em; margin:0; }
+        #explanation-text { font-size:0.9em; margin-bottom:10px; line-height:1.5;}
+        #source-link { display:none; align-items:center;}
+        #source-link .spinner {display:none; width:16px; height:16px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation: spin 1s linear infinite; margin-left:8px;}
+        #next-button { margin-left:10px; }
 
-        #news-meta-info {
-            display: flex; flex-wrap: wrap; gap: 5px; /* Gap azaltıldı */
-            margin-bottom: 10px; /* Boşluk azaltıldı */
-            width: 100%; justify-content: center;
-            flex-shrink: 0; /* Meta info küçülmesin */
-        }
-        .meta-tag {
-            font-size: 0.65em; padding: 2px 6px; /* Daha küçük etiketler */
-            background-color: var(--bg-tertiary); border-radius: 5px;
-            color: var(--text-secondary); font-weight: 500;
-            border: 1px solid var(--border-color);
-        }
-
-        #news-image-container {
+        .ingame-sponsor-logo-container, .result-sponsor-logo-container {
             width: 100%;
-            aspect-ratio: 1 / 1;
-            overflow: hidden;
-            border-radius: calc(var(--border-radius-cards) - 10px); /* Yuvarlaklık ayarlandı */
-            margin-bottom: 10px; /* Boşluk azaltıldı */
-            background-color: var(--bg-image-placeholder);
-            box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
-            position: relative;
-            flex-shrink: 0; /* Görsel alanı küçülmesin */
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 15px;
         }
-        #news-image {
-            display: block; width: 100%; height: 100%; object-fit: cover;
-            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-            opacity: 0; transform: scale(1.05);
-        }
-        #news-image.visible { opacity: 1; transform: scale(1); }
-        #image-placeholder.loading-placeholder { /* ... önceki gibi ... */ }
-
-        #news-headline {
-            font-size: clamp(0.9em, 2.8vw, 1.05em); /* Dinamik ve daha küçük font */
-            font-weight: 500; color: var(--text-primary); 
-            line-height: 1.4; /* Satır yüksekliği ayarlandı */
-            width: 100%; 
-            flex-grow: 1; /* Kalan alanı kaplasın */
-            overflow-y: auto; padding: 5px 2px; /* Hafif padding */
-            -webkit-overflow-scrolling: touch;
-            min-height: 40px; /* Başlık için minimum yükseklik */
-            &::-webkit-scrollbar { width: 5px; } /* Scrollbar inceltildi */
-            &::-webkit-scrollbar-thumb { background-color: var(--accent-grey); }
+        .ingame-sponsor-logo-container img, .result-sponsor-logo-container img {
+            max-height: 30px;
+            opacity: 0.8;
         }
 
-        .card.swiping { /* ... önceki gibi ... */ }
-        .card.removing-left, .card.removing-right { /* ... önceki gibi ... */ }
-
-        .feedback-popup { /* ... önceki gibi, padding ve fontlar media query ile ayarlanacak ... */ }
-        #feedback-confetti-anchor { /* ... önceki gibi ... */ }
-        #feedback-text { /* ... önceki gibi ... */ }
-        .confetti-dot { /* ... önceki gibi ... */ }
-        #source-link, #explanation-text { /* ... önceki gibi ... */ }
-        .hidden { /* ... önceki gibi ... */ }
-        #result-screen p { /* ... önceki gibi ... */ }
-        .stats-container, .stat-item, .stat-label, .stat-bar-bg, .stat-bar-fill, .stat-percentage { /* ... önceki gibi ... */ }
-        #score-list, #score-list li, #score-list li .date { /* ... önceki gibi ... */ }
-        
-        /* Genel Mobil Uyum İyileştirmeleri */
-        @media (max-height: 650px) { /* Daha kısa ekranlar için agresif küçültme */
-            h1 { font-size: 1.8em; margin-bottom: 15px;}
-            .content-box { padding: 20px; }
-            .card { padding: 12px; max-height: calc(100% - 40px); /* Üst ve alttan boşluk bırak */ }
-            #news-image-container { height: auto; max-height: 40%; margin-bottom: 8px; } /* Yükseklik %40 ile sınırlandı */
-            #news-headline { font-size: 0.9em; line-height: 1.35; max-height: none; /* Daha fazla esneklik */}
-            .btn { padding: 10px 18px; font-size: 0.95em; }
-            #game-header { font-size: 0.7em; padding: 6px 10px; gap: 4px; }
-            #timer-text-display, #game-stats { padding: 3px 5px; }
-            .swipe-instructions-ingame { padding: 6px 0; font-size: 0.8em; }
-            .feedback-popup { padding: 15px; }
-            #feedback-text { font-size: 1.1em; }
-            .onboarding-slide img { max-width: 100px; }
-            .onboarding-slide h3 { font-size: 1.2em; }
-            .onboarding-slide p { font-size: 0.85em; }
-            .onboarding-navigation { padding: 10px; }
-        }
-         @media (max-height: 580px) { /* Çok kısa ekranlar */
-            #news-image-container { max-height: 35%; }
-            #news-headline { font-size: 0.85em; }
-            .meta-tag { font-size: 0.6em; padding: 2px 5px;}
-            .card { padding: 10px; }
-        }
-
-
+        .hidden { display: none !important; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 </head>
 <body>
-    <svg width="0" height="0" style="position:absolute">
-        <defs>
-            <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
-            <symbol id="icon-restart" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></symbol>
-            <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A7.003 7.003 0 0 0 12 22a7.003 7.003 0 0 0 4.61-11.06C19.08 10.63 21 8.55 21 6V5c0-1.1-.9-2-2-2zm-9-1h4v1h-4V4zm7 7.26c-1.49.68-2.69 1.92-3.44 3.43A5.012 5.012 0 0 1 12 20a5.012 5.012 0 0 1-1.56-6.31c-.75-1.51-1.95-2.75-3.44-3.43C5.3 9.89 4 8.07 4 6V5.05C4 5.03 4.01 5 4.01 5H12h7.99c0 .02.01.03.01.05V6c0 2.07-1.3 3.89-3 4.26z"/></symbol>
-            <symbol id="icon-share" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.18c.52.47 1.2.77 1.96.77 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.52 9.34 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.52-.34 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></symbol>
-            <symbol id="icon-next" viewBox="0 0 24 24"><path d="m12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8l-8-8z"/></symbol>
-            <symbol id="icon-prev" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></symbol>
-            <symbol id="icon-home" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8h5z"/></symbol>
-            <symbol id="icon-info" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path></symbol>
-            <symbol id="icon-swipe" viewBox="0 0 24 24"><path d="M3.5 12.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S5.83 11 5 11s-1.5.67-1.5 1.5zm4 0c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S9.83 11 9 11s-1.5.67-1.5 1.5zm4 0c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S13.83 11 13 11s-1.5.67-1.5 1.5zm9.48-3.16c-.04-.16-.09-.31-.15-.45l-2.61-6.3c-.2-.48-.65-.8-1.18-.8H7.47c-.53 0-.99.32-1.18.8l-2.61 6.3c-.06.14-.11.29-.15.45C1.01 10.63 0 12.73 0 15.59 0 19.13 2.87 22 6.41 22H17.6c3.53 0 6.4-2.87 6.4-6.41 0-2.86-1.01-4.96-2.52-6.25zM17.59 20H6.41C3.99 20 2 18.01 2 15.59c0-1.94.77-3.59 1.93-4.74.08-.08.16-.16.25-.24H7.6v2.79c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V10.61h3.81v2.79c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V10.61h3.42c.09.08.17.16.25.24 1.16 1.15 1.93 2.8 1.93 4.74 0 2.42-1.99 4.41-4.41 4.41zM10.18 8.61h3.64L12 4.21 10.18 8.61zM7.91 8.61l1.82-4.4L6.09 8.61h1.82zm5.99 0h1.82L13.9 4.21l1.82 4.4z"></path></symbol>
-            <symbol id="icon-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"></path></symbol>
-        </defs>
-    </svg>
+    <svg width="0" height="0" style="position:absolute"> <defs>
+        <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+        <symbol id="icon-restart" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></symbol>
+        <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A7.003 7.003 0 0 0 12 22a7.003 7.003 0 0 0 4.61-11.06C19.08 10.63 21 8.55 21 6V5c0-1.1-.9-2-2-2zm-9-1h4v1h-4V4zm7 7.26c-1.49.68-2.69 1.92-3.44 3.43A5.012 5.012 0 0 1 12 20a5.012 5.012 0 0 1-1.56-6.31c-.75-1.51-1.95-2.75-3.44-3.43C5.3 9.89 4 8.07 4 6V5.05C4 5.03 4.01 5 4.01 5H12h7.99c0 .02.01.03.01.05V6c0 2.07-1.3 3.89-3 4.26z"/></symbol>
+        <symbol id="icon-share" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.18c.52.47 1.2.77 1.96.77 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.52 9.34 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.52-.34 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></symbol>
+        <symbol id="icon-next" viewBox="0 0 24 24"><path d="m12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8l-8-8z"/></symbol>
+        <symbol id="icon-prev" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8h5z"/></symbol>
+        <symbol id="icon-info" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path></symbol>
+        <symbol id="icon-swipe" viewBox="0 0 24 24"><path d="M3.5 12.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S5.83 11 5 11s-1.5.67-1.5 1.5zm4 0c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S9.83 11 9 11s-1.5.67-1.5 1.5zm4 0c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S13.83 11 13 11s-1.5.67-1.5 1.5zm9.48-3.16c-.04-.16-.09-.31-.15-.45l-2.61-6.3c-.2-.48-.65-.8-1.18-.8H7.47c-.53 0-.99.32-1.18.8l-2.61 6.3c-.06.14-.11.29-.15.45C1.01 10.63 0 12.73 0 15.59 0 19.13 2.87 22 6.41 22H17.6c3.53 0 6.4-2.87 6.4-6.41 0-2.86-1.01-4.96-2.52-6.25zM17.59 20H6.41C3.99 20 2 18.01 2 15.59c0-1.94.77-3.59 1.93-4.74.08-.08.16-.16.25-.24H7.6v2.79c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V10.61h3.81v2.79c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V10.61h3.42c.09.08.17.16.25.24 1.16 1.15 1.93 2.8 1.93 4.74 0 2.42-1.99 4.41-4.41 4.41zM10.18 8.61h3.64L12 4.21 10.18 8.61zM7.91 8.61l1.82-4.4L6.09 8.61h1.82zm5.99 0h1.82L13.9 4.21l1.82 4.4z"></path></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></symbol>
+        <symbol id="icon-link" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"></path></symbol>
+    </defs></svg>
 
     <div id="game-container">
-        <div id="onboarding-screen" class="screen">
-            <div class="onboarding-carousel">
-                <div class="onboarding-slide active" data-slide="0">
-                    <svg width="60" height="60" style="fill: var(--accent-red); margin-bottom: 15px;"><use xlink:href="#icon-info"></use></svg>
-                    <h3>Gerçekten Yaşandı'ya Hoş Geldin!</h3>
-                    <p>Karşına çıkan absürt haberlerin gerçek mi yoksa uydurma mı olduğuna karar ver.</p>
-                </div>
-                <div class="onboarding-slide" data-slide="1">
-                     <svg width="60" height="60" style="fill: var(--accent-red); margin-bottom: 15px;"><use xlink:href="#icon-swipe"></use></svg>
-                    <h3>Nasıl Oynanır?</h3>
-                    <p>Haber kartını <strong>sağa kaydırarak "Gerçek"</strong>, <strong>sola kaydırarak "Sahte"</strong> olduğunu belirt.</p>
-                </div>
-                <div class="onboarding-slide" data-slide="2">
-                    <svg width="60" height="60" style="fill: var(--accent-red); margin-bottom: 15px;"><use xlink:href="#icon-trophy"></use></svg>
-                    <h3>Puanlama ve Süre</h3>
-                    <p>Her doğru cevap sana puan kazandırır. Hızlı karar vermek için bir "Gerilim Sayacın" olacak. Bakalım ne kadar dikkatlisin?</p>
-                </div>
-                <div class="onboarding-slide" data-slide="3">
-                    <h3>Hemen Dene!</h3>
-                    <p>"Bu haber sence gerçek mi?"</p>
-                    <div id="onboarding-test-card" class="card loaded" style="position:relative; margin-top:15px; height: auto; min-height:150px; font-size:0.9em; padding:12px; box-shadow: var(--shadow-medium);">
-                        <div id="onboarding-news-meta-info" style="font-size:0.7em; margin-bottom:8px;">
-                             <span class="meta-tag">⏳ Şimdi</span> <span class="meta-tag">📍 Burada</span> <span class="meta-tag">💭 Deneme</span>
+        <div id="app-top-sponsors">
+            <img id="promo-banner-top" src="https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/e12abcf0-0425-4503-ab4a-531de9382322.png" alt="Promosyon Banner">
+            <img id="sponsor-logo-main" src="https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/ebcb2ccf-bd61-4e27-a1f7-44d70916ca0b.png" alt="Sponsor Ana Logo">
+        </div>
+
+        <div class="screens-wrapper">
+            <div id="onboarding-screen" class="screen">
+                <button id="skip-onboarding-btn" class="btn small">Atla</button>
+                <div class="onboarding-carousel">
+                    <div class="onboarding-slides-wrapper">
+                        <div class="onboarding-slide">
+                            <img class="slide-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23E5383B'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E" alt="Hoş Geldin İkonu">
+                            <h3>Gerçekten Yaşandı Mı?</h3>
+                            <p>Oyunumuza hoş geldiniz! Haber başlıklarının gerçek mi kurgu mu olduğunu ayırt etmeye hazır mısınız?</p>
                         </div>
-                        Bu bir deneme kartıdır. Sağa veya sola kaydırarak testi tamamla!
-                    </div>
-                    <p style="margin-top:10px; font-size:0.75em;">Bu kaydırma bir puanlama yapmayacak.</p>
-                </div>
-            </div>
-            <div class="onboarding-navigation">
-                <button id="prev-onboarding-btn" class="btn secondary small" style="visibility: hidden;"><svg><use xlink:href="#icon-prev"></use></svg>Geri</button>
-                <div class="onboarding-dots">
-                    <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                </div>
-                <button id="next-onboarding-btn" class="btn small"><svg><use xlink:href="#icon-next"></use></svg>İleri</button>
-                <button id="finish-onboarding-btn" class="btn small hidden"><svg><use xlink:href="#icon-check"></use></svg>Başla!</button>
-            </div>
-            <button id="skip-onboarding-btn" class="btn small" style="position:absolute; top:10px; right:10px; background:none; color:var(--text-secondary); box-shadow:none; padding:5px;">Atla</button>
-        </div>
-
-        <div id="start-screen" class="screen">
-            <div class="content-box">
-                <h1>Gerçekten Yaşandı</h1>
-                <button id="start-button" class="btn"><svg><use xlink:href="#icon-play"></use></svg>Oyuna Başla</button>
-                <p class="swipe-instructions">Sağa kaydır: Gerçek<br>Sola kaydır: Sahte</p>
-            </div>
-        </div>
-
-        <div id="game-screen" class="screen">
-            <div id="game-header">
-                <div id="timer-text-display">--:--</div>
-                <div id="tension-timer-container"><div id="tension-progress-bar"></div></div>
-                <div id="game-stats">D:0/S:0</div>
-            </div>
-            <div id="card-area">
-                <div id="news-card" class="card"></div>
-            </div>
-            <div id="feedback-area" class="feedback-popup hidden">
-                <div id="feedback-confetti-anchor"></div>
-                <p id="feedback-text"></p>
-                <a id="source-link" href="#" target="_blank" class="hidden">
-                    <span class="link-text">📰 Kaynak Habere Git</span>
-                    <span class="spinner hidden"></span>
-                </a>
-                <p id="explanation-text" class="hidden"></p>
-                <button id="next-button" class="btn"><svg><use xlink:href="#icon-next"></use></svg>Devam Et</button>
-            </div>
-            <p class="swipe-instructions-ingame">Sağa: Gerçek / Sola: Sahte</p>
-        </div>
-
-        <div id="result-screen" class="screen">
-            <div class="content-box">
-                <h2>Oyun Bitti!</h2>
-                <p id="final-correct">Toplam Doğru: <span class="value">0</span></p>
-                <p id="time-taken">Toplam Süre: <span class="value">0s</span></p>
-                <p id="calculated-score">Skorun: <span class="value">0</span></p>
-                <div class="stats-container">
-                    <div class="stat-item">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="stat-label">Doğruluk Oranın:</span>
-                            <span id="correct-answer-percentage" class="stat-percentage">0%</span>
+                        <div class="onboarding-slide">
+                            <svg viewBox="0 0 24 24" width="100" height="100" style="margin-bottom:20px; color:var(--accent-red);"><use href="#icon-swipe"></use></svg>
+                            <h3>Nasıl Oynanır?</h3>
+                            <p>Kartı gerçekse sağa, kurguysa sola kaydırın. Hızlı ve doğru cevaplar size daha çok puan kazandırır!</p>
                         </div>
-                        <div class="stat-bar-bg">
-                            <div id="correct-answer-bar" class="stat-bar-fill"></div>
+                        <div class="onboarding-slide">
+                             <svg viewBox="0 0 24 24" width="100" height="100" style="margin-bottom:20px; color:var(--accent-green);"><use href="#icon-check"></use></svg>
+                            <h3>Hazır Mısın?</h3>
+                            <p>Hadi başlayalım ve ne kadar dikkatli bir haber okuru olduğunu görelim!</p>
                         </div>
                     </div>
                 </div>
-                <button id="restart-button" class="btn"><svg><use xlink:href="#icon-restart"></use></svg>Tekrar Oyna</button>
-                <button id="view-scores-button" class="btn secondary"><svg><use xlink:href="#icon-trophy"></use></svg>Skorları Gör</button>
-                <button id="share-score-button" class="btn secondary"><svg><use xlink:href="#icon-share"></use></svg>Skorunu Paylaş</button>
+                <div class="onboarding-navigation">
+                    <button id="prev-onboarding-btn" class="btn secondary">
+                        <svg viewBox="0 0 24 24"><use href="#icon-prev"></use></svg>
+                    </button>
+                    <div class="onboarding-dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <button id="next-onboarding-btn" class="btn">
+                        <svg viewBox="0 0 24 24"><use href="#icon-next"></use></svg>
+                    </button>
+                    <button id="finish-onboarding-btn" class="btn hidden">Başla!</button>
+                </div>
             </div>
-        </div>
 
-        <div id="scoreboard-screen" class="screen">
-            <div class="content-box">
-                <h2><svg style="width:24px; height:24px; vertical-align: -3px; margin-right: 6px;"><use xlink:href="#icon-trophy"></use></svg>En Yüksek Skorlar</h2>
-                <ul id="score-list"></ul>
-                <button id="back-to-start-button" class="btn secondary"><svg><use xlink:href="#icon-home"></use></svg>Ana Ekrana Dön</button>
+            <div id="start-screen" class="screen">
+                <div class="content-box">
+                    <svg viewBox="0 0 24 24" style="width: 64px; height: 64px; color: var(--accent-red); margin-bottom: 20px;">
+                        <use href="#icon-play"></use></svg>
+                    <h1>Gerçekten Yaşandı Mı?</h1>
+                    <p>Haber başlıklarının gerçek mi kurgu mu olduğunu tahmin etmeye hazır mısın?</p>
+                    <button id="start-button" class="btn" style="width: 100%; padding: 15px; font-size: 1.1em; margin-bottom:15px;">
+                        Oyuna Başla
+                        <svg viewBox="0 0 24 24"><use href="#icon-next"></use></svg>
+                    </button>
+                    <button id="view-scores-button" class="btn secondary" style="width: 100%; padding: 12px; font-size: 1em;">
+                        <svg viewBox="0 0 24 24" style="width:18px; height:18px; margin-right:8px;"><use href="#icon-trophy"></use></svg>
+                        Yüksek Skorlar
+                    </button>
+                </div>
+            </div>
+
+            <div id="game-screen" class="screen" style="padding:0;">
+                <div id="game-header">
+                    <div id="game-stats" style="font-size:0.9em;">Soru: <span id="current-question-stat">0</span>/<span id="total-questions-stat">0</span> | Skor: <span id="current-score-stat">0</span></div>
+                    <div id="tension-timer-container" style="position:relative; width:80px; height:18px; background:var(--border-color); border-radius:9px; overflow:hidden;">
+                        <div id="tension-progress-bar" style="width:100%; height:100%; background:var(--accent-green); border-radius:9px; transition: width 0.1s linear;"></div>
+                        <div id="timer-text-display" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:0.75em; color:var(--text-primary); font-weight:500;">0s</div>
+                    </div>
+                </div>
+
+                <div id="card-area">
+                    <div id="news-card">
+                        <div id="news-image-container">
+                            <img id="news-image" src="" alt="Haber Görseli">
+                            <div id="image-placeholder"><div class="spinner"></div></div>
+                        </div>
+                        <div id="news-meta-info">
+                            <span class="meta-tag"></span>
+                            <span class="meta-source"></span>
+                        </div>
+                        <h2 id="news-headline"></h2>
+                    </div>
+                    <p class="swipe-instructions-ingame">Gerçekse sağa, değilse sola kaydır.</p>
+                     <div class="ingame-sponsor-logo-container">
+                        <img src="https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/ebcb2ccf-bd61-4e27-a1f7-44d70916ca0b.png" alt="Sponsor Logo">
+                    </div>
+                </div>
+
+                <div id="feedback-area">
+                     <div class="feedback-popup">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <p id="feedback-text"></p>
+                            <button id="next-button" class="btn small">Devam Et</button>
+                        </div>
+                        <p id="explanation-text"></p>
+                        <a id="source-link" href="#" target="_blank" class="btn small secondary">
+                            <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right:6px;"><use href="#icon-link"></use></svg>
+                            <span class="link-text">Kaynağı Gör</span>
+                            <span class="spinner"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="result-screen" class="screen">
+                <div class="content-box">
+                    <h2>Oyun Bitti!</h2>
+                    <p id="final-correct">Doğru Sayısı: <span class="value">0</span></p>
+                    <p id="time-taken">Toplam Süre: <span class="value">0s</span></p>
+                    <p id="calculated-score" style="font-size:1.5em; font-weight:bold; color:var(--accent-red);">Puan: <span class="value">0</span></p>
+                    <button id="restart-button" class="btn" style="margin-top:20px; width:100%;">Tekrar Oyna</button>
+                    <button id="back-to-start-button-result" class="btn secondary" style="margin-top:10px; width:100%;">Ana Sayfa</button>
+                    <button id="share-score-button" class="btn secondary" style="margin-top:10px; width:100%;">Skoru Paylaş</button>
+                    <div class="result-sponsor-logo-container">
+                        <img src="https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/ebcb2ccf-bd61-4e27-a1f7-44d70916ca0b.png" alt="Sponsor Logo">
+                    </div>
+                </div>
+            </div>
+
+            <div id="scoreboard-screen" class="screen">
+                <div class="content-box" style="width:95%; max-width:380px;">
+                    <h2>Yüksek Skorlar</h2>
+                    <ul id="score-list" style="list-style:none; padding:0; margin:0 0 20px 0; text-align:left;">
+                        <li style="padding:8px 0; border-bottom:1px solid var(--border-color);">Yükleniyor...</li>
+                    </ul>
+                    <button id="back-to-start-button-scoreboard" class="btn secondary" style="width:100%;">Ana Sayfa</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof Hammer === 'undefined') { console.error('Hammer.js kütüphanesi yüklenemedi!'); }
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof Hammer === 'undefined') { console.error('Hammer.js kütüphanesi yüklenemedi!'); return; }
 
-            const QUESTION_TIME_LIMIT = 20;
-            const gameContainer = document.getElementById('game-container');
-            const screens = {
-                onboarding: document.getElementById('onboarding-screen'),
-                start: document.getElementById('start-screen'),
-                game: document.getElementById('game-screen'),
-                result: document.getElementById('result-screen'),
-                scoreboard: document.getElementById('scoreboard-screen')
-            };
-            const buttons = {
-                prevOnboarding: document.getElementById('prev-onboarding-btn'),
-                nextOnboarding: document.getElementById('next-onboarding-btn'),
-                finishOnboarding: document.getElementById('finish-onboarding-btn'),
-                skipOnboarding: document.getElementById('skip-onboarding-btn'),
-                start: document.getElementById('start-button'),
-                next: document.getElementById('next-button'),
-                restart: document.getElementById('restart-button'),
-                viewScores: document.getElementById('view-scores-button'),
-                backToStart: document.getElementById('back-to-start-button'),
-                shareScore: document.getElementById('share-score-button')
-            };
-            const displays = {
-                timerText: document.getElementById('timer-text-display'),
-                tensionProgressBar: document.getElementById('tension-progress-bar'),
-                gameStats: document.getElementById('game-stats'),
-                feedbackArea: document.getElementById('feedback-area'),
-                feedbackText: document.getElementById('feedback-text'),
-                sourceLink: document.getElementById('source-link'),
-                sourceLinkText: document.querySelector('#source-link .link-text'),
-                sourceLinkSpinner: document.querySelector('#source-link .spinner'),
-                explanationText: document.getElementById('explanation-text'),
-                finalCorrect: document.querySelector('#final-correct .value'),
-                timeTaken: document.querySelector('#time-taken .value'),
-                calculatedScore: document.querySelector('#calculated-score .value'),
-                scoreList: document.getElementById('score-list'),
-                correctAnswerBar: document.getElementById('correct-answer-bar'),
-                correctAnswerPercentage: document.getElementById('correct-answer-percentage'),
-                onboardingCarousel: document.querySelector('.onboarding-carousel'),
-                onboardingSlides: document.querySelectorAll('.onboarding-slide'),
-                onboardingDots: document.querySelectorAll('.onboarding-dots .dot')
-            };
-            const newsCardElement = document.getElementById('news-card');
-            const onboardingTestCardElement = document.getElementById('onboarding-test-card');
+        const QUESTION_TIME_LIMIT = 20;
+        const gameContainer = document.getElementById('game-container');
+        const screensWrapper = document.querySelector('.screens-wrapper');
+        const appTopSponsors = document.getElementById('app-top-sponsors');
 
-            const newsItems = [
-                { 
-                    headline: "Konya’da Adam, Kendisini Aldatan Sevgilisini ChatGPT’ye Şikayet Etti. “Adalet artık yapay zekâda” sözleriyle gündem oldu.", 
-                    isReal: false, 
-                    explanation: "Bu haber uydurmadır. ChatGPT bir şikayet veya yargı mercii değildir.",
-                    imageUrl: "https://source.unsplash.com/400x400/?sad,robot,court,konya",
-                    date: "2024", location: "Konya", topic: "Yapay Zeka"
-                },
-                { 
-                    headline: "Fatih'te sokakta yürüyen bir kişinin üzerine binanın çatısından çanak anten düştü. Hafif yaralanan adamın yardımına çevredekiler koştu.", 
-                    isReal: true, 
-                    source: "https://www.hurriyet.com.tr/video/fatihte-sokakta-yururken-uzerine-canak-anten-dustu-o-anlar-kamerada-42810547",
-                    imageUrl: "https://source.unsplash.com/400x400/?istanbul,antenna,accident,street",
-                    date: "2023", location: "İstanbul", topic: "Yaşam"
-                },
-                { 
-                    headline: "Zonguldak’ta Belediye, Boş Arsaya ‘Görsel Olarak Düşünün’ Yazıp Açılış Yaptı. Arsaya kurdele keserek açılış yapan başkan, “İleri görüş budur” dedi.", 
-                    isReal: false, 
-                    explanation: "Bu haber uydurmadır. Bir belediye başkanının böyle bir açılış yapması gerçekçi değildir.",
-                    imageUrl: "https://source.unsplash.com/400x400/?empty,sign,ceremony,zonguldak",
-                    date: "2022", location: "Zonguldak", topic: "Mizah"
-                },
-                 { 
-                    headline: "NEVŞEHİR'in Avanos İlçesi'nde kahvede okey oynayanların üzerine inek düştü.", 
-                    isReal: true, 
-                    source: "https://www.hurriyet.com.tr/gundem/okeycilerin-basina-inek-dustu-3434",
-                    imageUrl: "https://source.unsplash.com/400x400/?cow,cafe,falling,nevsehir",
-                    date: "2004", location: "Nevşehir", topic: "Hayvanlar"
-                },
-                { 
-                    headline: "İstanbul'da bir kişi, ücretsiz aldığı ikinci el koltuğun içinde 600 bin lira buldu. Parayı bulan kişi, durumu yetkililere bildirdi.", 
-                    isReal: true, 
-                    source: "https://www.haberler.com/dunya/bedava-aldigi-koltuktan-600-bin-lira-para-cikti-14998707-",
-                    explanation: "Not: Haber ABD kaynaklıdır ancak Türk basınında da yer bulmuştur.",
-                    imageUrl: "https://source.unsplash.com/400x400/?money,couch,surprise,istanbul",
-                    date: "2022", location: "ABD/İstanbul", topic: "Şans" 
-                },
-                { 
-                    headline: "Sivas’ta Çoban, Sürüsüne Spotify Premium Alarak Müzik Dinletti. “Hayvanlar klasik müziğe daha sakin tepki veriyor” dedi.", 
-                    isReal: false, 
-                    explanation: "Bu haber uydurmadır. Hayvanların müzik zevki üzerine araştırmalar olsa da, bu durum kurgusaldır.",
-                    imageUrl: "https://source.unsplash.com/400x400/?sheep,music,shepherd,sivas",
-                    date: "2023", location: "Sivas", topic: "Teknoloji"
-                },
-                { 
-                    headline: "Bir ahırda, ineklerin gaz çıkarması sonucu biriken metan gazı patlamaya neden oldu.", 
-                    isReal: true, 
-                    source: "https://onedio.com/haber/inekler-gaz-cikardi-ahir-patladi-243426",
-                    imageUrl: "https://source.unsplash.com/400x400/?cow,explosion,barn,germany",
-                    date: "2014", location: "Almanya", topic: "Bilim"
-                }
-            ];
-            let currentNewsIndex = 0;
-            let score = 0;
-            let correctAnswers = 0;
-            let questionTimerInterval;
-            let questionTimeLeft = QUESTION_TIME_LIMIT;
-            let totalGameSecondsElapsed = 0;
-            let gameTimerInterval;
+        const screens = {
+            onboarding: document.getElementById('onboarding-screen'),
+            start: document.getElementById('start-screen'),
+            game: document.getElementById('game-screen'),
+            result: document.getElementById('result-screen'),
+            scoreboard: document.getElementById('scoreboard-screen')
+        };
+        const buttons = {
+            prevOnboarding: document.getElementById('prev-onboarding-btn'),
+            nextOnboarding: document.getElementById('next-onboarding-btn'),
+            finishOnboarding: document.getElementById('finish-onboarding-btn'),
+            skipOnboarding: document.getElementById('skip-onboarding-btn'),
+            start: document.getElementById('start-button'),
+            next: document.getElementById('next-button'),
+            restart: document.getElementById('restart-button'),
+            viewScores: document.getElementById('view-scores-button'),
+            backToStartResult: document.getElementById('back-to-start-button-result'),
+            backToStartScoreboard: document.getElementById('back-to-start-button-scoreboard'),
+            shareScore: document.getElementById('share-score-button'),
+        };
+        const displays = {
+            timerText: document.getElementById('timer-text-display'),
+            tensionProgressBar: document.getElementById('tension-progress-bar'),
+            gameStats: document.getElementById('game-stats'),
+            feedbackArea: document.getElementById('feedback-area'),
+            feedbackText: document.getElementById('feedback-text'),
+            sourceLink: document.getElementById('source-link'),
+            sourceLinkText: document.querySelector('#source-link .link-text'),
+            sourceLinkSpinner: document.querySelector('#source-link .spinner'),
+            explanationText: document.getElementById('explanation-text'),
+            finalCorrect: document.querySelector('#final-correct .value'),
+            timeTaken: document.querySelector('#time-taken .value'),
+            calculatedScore: document.querySelector('#calculated-score .value'),
+            scoreList: document.getElementById('score-list'),
+            onboardingCarousel: document.querySelector('#onboarding-screen .onboarding-carousel'),
+            onboardingSlidesWrapper: document.querySelector('#onboarding-screen .onboarding-slides-wrapper'),
+            onboardingSlides: document.querySelectorAll('#onboarding-screen .onboarding-slide'),
+            onboardingDots: document.querySelectorAll('#onboarding-screen .onboarding-dots .dot'),
+            currentQuestionStat: document.getElementById('current-question-stat'),
+            totalQuestionsStat: document.getElementById('total-questions-stat'),
+            currentScoreStat: document.getElementById('current-score-stat'),
+        };
+        const newsCardElement = document.getElementById('news-card');
 
-            let gameActive = false;
-            let shuffledNews = [];
-            let mainHammerInstance;
-            let onboardingHammerInstance;
-
-            let currentOnboardingSlide = 0;
-            function showOnboardingSlide(index) {
-                if (!displays.onboardingSlides || !displays.onboardingDots || !buttons.prevOnboarding || !buttons.nextOnboarding || !buttons.finishOnboarding) return;
-                displays.onboardingSlides.forEach((slide, i) => {
-                    slide.style.transform = `translateX(-${index * 100}%)`;
-                    if(displays.onboardingDots[i]) displays.onboardingDots[i].classList.toggle('active', i === index);
-                });
-                buttons.prevOnboarding.style.visibility = (index === 0) ? 'hidden' : 'visible';
-                buttons.nextOnboarding.classList.toggle('hidden', index === displays.onboardingSlides.length - 1);
-                buttons.finishOnboarding.classList.toggle('hidden', index !== displays.onboardingSlides.length - 1);
-                currentOnboardingSlide = index;
-
-                if (index === displays.onboardingSlides.length - 1 && onboardingTestCardElement) {
-                    setupOnboardingSwipe();
-                } else if (onboardingHammerInstance) {
-                    onboardingHammerInstance.destroy();
-                    onboardingHammerInstance = null;
-                }
+        const newsItems = [
+            {
+                id: 1,
+                headline: "Konya’da Adam, Kendisini Aldatan Sevgilisini ChatGPT’ye Şikayet Etti",
+                image: "https://via.placeholder.com/300x180/E0E0E0/000000?text=ChatGPT+Şikayet",
+                source_link: null, // Veya "#"
+                isReal: false,
+                explanation: "“Adalet artık yapay zekâda” sözleriyle gündem oldu. Bu haber kurgudur.",
+                sourceName: "Kurgu Haber",
+                isAdvertorial: false
+            },
+            {
+                id: 2,
+                headline: "Fatih'te sokakta yürüyen bir kişinin üzerine binanın çatısından çanak anten düştü.",
+                image: "https://static.bundle.app/studio/44032fab-c684-48b1-a071-f1d7702632c5/3298448e-4e6c-4caa-a020-b0a81f6d1831.png",
+                source_link: "https://www.hurriyet.com.tr/video/fatihte-sokakta-yururken-uzerine-canak-anten-dustu-o-anlar-kamerada-42810547",
+                isReal: true,
+                explanation: "Hafif yaralanan adamın yardımına çevredekiler koştu. Bu haber gerçektir.",
+                sourceName: "Hürriyet Video",
+                isAdvertorial: false
+            },
+            {
+                id: 3,
+                headline: "Zonguldak’ta Belediye, Boş Arsaya ‘Görsel Olarak Düşünün’ Yazıp Açılış Yaptı.",
+                image: "https://via.placeholder.com/300x180/D0D0D0/000000?text=Boş+Arsa+Açılışı",
+                source_link: null,
+                isReal: false,
+                explanation: "Arsaya kurdele keserek açılış yapan başkan, “İleri görüş budur” dedi. Bu haber kurgudur.",
+                sourceName: "Kurgu Haber",
+                isAdvertorial: false
+            },
+            {
+                id: 4,
+                headline: "NEVŞEHİR'in Avanos İlçesi'nde kahvede okey oynayanların üzerine inek düştü.",
+                image: "https://via.placeholder.com/300x180/C0C0C0/000000?text=İnek+Düștü", // İnek görseli için placeholder
+                source_link: "https://www.hurriyet.com.tr/gundem/okeycilerin-basina-inek-dustu-3434",
+                isReal: true,
+                explanation: "Okey oynayanların üzerine çatıdan inek düşmesi olayı gerçektir.",
+                sourceName: "Hürriyet",
+                isAdvertorial: false
+            },
+            {
+                id: 5,
+                headline: "İstanbul'da bir kişi, ücretsiz aldığı ikinci el koltuğun içinde 600 bin lira buldu.",
+                image: "https://via.placeholder.com/300x180/B0B0B0/000000?text=Koltukta+Para",
+                source_link: "https://www.haberler.com/dunya/bedava-aldigi-koltuktan-600-bin-lira-para-cikti-14998707-",
+                isReal: true,
+                explanation: "Parayı bulan kişi, durumu yetkililere bildirdi. Haber ABD kaynaklı olsa da gerçektir.",
+                sourceName: "Haberler.com",
+                isAdvertorial: false
+            },
+            {
+                id: 6,
+                headline: "Sivas’ta Çoban, Sürüsüne Spotify Premium Alarak Müzik Dinletti.",
+                image: "https://via.placeholder.com/300x180/A0A0A0/000000?text=Müzik+Dinleyen+Sürü",
+                source_link: null,
+                isReal: false,
+                explanation: "“Hayvanlar klasik müziğe daha sakin tepki veriyor” dedi. Bu haber kurgudur.",
+                sourceName: "Kurgu Haber",
+                isAdvertorial: false
+            },
+            {
+                id: 7,
+                headline: "Bir ahırda, ineklerin gaz çıkarması sonucu biriken metan gazı patlamaya neden oldu.",
+                image: "https://via.placeholder.com/300x180/909090/FFFFFF?text=Ahır+Patlaması",
+                source_link: "https://onedio.com/haber/inekler-gaz-cikardi-ahir-patladi-243426",
+                isReal: true,
+                explanation: "İneklerin çıkardığı metan gazının birikerek ahırda patlamaya yol açması olayı gerçektir.",
+                sourceName: "Onedio",
+                isAdvertorial: false
             }
+        ];
 
-            function setupOnboardingSwipe() {
-                if (typeof Hammer === 'undefined' || !onboardingTestCardElement) return;
-                if (onboardingHammerInstance) onboardingHammerInstance.destroy();
-                onboardingHammerInstance = new Hammer(onboardingTestCardElement);
-                onboardingHammerInstance.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 20 });
-                onboardingTestCardElement.style.transform = 'translateX(0px) rotateZ(0deg)';
-                onboardingHammerInstance.on('panmove', (ev) => {
-                    onboardingTestCardElement.style.transform = `translateX(${ev.deltaX}px) rotateZ(${ev.deltaX / 20}deg)`;
-                });
-                onboardingHammerInstance.on('panend', (ev) => {
-                    if (Math.abs(ev.deltaX) > 50) {
-                        onboardingTestCardElement.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
-                        onboardingTestCardElement.style.transform = `translateX(${ev.deltaX > 0 ? 300 : -300}px) rotateZ(${ev.deltaX > 0 ? 20 : -20}deg)`;
-                        onboardingTestCardElement.style.opacity = '0';
-                        setTimeout(() => { if(buttons.finishOnboarding) buttons.finishOnboarding.focus(); }, 300);
-                    } else {
-                        onboardingTestCardElement.style.transition = 'transform 0.3s ease-out';
-                        onboardingTestCardElement.style.transform = 'translateX(0px) rotateZ(0deg)';
-                    }
-                });
+        const feedbackTexts = {
+            correctReal: ["Doğru Bildin!", "Harika!", "Tam İsabet!"],
+            incorrectReal: ["Yanlış Tahmin!", "Dikkatli Ol!", "Bu Gerçekti!"],
+            correctFake: ["Doğru, Bu Kurgu!", "Aferin!", "Yakaladın!"],
+            incorrectFake: ["Maalesef Yanlış!", "Bu Kurguydu!", "Daha Dikkatli!"],
+            timeout: ["Süre Doldu!"]
+        };
+
+        let currentNewsIndex = 0; let score = 0; let correctAnswers = 0;
+        let questionTimerInterval; let questionTimeLeft = QUESTION_TIME_LIMIT;
+        let totalGameSecondsElapsed = 0; let gameTimerInterval;
+        let gameActive = false; let shuffledNews = [];
+        let mainHammerInstance; let onboardingHammerInstance; let onboardingCarouselHammer;
+        let currentOnboardingSlide = 0;
+
+        function showScreen(screenId) {
+            if (!screens[screenId]) {
+                console.error(`Ekran bulunamadı: ${screenId}`);
+                const initialScreen = localStorage.getItem('onboardingComplete_v4') ? screens.start : screens.onboarding;
+                if (initialScreen) initialScreen.classList.add('active');
+                return;
             }
+            Object.values(screens).forEach(screen => {
+                if (screen) screen.classList.remove('active');
+            });
+            screens[screenId].classList.add('active');
 
-            function finishOnboarding() {
-                localStorage.setItem('onboardingComplete_v3', 'true');
-                showScreen('start');
-            }
-
-            if (buttons.nextOnboarding) buttons.nextOnboarding.addEventListener('click', () => { if (currentOnboardingSlide < displays.onboardingSlides.length - 1) showOnboardingSlide(currentOnboardingSlide + 1); });
-            if (buttons.prevOnboarding) buttons.prevOnboarding.addEventListener('click', () => { if (currentOnboardingSlide > 0) showOnboardingSlide(currentOnboardingSlide - 1); });
-            if (buttons.finishOnboarding) buttons.finishOnboarding.addEventListener('click', finishOnboarding);
-            if (buttons.skipOnboarding) buttons.skipOnboarding.addEventListener('click', finishOnboarding);
-
-            function setupMainSwipeControls() {
-                if (typeof Hammer === 'undefined' || !newsCardElement) return;
-                if (mainHammerInstance) { mainHammerInstance.destroy(); }
-                mainHammerInstance = new Hammer(newsCardElement);
-                mainHammerInstance.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 30 });
-                newsCardElement.style.transform = ''; newsCardElement.style.transition = '';
-                mainHammerInstance.on('panstart', () => {
-                    if (!gameActive || (displays.feedbackArea && displays.feedbackArea.classList.contains('visible'))) return;
-                    newsCardElement.classList.add('swiping');
-                    if (gameContainer) gameContainer.classList.add('background-blur');
-                });
-                mainHammerInstance.on('panmove', (ev) => {
-                    if (!gameActive || !newsCardElement.classList.contains('swiping')) return;
-                    const x = ev.deltaX;
-                    const rotation = x / 20; 
-                    const scale = 1 - Math.abs(x / (newsCardElement.offsetWidth * 3));
-                    newsCardElement.style.transform = `translateX(${x}px) rotateZ(${rotation}deg) scale(${Math.max(scale, 0.97)})`;
-                    newsCardElement.style.opacity = 1 - Math.abs(x / (newsCardElement.offsetWidth * 2)); 
-                });
-                mainHammerInstance.on('panend', (ev) => {
-                    if (!gameActive || !newsCardElement.classList.contains('swiping')) return;
-                    newsCardElement.classList.remove('swiping');
-                    if (gameContainer) gameContainer.classList.remove('background-blur');
-                    newsCardElement.style.opacity = ''; 
-                    const swipeThreshold = newsCardElement.offsetWidth * 0.35; 
-                    if (Math.abs(ev.deltaX) > swipeThreshold) {
-                        handleSwipe(ev.deltaX > 0 ? 'right' : 'left');
-                    } else {
-                        newsCardElement.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease';
-                        newsCardElement.style.transform = 'translateX(0px) rotateZ(0deg) scale(1)';
-                        newsCardElement.style.opacity = '1';
-                        setTimeout(() => { if(newsCardElement) newsCardElement.style.transition = ''; }, 300);
-                    }
-                });
-            }
-
-            function showScreen(screenId) {
-                Object.values(screens).forEach(screen => { if(screen) screen.classList.remove('active');});
-                if (screens[screenId]) {
-                    screens[screenId].classList.add('active');
+            if (appTopSponsors) {
+                if (screenId === 'onboarding' || screenId === 'scoreboard') { // Bu ekranlarda sponsor banner'ını gizle
+                    appTopSponsors.style.display = 'none';
                 } else {
-                    // console.error("Ekran bulunamadı:", screenId);
+                    appTopSponsors.style.display = 'block';
                 }
             }
+        }
 
-            function startQuestionTimer() {
-                questionTimeLeft = QUESTION_TIME_LIMIT;
-                if(displays.tensionProgressBar) {
-                    displays.tensionProgressBar.style.transition = 'none'; // Prevent animation on reset
-                    displays.tensionProgressBar.style.width = '100%';
-                }
-                if(displays.timerText) displays.timerText.textContent = `${questionTimeLeft}s`;
-                
-                requestAnimationFrame(() => { // Ensure reset is rendered
-                    requestAnimationFrame(() => { // Then start animation
-                        if(displays.tensionProgressBar) {
-                            displays.tensionProgressBar.style.transition = `width ${QUESTION_TIME_LIMIT}s linear`;
-                            displays.tensionProgressBar.style.width = '0%';
-                        }
-                    });
-                });
-
-                if (questionTimerInterval) clearInterval(questionTimerInterval);
-                questionTimerInterval = setInterval(() => {
-                    questionTimeLeft--;
-                    if(displays.timerText) displays.timerText.textContent = `${questionTimeLeft}s`;
-                    if (questionTimeLeft < 0) { // Use < 0 to ensure 0s is displayed
-                        clearInterval(questionTimerInterval);
-                        if (gameActive) { handleSwipe('timeout'); }
-                    }
-                }, 1000);
+        function showOnboardingSlide(index) {
+             if (!displays.onboardingSlidesWrapper || !displays.onboardingSlides || displays.onboardingSlides.length === 0 || !displays.onboardingDots || displays.onboardingDots.length === 0 || !buttons.prevOnboarding || !buttons.nextOnboarding || !buttons.finishOnboarding) {
+                console.error("Onboarding elemanları eksik.");
+                if (!localStorage.getItem('onboardingComplete_v4')) finishOnboarding();
+                return;
             }
+            const numSlides = displays.onboardingSlides.length;
+            index = Math.max(0, Math.min(index, numSlides - 1));
+            displays.onboardingSlidesWrapper.style.transform = `translateX(-${index * 100}%)`;
+            displays.onboardingDots.forEach((dot, i) => { if(dot) dot.classList.toggle('active', i === index); });
+            buttons.prevOnboarding.style.visibility = (index === 0) ? 'hidden' : 'visible';
+            const onActualLastSlide = index === numSlides - 1;
+            buttons.nextOnboarding.classList.toggle('hidden', onActualLastSlide);
+            buttons.finishOnboarding.classList.toggle('hidden', !onActualLastSlide);
+            currentOnboardingSlide = index;
+            setupOnboardingCarouselSwipe();
+        }
 
-            function stopQuestionTimer() {
-                clearInterval(questionTimerInterval);
-                if(displays.tensionProgressBar && displays.tensionProgressBar.parentElement) {
-                    const currentWidth = displays.tensionProgressBar.offsetWidth;
-                    const parentWidth = displays.tensionProgressBar.parentElement.offsetWidth;
-                    displays.tensionProgressBar.style.transition = 'none';
-                    displays.tensionProgressBar.style.width = parentWidth > 0 ? `${(currentWidth / parentWidth) * 100}%` : '0%';
-                }
-            }
-            
-            function startGameTimer() {
-                totalGameSecondsElapsed = 0;
-                if (gameTimerInterval) clearInterval(gameTimerInterval);
-                gameTimerInterval = setInterval(() => {
-                    totalGameSecondsElapsed++;
-                }, 1000);
-            }
-            function stopGameTimer() { clearInterval(gameTimerInterval); }
+        function setupOnboardingCarouselSwipe() {
+            if (typeof Hammer === 'undefined' || !displays.onboardingCarousel) return;
+            if (onboardingCarouselHammer) { onboardingCarouselHammer.destroy(); }
+            onboardingCarouselHammer = new Hammer(displays.onboardingCarousel);
+            onboardingCarouselHammer.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 50 });
+            onboardingCarouselHammer.on('panleft', () => {
+                if (currentOnboardingSlide < displays.onboardingSlides.length - 1) showOnboardingSlide(currentOnboardingSlide + 1);
+            });
+            onboardingCarouselHammer.on('panright', () => {
+                if (currentOnboardingSlide > 0) showOnboardingSlide(currentOnboardingSlide - 1);
+            });
+        }
+        function finishOnboarding() {
+            localStorage.setItem('onboardingComplete_v4', 'true');
+            showScreen('start');
+        }
 
-            function calculateCurrentScore() { return correctAnswers * 100; }
-            function finalScoreFormula(correct, time) {
-                if (time <= 0) return correct * (shuffledNews.length * 100); // Max possible if no time taken
-                return Math.round((correct * (shuffledNews.length * 1000)) / (time + 1)); 
-            }
-
-            function updateGameStats() {
-                const questionNumToShow = gameActive ? currentNewsIndex + 1 : 0;
-                const totalQuestions = shuffledNews.length || newsItems.length;
-                
-                if (displays.gameStats) {
-                     displays.gameStats.textContent = `D: ${correctAnswers} / S: ${totalQuestions}`;
-                }
-                // Skor, `processAnswer` içinde ve oyun başında ayrıca güncelleniyor.
-                // İsterseniz buraya da ekleyebilirsiniz:
-                // if (displays.scoreDisplay) displays.scoreDisplay.textContent = `Skor: ${score}`;
-            }
-
-            function createConfetti() {
-                const confettiAnchor = document.getElementById('feedback-confetti-anchor');
-                if (!confettiAnchor) return;
-                for (let i = 0; i < 15; i++) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('confetti-dot');
-                    dot.style.left = `${Math.random() * 80 - 40}px`; // Yayılma alanı
-                    dot.style.animationDelay = `${Math.random() * 0.3}s`;
-                    dot.style.backgroundColor = `hsl(${Math.random() * 60 + 90}, 70%, 60%)`;
-                    confettiAnchor.appendChild(dot);
-                    setTimeout(() => dot.remove(), 1000);
-                }
-            }
-
-            function loadNewsCard() {
-                if (!newsCardElement) return;
-                newsCardElement.classList.remove('loaded', 'removing-left', 'removing-right', 'swiping');
-                newsCardElement.style.transform = ''; newsCardElement.style.opacity = '';
-                newsCardElement.innerHTML = '';
-
-                if (currentNewsIndex < shuffledNews.length) {
-                    const newsItem = shuffledNews[currentNewsIndex];
-                    
-                    // Soru sayısını ve diğer header bilgilerini burada doğru şekilde ayarla
-                    if (displays.gameStats) displays.gameStats.textContent = `D: ${correctAnswers} / S: ${shuffledNews.length}`;
-                    // Skor zaten processAnswer'da ve startGame'de güncelleniyor, burada tekrar ayarlanabilir:
-                    // if (displays.scoreDisplay) displays.scoreDisplay.textContent = `Skor: ${score}`; 
-
-                    startQuestionTimer();
-
-                    const metaInfoDiv = document.createElement('div');
-                    metaInfoDiv.id = 'news-meta-info';
-                    if (newsItem.date) metaInfoDiv.innerHTML += `<span class="meta-tag"><span class="icon">⏳</span> ${newsItem.date}</span>`;
-                    if (newsItem.location) metaInfoDiv.innerHTML += `<span class="meta-tag"><span class="icon">📍</span> ${newsItem.location}</span>`;
-                    if (newsItem.topic) metaInfoDiv.innerHTML += `<span class="meta-tag"><span class="icon">💭</span> ${newsItem.topic}</span>`;
-                    newsCardElement.appendChild(metaInfoDiv);
-
-                    const imageContainer = document.createElement('div');
-                    imageContainer.id = 'news-image-container';
-                    const newsImage = document.createElement('img');
-                    newsImage.id = 'news-image';
-                    let placeholder = document.createElement('div');
-                    placeholder.id = 'image-placeholder'; 
-                    placeholder.classList.add('loading-placeholder');
-                    imageContainer.appendChild(placeholder);
-                    newsImage.onload = () => { placeholder.style.display = 'none'; newsImage.classList.add('visible'); };
-                    newsImage.onerror = () => { placeholder.textContent = 'Görsel Yüklenemedi';};
-                    if (newsItem.imageUrl) newsImage.src = newsItem.imageUrl; else placeholder.textContent = 'Görsel Yok';
-                    imageContainer.appendChild(newsImage);
-                    newsCardElement.appendChild(imageContainer);
-
-                    const headlineDiv = document.createElement('div');
-                    headlineDiv.id = 'news-headline';
-                    headlineDiv.textContent = newsItem.headline;
-                    newsCardElement.appendChild(headlineDiv);
-                    
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                           if (newsCardElement) newsCardElement.classList.add('loaded');
-                           setupMainSwipeControls();
-                        });
-                    });
-                } else {
-                    endGame();
-                }
-            }
-            
-            function handleSwipe(directionOrReason) {
-                if (!gameActive) return;
-                gameActive = false; 
-                stopQuestionTimer();
-
-                if (directionOrReason === 'timeout') {
-                    if(newsCardElement) newsCardElement.classList.add('removing-left'); 
-                } else if (newsCardElement) {
-                     newsCardElement.classList.add(directionOrReason === 'right' ? 'removing-right' : 'removing-left');
-                }
-                
-                const newsItem = shuffledNews[currentNewsIndex];
-                let userChoiceIsReal;
-                if (directionOrReason === 'timeout') { userChoiceIsReal = null; } 
-                else { userChoiceIsReal = (directionOrReason === 'right'); }
-                
-                setTimeout(() => {
-                    processAnswer(userChoiceIsReal, newsItem, directionOrReason === 'timeout');
-                }, newsCardElement ? 450 : 0);
-            }
-
-            function processAnswer(userChoiceIsReal, newsItem, timedOut = false) {
-                let correct = false;
-                if (!timedOut) { correct = (userChoiceIsReal === newsItem.isReal); }
-
-                if (displays.feedbackArea) { displays.feedbackArea.classList.remove('hidden'); displays.feedbackArea.classList.add('visible'); }
-                if (displays.sourceLink) { displays.sourceLink.classList.add('hidden'); if(displays.sourceLinkText) displays.sourceLinkText.textContent = "📰 Kaynak Habere Git"; if(displays.sourceLinkSpinner) displays.sourceLinkSpinner.classList.add('hidden');}
-                if (displays.explanationText) displays.explanationText.classList.add('hidden');
-
-                if (correct) {
-                    correctAnswers++;
-                    score = calculateCurrentScore();
-                    if (displays.feedbackText) {
-                        displays.feedbackText.textContent = "Doğru! 👍";
-                        displays.feedbackText.className = 'correct';
-                        createConfetti();
-                    }
-                    if (newsItem.isReal) {
-                        if (displays.feedbackText) displays.feedbackText.textContent += " Bu gerçekten yaşandı!";
-                        if (newsItem.source && displays.sourceLink) { displays.sourceLink.href = newsItem.source; displays.sourceLink.classList.remove('hidden'); }
-                    } else {
-                         if (displays.feedbackText) displays.feedbackText.textContent += " Bu uydurma bir haberdi.";
-                        if (newsItem.explanation && displays.explanationText) { displays.explanationText.textContent = newsItem.explanation; displays.explanationText.classList.remove('hidden'); }
-                    }
-                } else {
-                    if (displays.feedbackText) {
-                        displays.feedbackText.textContent = timedOut ? "Süre Doldu! 😟" : "Yanlış! 👎";
-                        displays.feedbackText.className = 'incorrect';
-                        if(gameContainer && !timedOut) gameContainer.classList.add('shake');
-                        setTimeout(()=> { if(gameContainer) gameContainer.classList.remove('shake'); }, 300);
-                    }
-                    if (!timedOut) {
-                        if (newsItem.isReal) {
-                           if (displays.feedbackText) displays.feedbackText.textContent += " Bu aslında gerçek bir haberdi.";
-                            if (newsItem.source && displays.sourceLink) { displays.sourceLink.href = newsItem.source; displays.sourceLink.classList.remove('hidden'); }
-                        } else {
-                           if (displays.feedbackText) displays.feedbackText.textContent += " Bu haber uydurmaydı.";
-                            if (newsItem.explanation && displays.explanationText) { displays.explanationText.textContent = newsItem.explanation; displays.explanationText.classList.remove('hidden');}
-                        }
-                    }
-                }
-                updateGameStats(); // D:X / S:Y güncelle
-                if(displays.score) displays.score.textContent = `Skor: ${score}`; // Skoru da güncelle
-            }
-
-            function nextNewsItem() {
-                if (displays.feedbackArea) {
-                     displays.feedbackArea.classList.remove('visible');
-                     setTimeout(() => { displays.feedbackArea.classList.add('hidden');}, 400);
-                }
-                currentNewsIndex++;
-                if (currentNewsIndex < shuffledNews.length) {
-                    gameActive = true;
-                    loadNewsCard();
-                } else {
-                    endGame();
-                }
-            }
-
-            function startGame() {
-                shuffledNews = [...newsItems];
-                shuffledNews = shuffledNews.slice(0, Math.min(10, shuffledNews.length));
-
-                currentNewsIndex = 0; score = 0; correctAnswers = 0;
-                totalGameSecondsElapsed = 0;
-                
-                if (displays.feedbackArea) { displays.feedbackArea.classList.add('hidden'); displays.feedbackArea.classList.remove('visible');}
-                
-                if (displays.gameStats) displays.gameStats.textContent = `D: 0 / S: ${shuffledNews.length}`;
-                if (displays.score) displays.score.textContent = `Skor: 0`; // Skoru sıfırla
-                if (displays.timerText) displays.timerText.textContent = `${QUESTION_TIME_LIMIT}s`; // Zamanlayıcıyı göster
-                
-                loadNewsCard(); 
-                startGameTimer();
-                showScreen('game');
-                gameActive = true;
-            }
-
-            function endGame() {
-                gameActive = false;
-                stopQuestionTimer(); stopGameTimer(); 
-                
-                const totalQuestionsAttempted = shuffledNews.length;
-                const percentage = totalQuestionsAttempted > 0 ? Math.round((correctAnswers / totalQuestionsAttempted) * 100) : 0;
-
-                if (displays.finalCorrect) displays.finalCorrect.textContent = correctAnswers;
-                if (displays.timeTaken) displays.timeTaken.textContent = `${totalGameSecondsElapsed}s`;
-                
-                const finalCalcScore = finalScoreFormula(correctAnswers, totalGameSecondsElapsed);
-                if (displays.calculatedScore) displays.calculatedScore.textContent = finalCalcScore;
-
-                if(displays.correctAnswerBar) displays.correctAnswerBar.style.width = `${percentage}%`;
-                if(displays.correctAnswerPercentage) displays.correctAnswerPercentage.textContent = `${percentage}%`;
-
-                saveScoreToLocalStorage(finalCalcScore, correctAnswers, totalGameSecondsElapsed);
-                showScreen('result');
-            }
-
-            function saveScoreToLocalStorage(playerScore, correct, time) {
-                const scores = getScoresFromLocalStorage();
-                const newScoreEntry = { 
-                    score: playerScore, correct: correct, time: time, 
-                    date: new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) 
-                };
-                scores.push(newScoreEntry);
-                scores.sort((a, b) => b.score - a.score);
-                localStorage.setItem('gercektenYasandiScores_vFinal', JSON.stringify(scores.slice(0, 5)));
-            }
-
-            function getScoresFromLocalStorage() {
-                const scores = localStorage.getItem('gercektenYasandiScores_vFinal');
-                return scores ? JSON.parse(scores) : [];
-            }
-
-            function displayScoreboard() {
-                const scores = getScoresFromLocalStorage();
-                if (displays.scoreList) {
-                    displays.scoreList.innerHTML = '';
-                    if (scores.length === 0) {
-                        displays.scoreList.innerHTML = '<li>Henüz kayıtlı skor yok.</li>';
-                    } else {
-                        scores.forEach(entry => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `<span>Skor: ${entry.score} (D:${entry.correct}, S:${entry.time}s)</span> <span class="date">${entry.date}</span>`;
-                            displays.scoreList.appendChild(li);
-                        });
-                    }
-                }
-                showScreen('scoreboard');
-            }
-
-            function shareScore() { /* ... önceki gibi ... */ 
-                 const shareText = `Gerçekten Yaşandı oyununda ${displays.calculatedScore ? displays.calculatedScore.textContent : 'bir'} puan aldım! Sen de oyna!`;
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'Gerçekten Yaşandı Skor', text: shareText, url: window.location.href
-                    }).catch((error) => {
-                        console.warn('Paylaşım API hatası veya iptal:', error);
-                        prompt("Skorunu kopyala ve paylaş:", shareText);
-                      });
-                } else {
-                    prompt("Skorunu kopyala ve paylaş:", shareText);
-                }
-            }
-            
-            function safelyAddEventListener(button, event, handler) {
-                if (button) button.addEventListener(event, handler);
-            }
-
-            safelyAddEventListener(buttons.start, 'click', startGame);
-            safelyAddEventListener(buttons.next, 'click', nextNewsItem);
-            safelyAddEventListener(buttons.restart, 'click', startGame);
-            safelyAddEventListener(buttons.viewScores, 'click', displayScoreboard);
-            safelyAddEventListener(buttons.backToStart, 'click', () => showScreen('start'));
-            safelyAddEventListener(buttons.shareScore, 'click', shareScore);
-
-            if (displays.sourceLink) {
-                displays.sourceLink.addEventListener('click', function(e) {
-                    // e.preventDefault(); // Eğer linkin varsayılan davranışını hemen engellemek istemiyorsak
-                    if(displays.sourceLinkText) displays.sourceLinkText.textContent = "Yönlendiriliyor...";
-                    if(displays.sourceLinkSpinner) displays.sourceLinkSpinner.classList.remove('hidden');
-                    // Kullanıcı yeni sekmeye geçtiği için bu timeout'un geri alma etkisi sınırlı olabilir.
-                    // setTimeout(() => {
-                    //     if(displays.sourceLinkText) displays.sourceLinkText.textContent = "📰 Kaynak Habere Git";
-                    //     if(displays.sourceLinkSpinner) displays.sourceLinkSpinner.classList.add('hidden');
-                    // }, 3000); 
-                });
-            }
-
-            const onboardingComplete = localStorage.getItem('onboardingComplete_v3');
-            if (!onboardingComplete && screens.onboarding) { // Onboarding ekranı varsa göster
-                showScreen('onboarding');
-                showOnboardingSlide(0);
-            } else if (screens.start) { // Yoksa direkt başlangıç ekranı
-                showScreen('start');
-            } else { // Hiçbiri yoksa (beklenmedik durum)
-                console.error("Başlangıç veya onboarding ekranı bulunamadı.");
-            }
+        if (buttons.nextOnboarding) buttons.nextOnboarding.addEventListener('click', () => {
+            if (currentOnboardingSlide < displays.onboardingSlides.length - 1) showOnboardingSlide(currentOnboardingSlide + 1);
         });
+        if (buttons.prevOnboarding) buttons.prevOnboarding.addEventListener('click', () => {
+            if (currentOnboardingSlide > 0) showOnboardingSlide(currentOnboardingSlide - 1);
+        });
+        if (buttons.finishOnboarding) buttons.finishOnboarding.addEventListener('click', finishOnboarding);
+        if (buttons.skipOnboarding) buttons.skipOnboarding.addEventListener('click', finishOnboarding);
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateGameStatsDisplay() {
+            if (displays.currentQuestionStat) displays.currentQuestionStat.textContent = shuffledNews.length > 0 ? currentNewsIndex + 1 : 0;
+            if (displays.totalQuestionsStat) displays.totalQuestionsStat.textContent = shuffledNews.length;
+            if (displays.currentScoreStat) displays.currentScoreStat.textContent = score;
+        }
+        function finalScoreFormula(correct, totalTime, totalQuestions) {
+            if (totalQuestions === 0) return 0;
+            const baseScorePerCorrect = 100;
+            const timeBonusFactor = Math.max(0, (totalQuestions * QUESTION_TIME_LIMIT) - totalTime) * 0.5;
+            return (correct * baseScorePerCorrect) + Math.floor(timeBonusFactor);
+        }
+
+        function startGame() {
+            currentNewsIndex = 0; score = 0; correctAnswers = 0;
+            totalGameSecondsElapsed = 0; gameActive = true;
+            if (!newsItems || newsItems.length === 0) {
+                alert("Oyun verileri yüklenemedi."); showScreen('start'); return;
+            }
+            shuffledNews = shuffleArray([...newsItems]);
+            if (shuffledNews.length === 0) {
+                alert("Oyun başlatılamıyor: Soru bulunamadı."); showScreen('start'); return;
+            }
+            if (displays.feedbackArea) displays.feedbackArea.style.transform = 'translateY(100%)';
+            if (newsCardElement) {
+                 newsCardElement.classList.remove('removing-left', 'removing-right', 'swiping', 'loaded');
+                 newsCardElement.style.opacity = '0';
+                 newsCardElement.style.transform = 'scale(0.95) translateY(10px)';
+            }
+            showScreen('game');
+            updateGameStatsDisplay();
+            loadNewsCard();
+            startGameTimer();
+        }
+
+        function loadNewsCard() {
+            if (!gameActive && currentNewsIndex >= shuffledNews.length) {
+                 if(gameActive) endGame(); return;
+            }
+            if (currentNewsIndex >= shuffledNews.length) { endGame(); return; }
+            if (displays.feedbackArea) displays.feedbackArea.style.transform = 'translateY(100%)';
+            const newsItem = shuffledNews[currentNewsIndex];
+            if (!newsItem) { endGame(); return; }
+
+            const headlineEl = document.getElementById('news-headline');
+            const imageEl = document.getElementById('news-image');
+            const imagePlaceholderEl = document.getElementById('image-placeholder');
+            const metaTagEl = document.querySelector('#news-meta-info .meta-tag');
+            const metaSourceEl = document.querySelector('#news-meta-info .meta-source');
+
+            if (!newsCardElement || !headlineEl || !imageEl || !imagePlaceholderEl || !metaTagEl || !metaSourceEl) {
+                console.error("Haber kartı için HTML elementleri eksik!"); endGame(); return;
+            }
+            newsCardElement.style.opacity = '0';
+            newsCardElement.style.transform = 'scale(0.95) translateY(10px) translateX(0)';
+            newsCardElement.classList.remove('loaded', 'swiping', 'removing-left', 'removing-right');
+
+            headlineEl.textContent = newsItem.headline;
+            metaTagEl.textContent = newsItem.isAdvertorial ? "TANITIM" : "HABER";
+            metaSourceEl.textContent = newsItem.sourceName || "";
+
+            imagePlaceholderEl.style.display = 'flex';
+            imageEl.style.opacity = '0'; imageEl.src = "";
+            imageEl.onload = () => { imageEl.style.opacity = '1'; imagePlaceholderEl.style.display = 'none'; };
+            imageEl.onerror = () => { imagePlaceholderEl.style.display = 'flex'; imageEl.style.opacity = '0'; };
+            imageEl.src = newsItem.image;
+
+            setTimeout(() => {
+                newsCardElement.style.opacity = '1';
+                newsCardElement.style.transform = 'scale(1) translateY(0)';
+                newsCardElement.classList.add('loaded');
+                startQuestionTimer();
+                setupMainSwipeControls();
+            }, 50);
+            updateGameStatsDisplay();
+        }
+        function startQuestionTimer() {
+            stopQuestionTimer();
+            questionTimeLeft = QUESTION_TIME_LIMIT;
+            if (displays.timerText) displays.timerText.textContent = `${questionTimeLeft}s`;
+            if (displays.tensionProgressBar) {
+                displays.tensionProgressBar.style.width = '100%';
+                displays.tensionProgressBar.style.backgroundColor = 'var(--accent-green)';
+            }
+            questionTimerInterval = setInterval(() => {
+                questionTimeLeft--;
+                if (displays.timerText) displays.timerText.textContent = `${questionTimeLeft}s`;
+                if (displays.tensionProgressBar) displays.tensionProgressBar.style.width = `${(questionTimeLeft / QUESTION_TIME_LIMIT) * 100}%`;
+                if (questionTimeLeft <= 5 && displays.tensionProgressBar) {
+                     displays.tensionProgressBar.style.backgroundColor = 'var(--accent-red)';
+                }
+                if (questionTimeLeft <= 0) {
+                    stopQuestionTimer();
+                    processAnswer(null, shuffledNews[currentNewsIndex], true);
+                }
+            }, 1000);
+        }
+        function stopQuestionTimer() { clearInterval(questionTimerInterval); }
+
+        function startGameTimer() {
+            stopGameTimer(); totalGameSecondsElapsed = 0;
+            gameTimerInterval = setInterval(() => { totalGameSecondsElapsed++; }, 1000);
+        }
+        function stopGameTimer() { clearInterval(gameTimerInterval); }
+
+        function processAnswer(userChoiceIsReal, newsItem, timedOut = false) {
+            if (!gameActive && !timedOut) return; // Sadece zaman aşımı değilse ve oyun aktif değilse çık
+            stopQuestionTimer();
+            gameActive = false;
+
+            const correct = timedOut ? false : userChoiceIsReal === newsItem.isReal;
+            if (correct && !timedOut) {
+                score += 10 + Math.max(0, questionTimeLeft);
+                correctAnswers++;
+            }
+
+            if (displays.feedbackText) {
+                let feedbackKey;
+                if (timedOut) feedbackKey = 'timeout';
+                else if (correct) feedbackKey = newsItem.isReal ? 'correctReal' : 'correctFake';
+                else feedbackKey = newsItem.isReal ? 'incorrectReal' : 'incorrectFake';
+                const feedbackOptions = feedbackTexts[feedbackKey] || ["Yanıt İşlendi"];
+                displays.feedbackText.textContent = feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)];
+                displays.feedbackText.className = correct && !timedOut ? 'correct' : 'incorrect'; // timeout durumunda da incorrect classı
+            }
+            if (displays.explanationText) displays.explanationText.textContent = newsItem.explanation || "";
+            if (displays.sourceLink) {
+                if (newsItem.source_link && newsItem.source_link !== "#" && !newsItem.source_link.toLowerCase().includes("sahte haber")) {
+                    displays.sourceLink.href = newsItem.source_link;
+                    displays.sourceLink.style.display = 'inline-flex';
+                    if (displays.sourceLinkText) displays.sourceLinkText.textContent = "Kaynağı Gör";
+                } else {
+                    displays.sourceLink.style.display = 'none';
+                }
+            }
+            if (displays.feedbackArea) displays.feedbackArea.style.transform = 'translateY(0%)';
+            if (buttons.next) buttons.next.focus();
+        }
+
+        function nextNewsItem() {
+            currentNewsIndex++;
+            gameActive = true;
+            if (currentNewsIndex < shuffledNews.length) {
+                loadNewsCard();
+            } else {
+                endGame();
+            }
+        }
+        function endGame() {
+            stopGameTimer(); gameActive = false;
+            const finalCalculatedScore = finalScoreFormula(correctAnswers, totalGameSecondsElapsed, shuffledNews.length);
+            if(displays.finalCorrect) displays.finalCorrect.textContent = correctAnswers;
+            if(displays.timeTaken) displays.timeTaken.textContent = `${totalGameSecondsElapsed}s`;
+            if(displays.calculatedScore) displays.calculatedScore.textContent = finalCalculatedScore;
+            saveScoreToLocalStorage(finalCalculatedScore, correctAnswers, totalGameSecondsElapsed);
+            showScreen('result');
+        }
+         function saveScoreToLocalStorage(playerScore, correct, time) {
+            const maxScores = 5;
+            let scores = JSON.parse(localStorage.getItem('gercektenYasandiScores_vFinalFix2') || '[]');
+            const newScoreEntry = { score: playerScore, correct: correct, time: time, date: new Date().toLocaleDateString('tr-TR') };
+            scores.push(newScoreEntry);
+            scores.sort((a, b) => b.score - a.score || a.time - b.time);
+            scores = scores.slice(0, maxScores);
+            localStorage.setItem('gercektenYasandiScores_vFinalFix2', JSON.stringify(scores));
+        }
+        function getScoresFromLocalStorage() {
+            return localStorage.getItem('gercektenYasandiScores_vFinalFix2');
+        }
+
+        function displayScoreboard() {
+            const scores = JSON.parse(getScoresFromLocalStorage() || '[]');
+            if (displays.scoreList) {
+                displays.scoreList.innerHTML = '';
+                if (scores.length === 0) {
+                    displays.scoreList.innerHTML = '<li>Henüz kayıtlı skor yok.</li>';
+                } else {
+                    scores.forEach(s => {
+                        const li = document.createElement('li');
+                        li.style.padding = "10px 5px";
+                        li.style.borderBottom = "1px solid var(--border-color)";
+                        li.innerHTML = `<strong>${s.score} Puan</strong> - ${s.correct} Doğru (${s.time}s) <span style="float:right; font-size:0.8em; color:var(--text-secondary);">${s.date}</span>`;
+                        displays.scoreList.appendChild(li);
+                    });
+                }
+            }
+            showScreen('scoreboard');
+        }
+
+        function setupMainSwipeControls() {
+            if (mainHammerInstance) { mainHammerInstance.destroy(); }
+            if (!newsCardElement) return;
+            mainHammerInstance = new Hammer(newsCardElement);
+            mainHammerInstance.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL, threshold: 40 });
+            mainHammerInstance.on('panstart', (ev) => { if (!gameActive) return; });
+            mainHammerInstance.on('panmove', (ev) => {
+                if (!gameActive) return;
+                newsCardElement.style.transform = `translateX(${ev.deltaX}px) rotate(${ev.deltaX / 20}deg) scale(1)`;
+                newsCardElement.classList.add('swiping');
+            });
+            mainHammerInstance.on('panend', (ev) => {
+                if (!gameActive) return;
+                newsCardElement.classList.remove('swiping');
+                const threshold = newsCardElement.offsetWidth * 0.35; // Kaydırma eşiği biraz düşürüldü
+                if (Math.abs(ev.deltaX) > threshold) {
+                    const direction = ev.deltaX > 0 ? 'right' : 'left';
+                    newsCardElement.classList.add(direction === 'right' ? 'removing-right' : 'removing-left');
+                    setTimeout(() => { // CSS animasyonunun bitmesini bekle
+                        processAnswer(direction === 'right', shuffledNews[currentNewsIndex]);
+                    }, 250); // CSS transition süresine yakın
+                } else {
+                    newsCardElement.style.transform = 'translateX(0) rotate(0deg) scale(1)'; // Kartı geri yerine al
+                }
+            });
+        }
+
+        function safelyAddEventListener(button, event, handler) { if (button) button.addEventListener(event, handler); }
+        safelyAddEventListener(buttons.start, 'click', startGame);
+        safelyAddEventListener(buttons.next, 'click', nextNewsItem);
+        safelyAddEventListener(buttons.restart, 'click', startGame);
+        safelyAddEventListener(buttons.viewScores, 'click', displayScoreboard);
+        safelyAddEventListener(buttons.backToStartResult, 'click', () => showScreen('start'));
+        safelyAddEventListener(buttons.backToStartScoreboard, 'click', () => showScreen('start'));
+
+        const onboardingComplete = localStorage.getItem('onboardingComplete_v4');
+        if (!onboardingComplete && screens.onboarding) {
+            showScreen('onboarding');
+            if (displays.onboardingSlidesWrapper && displays.onboardingSlides.length > 0) {
+                 showOnboardingSlide(0);
+            } else { finishOnboarding(); }
+        } else if (screens.start) {
+            showScreen('start');
+        } else if (screens.onboarding) { // Fallback
+             showScreen('onboarding');
+             if (displays.onboardingSlidesWrapper && displays.onboardingSlides.length > 0) {
+                 showOnboardingSlide(0);
+            }
+        } else {
+            console.error("Başlangıç ekranları bulunamadı.");
+            if(gameContainer) gameContainer.innerHTML = "<p style='color:red; text-align:center; padding:20px;'>Uygulama yüklenemedi.</p>";
+        }
+    });
     </script>
 </body>
 </html>
