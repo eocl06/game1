@@ -18,8 +18,8 @@
 .btn-secondary { background-color: #E5E7EB; color: #1F2937; }
 .lexend-font { font-family: 'Lexend', "Noto Sans", sans-serif; }
 .card-gradient { background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.8) 100%); }
-.primary-color-text { color: #0c7ff2; } 
-.primary-color-bg { background-color: #0c7ff2; } 
+.primary-color-text { color: #0c7ff2; } 
+.primary-color-bg { background-color: #0c7ff2; } 
 .news-button-disabled { opacity: 0.6; pointer-events: none; }
 .correct-feedback { background-color: #EBF9F0; border-left: 4px solid #34D399; }
 .incorrect-feedback { background-color: #FEE2E2; border-left: 4px solid #F87171; }
@@ -58,15 +58,24 @@ body.loading #appRoot > .main-screen-view { opacity: 0; transition: none !import
 @keyframes cardEnterAnim { to { transform: translateY(0) scale(1) rotateX(0deg); opacity: 1; } }
 #newsCard.enter-anim { visibility: hidden; opacity: 0; transform: translateY(60px) scale(0.95) rotateX(-15deg); }
 #newsCard.enter-anim.active { visibility: visible; animation: cardEnterAnim 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+/* YENİ EKLENEN STİLLER */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+/* YENİ EKLENEN STİLLER BİTTİ */
 </style>
 </head>
 <body class="bg-slate-50 lexend-font loading">
-<div id="appRoot" class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
+<div id="appRoot" class="relative flex size-full flex-col group/design-root overflow-x-hidden">
 
-<div id="homeScreen" class="main-screen-view flex flex-col min-h-screen">
+<div id="homeScreen" class="main-screen-view flex flex-col h-full">
 <header id="homeHeader" class="bg-white shadow-sm sticky top-0 z-20">
 <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-<div class="w-10"></div> 
+<div class="w-10"></div> 
 <h1 class="text-xl font-bold text-slate-800 text-center">NewsSwipe</h1>
 <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated">
 <span class="material-icons">settings</span>
@@ -106,7 +115,7 @@ body.loading #appRoot > .main-screen-view { opacity: 0; transition: none !import
 </footer>
 </div>
 
-<div id="gameScreen" class="main-screen-view hidden flex-col min-h-screen">
+<div id="gameScreen" class="main-screen-view hidden flex-col h-full">
 <div class="relative flex size-full flex-col bg-white group/design-root overflow-x-hidden lexend-font">
 <header class="sticky top-0 z-20 bg-white shadow-sm">
 <div class="flex items-center p-4 pb-3">
@@ -200,11 +209,11 @@ Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong
 </div>
 </div>
 
-<div id="feedbackScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto">
+<div id="feedbackScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto h-full">
 <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-3xl items-center justify-end p-3 sm:p-4"> <button id="closeFeedbackBtn" class="flex items-center justify-center rounded-full text-slate-700 hover:bg-slate-100 p-2 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 btn-animated"> <span class="material-icons-outlined">close</span> </button> </div> </header> <main class="flex-grow px-4 sm:px-6 py-6 sm:py-8"> <div class="mx-auto max-w-md text-center feedback-content-appear"> <div class="mb-6 sm:mb-8"> <span id="feedbackIcon" class="material-icons-outlined" style="font-size: 56px sm:font-size: 64px;"></span> <h2 id="feedbackTitle" class="mt-3 sm:mt-4 text-2xl sm:text-3xl font-bold text-slate-800"></h2> </div> <div id="feedbackBox" class="rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8"> <p id="feedbackText" class="text-slate-700 text-sm sm:text-base leading-relaxed"></p> </div> <div id="feedbackSourceSection" class="hidden rounded-lg bg-white p-5 sm:p-6 shadow-lg text-left"> <h3 class="text-lg sm:text-xl font-semibold text-slate-800 mb-3">Kaynak İncelemesi</h3> <a id="feedbackSourceLinkTag" class="flex items-center gap-3 text-slate-600 hover:text-blue-600 transition-colors group" href="#" target="_blank" rel="noopener noreferrer"> <div class="flex items-center justify-center rounded-lg bg-slate-100 group-hover:bg-blue-50 p-3 shrink-0"> <span class="material-icons-outlined text-slate-500 group-hover:text-blue-500">link</span> </div> <p id="feedbackSourceName" class="text-sm sm:text-base font-medium flex-1 truncate"></p> <span class="material-icons-outlined text-slate-400 group-hover:text-blue-500 text-lg">arrow_forward_ios</span> </a> </div> </div> </main> <footer class="sticky bottom-0 bg-white border-t border-slate-200 p-4"> <div class="mx-auto max-w-md"> <button id="feedbackNextButton" class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-[#0b80ee] text-white text-lg font-semibold leading-normal tracking-[0.015em] hover:bg-[#0968c3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0b80ee] focus:ring-offset-2 btn-animated"> <span class="truncate">Sonraki Soru</span> </button> </div> </footer>
 </div>
 
-<div id="resultsScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto"> <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-7xl items-center justify-between p-4"> <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full btn-animated"> <span class="material-symbols-outlined">close</span> </button> <h1 class="text-xl font-semibold text-slate-900">Sonuçlar</h1> <div class="w-8 sm:w-10"></div> </div> </header> <main class="flex-1 overflow-y-auto px-6 py-8"> <div class="mx-auto max-w-md text-center"> <div class="mb-8 rounded-xl bg-white p-6 shadow-lg feedback-content-appear"> <h2 class="text-3xl sm:text-4xl font-bold text-slate-800">Skorun: <span id="finalScoreValue" class="text-blue-600">0/0</span></h2> <p class="mt-1 text-slate-600">En Yüksek Skor: <span id="highScoreDisplay" class="font-medium text-slate-700">0/0</span></p> <p class="mt-2 text-slate-600">Harcanan Süre: <span id="timeTakenValue" class="font-medium text-slate-700">0 dakika 0 saniye</span></p> <h4 class="text-lg font-semibold text-slate-700 mt-6 mb-2">Başarımlar</h4> <div id="achievementsDisplay" class="text-sm text-green-600"> </div> </div> <div class="rounded-xl bg-white p-6 shadow-lg"> <div class="flex items-center justify-between mb-6"> <h3 class="text-2xl font-semibold text-slate-800">Liderlik Tablosu</h3> <span class="material-symbols-outlined text-yellow-500 !text-3xl">emoji_events</span> </div> <div class="space-y-4"> <div class="flex items-center justify-between rounded-lg bg-slate-100 p-4 transition-all hover:bg-slate-200"> <div class="flex items-center gap-3"><span class="text-lg font-semibold text-slate-700">1.</span><p class="text-slate-700 font-medium">Oyuncu1 (Bot)</p></div> <p class="font-semibold text-slate-700">7/7</p> </div> <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 text-blue-700 ring-2 ring-blue-500"> <div class="flex items-center gap-3"><span class="text-lg font-semibold">★</span><p id="yourLeaderboardName" class="font-medium">SEN</p></div> <p id="yourLeaderboardScoreResults" class="font-semibold">0/0</p> </div> </div> </div> </div> </main> <footer class="sticky bottom-0 bg-white/80 backdrop-blur-md p-4 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"> <div class="mx-auto flex max-w-md flex-col gap-3"> <button id="playAgainBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#dce8f3] px-5 text-base font-bold text-slate-900 tracking-wide shadow-sm transition-colors hover:bg-[#c9d9e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dce8f3] btn-animated"> <span class="material-symbols-outlined mr-2">replay</span>Tekrar Oyna </button> <button id="backToHomeResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-slate-200 px-5 text-base font-bold text-slate-700 tracking-wide shadow-sm transition-colors hover:bg-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 btn-animated"> <span class="material-symbols-outlined mr-2">home</span>Ana Sayfaya Dön </button> </div> </footer> </div>
+<div id="resultsScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto h-full"> <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-7xl items-center justify-between p-4"> <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full btn-animated"> <span class="material-symbols-outlined">close</span> </button> <h1 class="text-xl font-semibold text-slate-900">Sonuçlar</h1> <div class="w-8 sm:w-10"></div> </div> </header> <main class="flex-1 overflow-y-auto px-6 py-8"> <div class="mx-auto max-w-md text-center"> <div class="mb-8 rounded-xl bg-white p-6 shadow-lg feedback-content-appear"> <h2 class="text-3xl sm:text-4xl font-bold text-slate-800">Skorun: <span id="finalScoreValue" class="text-blue-600">0/0</span></h2> <p class="mt-1 text-slate-600">En Yüksek Skor: <span id="highScoreDisplay" class="font-medium text-slate-700">0/0</span></p> <p class="mt-2 text-slate-600">Harcanan Süre: <span id="timeTakenValue" class="font-medium text-slate-700">0 dakika 0 saniye</span></p> <h4 class="text-lg font-semibold text-slate-700 mt-6 mb-2">Başarımlar</h4> <div id="achievementsDisplay" class="text-sm text-green-600"> </div> </div> <div class="rounded-xl bg-white p-6 shadow-lg"> <div class="flex items-center justify-between mb-6"> <h3 class="text-2xl font-semibold text-slate-800">Liderlik Tablosu</h3> <span class="material-symbols-outlined text-yellow-500 !text-3xl">emoji_events</span> </div> <div class="space-y-4"> <div class="flex items-center justify-between rounded-lg bg-slate-100 p-4 transition-all hover:bg-slate-200"> <div class="flex items-center gap-3"><span class="text-lg font-semibold text-slate-700">1.</span><p class="text-slate-700 font-medium">Oyuncu1 (Bot)</p></div> <p class="font-semibold text-slate-700">7/7</p> </div> <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 text-blue-700 ring-2 ring-blue-500"> <div class="flex items-center gap-3"><span class="text-lg font-semibold">★</span><p id="yourLeaderboardName" class="font-medium">SEN</p></div> <p id="yourLeaderboardScoreResults" class="font-semibold">0/0</p> </div> </div> </div> </div> </main> <footer class="sticky bottom-0 bg-white/80 backdrop-blur-md p-4 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"> <div class="mx-auto flex max-w-md flex-col gap-3"> <button id="playAgainBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#dce8f3] px-5 text-base font-bold text-slate-900 tracking-wide shadow-sm transition-colors hover:bg-[#c9d9e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dce8f3] btn-animated"> <span class="material-symbols-outlined mr-2">replay</span>Tekrar Oyna </button> <button id="backToHomeResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-slate-200 px-5 text-base font-bold text-slate-700 tracking-wide shadow-sm transition-colors hover:bg-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 btn-animated"> <span class="material-symbols-outlined mr-2">home</span>Ana Sayfaya Dön </button> </div> </footer> </div>
 </div>
 
 <script>
@@ -221,38 +230,38 @@ const closeGameButton = document.getElementById('closeGameBtn');
 const currentQuestionDisplay = document.getElementById('currentQuestionDisplay');
 const totalQuestionsDisplay = document.getElementById('totalQuestionsDisplay');
 const scoreDisplay = document.getElementById('scoreDisplay');
-const streakCounter = document.getElementById('streakCounter'); 
+const streakCounter = document.getElementById('streakCounter'); 
 const progressBar = document.getElementById('progressBar');
 const timerMinutes = document.getElementById('timerMinutes');
 const timerSeconds = document.getElementById('timerSeconds');
 const newsCardContainer = document.getElementById('newsCardContainer');
 const newsCard = document.getElementById('newsCard');
 const newsImage = document.getElementById('newsImage');
-const newsTitle = document.getElementById('newsTitle'); 
+const newsTitle = document.getElementById('newsTitle'); 
 const newsSnippet = document.getElementById('newsSnippet');
 const swipeRealIndicator = document.getElementById('swipeRealIndicator');
 const swipeFakeIndicator = document.getElementById('swipeFakeIndicator');
 const timeUpPopup = document.getElementById('timeUpPopup');
 const timeUpOkButton = document.getElementById('timeUpOkButton');
 const feedbackScreen = document.getElementById('feedbackScreen');
-const closeFeedbackBtn = document.getElementById('closeFeedbackBtn'); 
+const closeFeedbackBtn = document.getElementById('closeFeedbackBtn'); 
 const feedbackIcon = document.getElementById('feedbackIcon');
 const feedbackTitle = document.getElementById('feedbackTitle');
 const feedbackBox = document.getElementById('feedbackBox');
 const feedbackText = document.getElementById('feedbackText');
 const feedbackSourceSection = document.getElementById('feedbackSourceSection');
-const feedbackSourceLinkTag = document.getElementById('feedbackSourceLinkTag'); 
-const feedbackSourceName = document.getElementById('feedbackSourceName'); 
+const feedbackSourceLinkTag = document.getElementById('feedbackSourceLinkTag'); 
+const feedbackSourceName = document.getElementById('feedbackSourceName'); 
 const feedbackNextButton = document.getElementById('feedbackNextButton');
 const resultsScreen = document.getElementById('resultsScreen');
 const finalScoreValue = document.getElementById('finalScoreValue');
-const highScoreDisplay = document.getElementById('highScoreDisplay'); 
+const highScoreDisplay = document.getElementById('highScoreDisplay'); 
 const timeTakenValue = document.getElementById('timeTakenValue');
-const achievementsDisplay = document.getElementById('achievementsDisplay'); 
+const achievementsDisplay = document.getElementById('achievementsDisplay'); 
 const playAgainBtn = document.getElementById('playAgainBtn');
 const backToHomeResultsBtn = document.getElementById('backToHomeResultsBtn');
 const closeResultsHeaderBtn = document.getElementById('closeResultsHeaderBtn');
-const yourLeaderboardScoreResults = document.getElementById('yourLeaderboardScoreResults'); 
+const yourLeaderboardScoreResults = document.getElementById('yourLeaderboardScoreResults'); 
 const homeNavHome = document.getElementById('homeNavHome');
 const homeNavScores = document.getElementById('homeNavScores');
 const homeNavProfile = document.getElementById('homeNavProfile');
@@ -263,7 +272,7 @@ const gameNavScores = document.getElementById('gameNavScores');
 if (!appRoot || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen) {
 console.error("Kritik HTML elementlerinden biri veya birkaçı DOM'da bulunamadı! Lütfen ID'leri kontrol edin.");
 if(document.body) document.body.innerHTML = "<p style='color:red; text-align:center; font-size:20px; margin-top:50px;'>Kritik bir hata oluştu. Lütfen geliştirici konsolunu kontrol edin.</p>";
-return; 
+return; 
 }
 
 const newsData = [
@@ -290,13 +299,13 @@ displaySourceName: "Milliyet",
 displaySourceLink: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262"
 },
 {
-  id: 3,
-  title: "Muhtar, Köyde Yapay Zekâ ile Düğün Organize Etti: 'Davulcuya Gerek Kalmadı!'",
-  snippet: "Çorum'un Bayat ilçesine bağlı bir köyde muhtar, köydeki genç çift için ChatGPT'den düğün organizasyonu planladı. Halay sırasını bile yapay zekâ belirledi.",
-  image: "https://i.ibb.co/4RZqspXY/image.png",
-  link: "#muhtar-chatgpt-dugun",
-  isReal: false,
-  explanation: "Yok artık, bu tamamen uydurma! Çorum'da muhtar ChatGPT'ye düğün planlatmış da, halay sırasını bile o belirlemiş falan... Kulağa komik geliyor ama maalesef (ya da neyse ki) böyle bir şey yaşanmamış. Sosyal medyada geyiği dönmüştür kesin, ama haber değeri yok, sallamasyon."
+  id: 3,
+  title: "Muhtar, Köyde Yapay Zekâ ile Düğün Organize Etti: 'Davulcuya Gerek Kalmadı!'",
+  snippet: "Çorum'un Bayat ilçesine bağlı bir köyde muhtar, köydeki genç çift için ChatGPT'den düğün organizasyonu planladı. Halay sırasını bile yapay zekâ belirledi.",
+  image: "https://i.ibb.co/4RZqspXY/image.png",
+  link: "#muhtar-chatgpt-dugun",
+  isReal: false,
+  explanation: "Yok artık, bu tamamen uydurma! Çorum'da muhtar ChatGPT'ye düğün planlatmış da, halay sırasını bile o belirlemiş falan... Kulağa komik geliyor ama maalesef (ya da neyse ki) böyle bir şey yaşanmamış. Sosyal medyada geyiği dönmüştür kesin, ama haber değeri yok, sallamasyon."
 },
 {
 id: 4,
@@ -310,13 +319,13 @@ displaySourceName: "Hemen Keşfet!",
 displaySourceLink: "https://www.bydauto.com.tr/tang"
 },
 {
-  id: 5,
-  title: "İstanbul'da Yeni Trafik Uygulaması: Korna Fazla Basana Ehliyet Dondurma Cezası!",
-  snippet: "İBB'nin başlattığı pilot uygulamada, trafikte 3 saniyeden uzun süre korna çalan sürücülerin ehliyetine 1 hafta el konuluyor. Tepkiler karışık.",
-  image: "https://i.ibb.co/RpB72wQm/image.png",
-  link: "#korna-cezasi-kurgu",
-  isReal: false,
-  explanation: "Keşke gerçek olsa diyenler olabilir ama bu haber de maalesef gerçek değil. İstanbul trafiğinde kornaya abananın ehliyetine el koymak... Güzel fikir ama şimdilik sadece hayal. Olsa kimse şaşırmazdı o ayrı konu tabii, o kornalarla az çekmedik!"
+  id: 5,
+  title: "İstanbul'da Yeni Trafik Uygulaması: Korna Fazla Basana Ehliyet Dondurma Cezası!",
+  snippet: "İBB'nin başlattığı pilot uygulamada, trafikte 3 saniyeden uzun süre korna çalan sürücülerin ehliyetine 1 hafta el konuluyor. Tepkiler karışık.",
+  image: "https://i.ibb.co/RpB72wQm/image.png",
+  link: "#korna-cezasi-kurgu",
+  isReal: false,
+  explanation: "Keşke gerçek olsa diyenler olabilir ama bu haber de maalesef gerçek değil. İstanbul trafiğinde kornaya abananın ehliyetine el koymak... Güzel fikir ama şimdilik sadece hayal. Olsa kimse şaşırmazdı o ayrı konu tabii, o kornalarla az çekmedik!"
 }
 ,
 { id: 6, title: "Ankara'da 3+1 Diye Aldığı Daire, 1+1 Çıktı!", snippet: "Almanya’da yaşayan Mehmet Ü., Ankara’da 140 metrekare olarak satın aldığı dairenin aslında 78 metrekare ve 1+1 olduğunu fark edince şoke oldu. Konuyla ilgili dava açıldı.", image: "https://i.ibb.co/MxBPdvqN/image.png", link: "https://www.ensonhaber.com/3-sayfa/ankarada-31-diye-aldigi-daire-11-cikti", isReal: true, explanation: "Ah be Mehmet abi! Bu haber maalesef gerçek. Almanya'dan gelip Ankara'da 'Geniş geniş otururum' diye aldığı ev, kuş yuvası çıkmış resmen. 3+1 diye al, 1+1 çıksın... Tam 'Türkiye'de emlakçılık' fıkrası gibi ama yaşanmış. Basında da bayağı konuşuldu bu olay." ,
@@ -329,15 +338,15 @@ displaySourceLink: "https://www.hurriyet.com.tr/gundem/4-yil-sonra-ogrendi-hayat
 displaySourceLink: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi" }
 
 ];
-let currentQuestionIndex = 0; score = 0; currentStreak = 0; 
+let currentQuestionIndex = 0; score = 0; currentStreak = 0; 
 let timerInterval; timeLeft = 15; const TIME_PER_QUESTION = 15;
 let gameStartTime; let gamePlayedAtLeastOnce = false;
 let achievements = JSON.parse(localStorage.getItem('newsSwipeAchievements_tr')) || { playedFirstGame: false, fiveInARow: false, scoreOver70Percent: false };
 
-let isSwiping = false; let isMouseSwiping = false; 
+let isSwiping = false; let isMouseSwiping = false; 
 let swipeStartX = 0; let swipeCurrentX = 0;
 const SWIPE_THRESHOLD = 70; // Sabit değer
-const CARD_MAX_ROTATION = 20; 
+const CARD_MAX_ROTATION = 20; 
 const CARD_ROTATION_FACTOR = CARD_MAX_ROTATION / 160; // Ortalama kart genişliğine göre oran (max-w-sm ~384px/2 ~ 190px, biraz daha azı)
 
 
@@ -357,86 +366,86 @@ if(timeUpOkButton) { timeUpOkButton.addEventListener('click', () => { handleAnsw
 
 function processSwipeDecision(isRealChoice) { if(!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = 'none'; if (isRealChoice) { newsCard.classList.add('fly-out-right'); swipeRealIndicator.classList.add('visible'); } else { newsCard.classList.add('fly-out-left'); swipeFakeIndicator.classList.add('visible'); } setTimeout(() => { handleAnswer(isRealChoice); }, 400); }
 function handleAnswer(userChoiceIsReal) {
-    if (!scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
-    clearInterval(timerInterval);
-    if(timerSeconds) timerSeconds.classList.remove('timer-pulse');
-    const currentQuestion = newsData[currentQuestionIndex];
-    const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
+    if (!scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
+    clearInterval(timerInterval);
+    if(timerSeconds) timerSeconds.classList.remove('timer-pulse');
+    const currentQuestion = newsData[currentQuestionIndex];
+    const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
 
-    if (userChoiceIsReal !== null && wasCorrect) {
-        score++;
-        currentStreak++;
-        if (currentStreak === 5) {
-            unlockAchievement('fiveInARow', "Harika Seri! (5 doğru)");
-        }
-    } else if (userChoiceIsReal !== null && !wasCorrect) {
-        currentStreak = 0;
-    }
-    if(userChoiceIsReal === null) currentStreak = 0; // Süre bittiyse de seri sıfırlanır
+    if (userChoiceIsReal !== null && wasCorrect) {
+        score++;
+        currentStreak++;
+        if (currentStreak === 5) {
+            unlockAchievement('fiveInARow', "Harika Seri! (5 doğru)");
+        }
+    } else if (userChoiceIsReal !== null && !wasCorrect) {
+        currentStreak = 0;
+    }
+    if(userChoiceIsReal === null) currentStreak = 0; // Süre bittiyse de seri sıfırlanır
 
-    scoreDisplay.textContent = score;
-    streakCounter.textContent = currentStreak;
+    scoreDisplay.textContent = score;
+    streakCounter.textContent = currentStreak;
 
-    // Reset classes for icon and box
-    feedbackIcon.className = "material-icons-outlined feedback-content-appear";
-    feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8 feedback-content-appear";
-    feedbackTitle.classList.add("feedback-content-appear");
-    
-    // Ensure source section is hidden by default at the start of feedback display.
-    // This line was already present and correctly placed.
-    feedbackSourceSection.classList.add('hidden'); 
+    // Reset classes for icon and box
+    feedbackIcon.className = "material-icons-outlined feedback-content-appear";
+    feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8 feedback-content-appear";
+    feedbackTitle.classList.add("feedback-content-appear");
+    
+    // Ensure source section is hidden by default at the start of feedback display.
+    // This line was already present and correctly placed.
+    feedbackSourceSection.classList.add('hidden'); 
 
-    let feedbackStr = "";
+    let feedbackStr = "";
 
-    if (userChoiceIsReal === null) { // Süre bitti
-        feedbackTitle.textContent = "Süre Bitti!";
-        feedbackIcon.textContent = "timer_off";
-        feedbackIcon.classList.add('timeup-icon');
-        feedbackBox.classList.add('incorrect-feedback'); 
-        feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`;
-        // Eski kaynak gösterme mantığı buradan kaldırıldı.
-    } else if (wasCorrect) { // Doğru cevap
-        feedbackTitle.textContent = "Bildin!";
-        feedbackIcon.textContent = "check_circle";
-        feedbackIcon.classList.add('status-icon-correct');
-        feedbackBox.classList.add('correct-feedback');
-        feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin.");
-        // Kaynak gösterme mantığı ortak alana taşındı.
-    } else { // Yanlış cevap
-        feedbackTitle.textContent = "Tekrar dene!";
-        feedbackIcon.textContent = "cancel";
-        feedbackIcon.classList.add('status-icon-incorrect');
-        feedbackBox.classList.add('incorrect-feedback');
-        feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`;
-        // Eski kaynak gösterme mantığı buradan kaldırıldı.
-    }
+    if (userChoiceIsReal === null) { // Süre bitti
+        feedbackTitle.textContent = "Süre Bitti!";
+        feedbackIcon.textContent = "timer_off";
+        feedbackIcon.classList.add('timeup-icon');
+        feedbackBox.classList.add('incorrect-feedback'); 
+        feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`;
+        // Eski kaynak gösterme mantığı buradan kaldırıldı.
+    } else if (wasCorrect) { // Doğru cevap
+        feedbackTitle.textContent = "Bildin!";
+        feedbackIcon.textContent = "check_circle";
+        feedbackIcon.classList.add('status-icon-correct');
+        feedbackBox.classList.add('correct-feedback');
+        feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin.");
+        // Kaynak gösterme mantığı ortak alana taşındı.
+    } else { // Yanlış cevap
+        feedbackTitle.textContent = "Tekrar dene!";
+        feedbackIcon.textContent = "cancel";
+        feedbackIcon.classList.add('status-icon-incorrect');
+        feedbackBox.classList.add('incorrect-feedback');
+        feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`;
+        // Eski kaynak gösterme mantığı buradan kaldırıldı.
+    }
 
-    feedbackText.innerHTML = feedbackStr; 
+    feedbackText.innerHTML = feedbackStr; 
 
-    // YENİ: Ortak kaynak gösterme mantığı
-    // Eğer soru için kaynak adı ve linki tanımlanmışsa, kaynak bölümünü göster.
-    if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) {
-        feedbackSourceName.textContent = currentQuestion.displaySourceName;
-        feedbackSourceLinkTag.href = currentQuestion.displaySourceLink;
-        feedbackSourceSection.classList.remove('hidden');
-    }
-    // Eğer kaynak bilgisi yoksa, `feedbackSourceSection` zaten yukarıda gizlendiği için gizli kalacaktır.
+    // YENİ: Ortak kaynak gösterme mantığı
+    // Eğer soru için kaynak adı ve linki tanımlanmışsa, kaynak bölümünü göster.
+    if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) {
+        feedbackSourceName.textContent = currentQuestion.displaySourceName;
+        feedbackSourceLinkTag.href = currentQuestion.displaySourceLink;
+        feedbackSourceSection.classList.remove('hidden');
+    }
+    // Eğer kaynak bilgisi yoksa, `feedbackSourceSection` zaten yukarıda gizlendiği için gizli kalacaktır.
 
-    feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru";
-    showScreen(feedbackScreen);
+    feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru";
+    showScreen(feedbackScreen);
 }
 function proceedToNextStep() { if (!progressBar) return; currentQuestionIndex++; progressBar.style.width = `${(currentQuestionIndex / newsData.length) * 100}%`; if (currentQuestionIndex < newsData.length) { showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); } else { endGame(); }}
 if(feedbackNextButton) feedbackNextButton.addEventListener('click', proceedToNextStep);
 if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextStep);
 function startGame() { if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) { console.error("Oyun başlatma için UI elementleri eksik"); return; } gameStartTime = Date.now(); currentQuestionIndex = 0; score = 0; currentStreak = 0; scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; totalQuestionsDisplay.textContent = newsData.length; progressBar.style.width = '0%'; unlockAchievement('playedFirstGame', "İlk Oyun!"); showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); }
-let gameEndTimeVariable; 
-function endGame() { if (!timeTakenValue || !finalScoreValue || !yourLeaderboardScoreResults || !highScoreDisplay) return; gamePlayedAtLeastOnce = true; clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse'); gameEndTimeVariable = Date.now(); const timeDiff = gameEndTimeVariable - gameStartTime; const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000); timeTakenValue.textContent = `${mins} dakika ${secs} saniye`; finalScoreValue.textContent = `${score}/${newsData.length}`; yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`; let hs = parseInt(localStorage.getItem('newsSwipeHighScore_tr')) || 0; if (score > hs) { hs = score; localStorage.setItem('newsSwipeHighScore_tr', hs); } highScoreDisplay.textContent = `${hs}/${newsData.length}`;  if (newsData.length > 0 && score / newsData.length >= 0.7) { unlockAchievement('scoreOver70Percent', "Yüksek Skorlu Oyuncu!"); } displayUnlockedAchievements(); showScreen(resultsScreen); }
+let gameEndTimeVariable; 
+function endGame() { if (!timeTakenValue || !finalScoreValue || !yourLeaderboardScoreResults || !highScoreDisplay) return; gamePlayedAtLeastOnce = true; clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse'); gameEndTimeVariable = Date.now(); const timeDiff = gameEndTimeVariable - gameStartTime; const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000); timeTakenValue.textContent = `${mins} dakika ${secs} saniye`; finalScoreValue.textContent = `${score}/${newsData.length}`; yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`; let hs = parseInt(localStorage.getItem('newsSwipeHighScore_tr')) || 0; if (score > hs) { hs = score; localStorage.setItem('newsSwipeHighScore_tr', hs); } highScoreDisplay.textContent = `${hs}/${newsData.length}`;  if (newsData.length > 0 && score / newsData.length >= 0.7) { unlockAchievement('scoreOver70Percent', "Yüksek Skorlu Oyuncu!"); } displayUnlockedAchievements(); showScreen(resultsScreen); }
 function resetGame() { clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse');}
 function navigateToHome() { resetGame(); showScreen(homeScreenDiv); }
 function navigateToResults() { /* ... (önceki gibi) ... */ }
 
 // SWIPE EVENT LISTENERS
-let initialCardX = 0, initialCardY = 0; 
+let initialCardX = 0, initialCardY = 0; 
 function unifiedSwipeStart(e) { if (!newsCard || newsCard.classList.contains('fly-out-left') || newsCard.classList.contains('fly-out-right')) return; isSwiping = true; isMouseSwiping = (e.type === 'mousedown'); swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX; newsCard.style.transition = 'none'; newsCard.classList.add('swiping'); if (isMouseSwiping) { document.addEventListener('mousemove', unifiedSwipeMove); document.addEventListener('mouseup', unifiedSwipeEnd); } }
 function unifiedSwipeMove(e) { if (!isSwiping || !newsCard) return; swipeCurrentX = isMouseSwiping ? e.pageX : e.touches[0].pageX; let diffX = swipeCurrentX - swipeStartX; if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) { e.preventDefault(); } let rotation = diffX * CARD_ROTATION_FACTOR; rotation = Math.max(-CARD_MAX_ROTATION, Math.min(CARD_MAX_ROTATION, rotation)); newsCard.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`; if (diffX > SWIPE_THRESHOLD / 1.8) { swipeRealIndicator.classList.add('visible'); swipeFakeIndicator.classList.remove('visible'); } else if (diffX < -SWIPE_THRESHOLD / 1.8) { swipeFakeIndicator.classList.add('visible'); swipeRealIndicator.classList.remove('visible'); } else { swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible'); } }
 function unifiedSwipeEnd(e) { if (!isSwiping || !newsCard) return; if (isMouseSwiping) { document.removeEventListener('mousemove', unifiedSwipeMove); document.removeEventListener('mouseup', unifiedSwipeEnd); } isSwiping = false; isMouseSwiping = false; newsCard.classList.remove('swiping'); let diffX = swipeCurrentX - swipeStartX; if (Math.abs(diffX) > SWIPE_THRESHOLD) { if (diffX > 0) { swipeRealIndicator.classList.add('visible'); } else { swipeFakeIndicator.classList.add('visible'); } processSwipeDecision(diffX > 0); } else { resetCardState(false); } swipeStartX = 0; swipeCurrentX = 0; }
@@ -455,8 +464,8 @@ if(leaderboardBtnHome) leaderboardBtnHome.addEventListener('click', (e) => { e.p
 if(gameNavHome) gameNavHome.addEventListener('click', (e) => { e.preventDefault(); navigateToHome();});
 if(gameNavScores) gameNavScores.addEventListener('click', (e) => { e.preventDefault(); navigateToResults();});
 
-displayUnlockedAchievements(); 
-showScreen(homeScreenDiv); 
+displayUnlockedAchievements(); 
+showScreen(homeScreenDiv); 
 if(document.body) document.body.classList.remove('loading');
 
 });
