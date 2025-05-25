@@ -8,11 +8,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-    <title>NewsSwipe - Verify News</title>
+    <title>NewsSwipe - Haber Doğrula</title>
     <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        /* ... (Önceki yanıttaki gibi tüm stiller buraya gelecek) ... */
         .material-icons, .material-icons-outlined { font-size: 28px; vertical-align: middle; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; vertical-align: middle; }
         .btn-primary { background-color: #3B82F6; color: white; }
@@ -29,69 +28,81 @@
         .status-icon-correct { color: #34D399; }
         .status-icon-incorrect { color: #F87171; }
         .timeup-icon { color: #F59E0B; }
+        .main-screen-view { opacity: 1; transform: translateY(0); transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
+        .main-screen-view.hidden { opacity: 0 !important; transform: translateY(15px) !important; pointer-events: none; }
+        .nav-item-active span:first-child { color: #0b80ee; transform: scale(1.1); transition: transform 0.2s ease-in-out; }
+        .nav-item-active span:last-child { color: #0b80ee; font-weight: 600; }
+        .btn-animated { transition: transform 0.1s ease-in-out, background-color 0.1s; }
+        .btn-animated:active { transform: scale(0.96); }
+        .feedback-content-appear { animation: scaleUpSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes scaleUpSpring { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+        .timer-pulse { animation: pulseTimerWarn 1s infinite ease-in-out; }
+        @keyframes pulseTimerWarn { 0%, 100% { transform: scale(1); color: inherit; } 50% { transform: scale(1.15); color: #ef4444; } }
     </style>
 </head>
 <body class="bg-slate-50 lexend-font">
     <div id="appRoot" class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
-        <div id="homeScreen" class="flex flex-col min-h-screen">
+
+        <div id="homeScreen" class="main-screen-view flex flex-col min-h-screen">
             <header id="homeHeader" class="bg-white shadow-sm sticky top-0 z-20">
                 <div class="container mx-auto px-4 py-3 flex items-center justify-between">
                     <div class="w-10"></div> 
                     <h1 class="text-xl font-bold text-slate-800 text-center">NewsSwipe</h1>
-                    <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated">
                         <span class="material-icons">settings</span>
                     </button>
                 </div>
             </header>
             <main id="homeMain" class="flex-grow container mx-auto px-6 py-8 text-center">
                 <div class="max-w-md mx-auto">
-                    <img alt="NewsSwipe App Icon" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
-                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">Welcome to NewsSwipe!</h2>
-                    <p class="text-lg sm:text-xl text-slate-600 mb-10">Test your news literacy. Swipe left for fake, right for real.</p>
+                    <img alt="NewsSwipe Uygulama İkonu" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/> <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">NewsSwipe'a Hoş Geldiniz!</h2>
+                    <p class="text-lg sm:text-xl text-slate-600 mb-10">Haber okuryazarlığınızı test edin. Sahte mi gerçek mi, karar verin.</p>
                     <div class="space-y-4">
-                        <button id="playNowBtn" class="btn-primary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:bg-blue-700 transition-colors duration-150">
-                            <span class="material-icons mr-2">play_arrow</span>Play Now
+                        <button id="playNowBtn" class="btn-primary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:bg-blue-700 transition-colors duration-150">
+                            <span class="material-icons mr-2">play_arrow</span>Hemen Oyna
                         </button>
-                        <button id="leaderboardBtnHome" class="btn-secondary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
-                            <span class="material-icons mr-2">leaderboard</span>View Scores
+                        <button id="leaderboardBtnHome" class="btn-secondary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
+                            <span class="material-icons mr-2">leaderboard</span>Skorları Gör
                         </button>
-                        <button id="howToPlayBtn" class="btn-secondary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
-                            <span class="material-icons mr-2">help_outline</span>How to Play
+                        <button id="howToPlayBtn" class="btn-secondary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
+                            <span class="material-icons mr-2">help_outline</span>Nasıl Oynanır?
                         </button>
                     </div>
                 </div>
             </main>
             <footer id="homeFooter" class="bg-white border-t border-slate-200 sticky bottom-0 z-20">
                 <nav class="container mx-auto px-4 h-16 flex justify-around items-center">
-                    <a id="homeNavHome" href="#" class="flex flex-col items-center justify-center text-blue-600 hover:text-blue-700 transition-colors duration-150 p-2 rounded-lg">
-                        <span class="material-icons">home</span><span class="text-xs font-medium">Home</span>
+                    <a id="homeNavHome" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg">
+                        <span class="material-icons">home</span><span class="text-xs font-medium">Ana Sayfa</span>
                     </a>
                     <a id="homeNavScores" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg">
-                        <span class="material-icons">bar_chart</span><span class="text-xs font-medium">Scores</span>
+                        <span class="material-icons">bar_chart</span><span class="text-xs font-medium">Skorlar</span>
                     </a>
                     <a id="homeNavProfile" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg">
-                        <span class="material-icons">person_outline</span><span class="text-xs font-medium">Profile</span>
+                        <span class="material-icons">person_outline</span><span class="text-xs font-medium">Profil</span>
                     </a>
                 </nav>
             </footer>
         </div>
 
-        <div id="gameScreen" class="hidden flex flex-col min-h-screen">
+        <div id="gameScreen" class="main-screen-view hidden flex-col min-h-screen">
             <div class="relative flex size-full flex-col bg-white group/design-root overflow-x-hidden lexend-font">
                 <header class="sticky top-0 z-10 bg-white shadow-sm">
                     <div class="flex items-center p-4 pb-3">
-                        <button id="closeGameBtn" class="text-gray-700 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100">
+                        <button id="closeGameBtn" class="text-gray-700 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 btn-animated">
                             <span class="material-icons-outlined">close</span>
                         </button>
-                        <h1 class="text-gray-900 text-xl font-semibold leading-tight tracking-tight flex-1 text-center pr-10">News Verification</h1>
+                        <h1 class="text-gray-900 text-xl font-semibold leading-tight tracking-tight flex-1 text-center pr-10">Haber Doğrulama</h1>
                     </div>
                     <div class="px-4 pb-3">
                         <div class="flex items-center justify-between mb-1.5">
-                            <p class="text-gray-700 text-sm font-medium">Question <span id="currentQuestionDisplay" class="font-bold text-gray-900">1</span>/<span id="totalQuestionsDisplay">3</span></p>
-                            <p class="text-gray-700 text-sm font-medium">Score: <span id="scoreDisplay" class="font-bold text-gray-900">0</span></p>
+                            <p class="text-gray-700 text-sm font-medium">Soru <span id="currentQuestionDisplay" class="font-bold text-gray-900">1</span>/<span id="totalQuestionsDisplay">4</span></p> <div class="flex items-center gap-3">
+                                <p class="text-gray-700 text-sm font-medium">Skor: <span id="scoreDisplay" class="font-bold text-gray-900">0</span></p>
+                                <p class="text-gray-700 text-sm font-medium">Seri: <span id="streakCounter" class="font-bold text-gray-900">0</span> 🔥</p>
+                            </div>
                         </div>
                         <div class="h-2.5 rounded-full bg-gray-200">
-                            <div id="progressBar" class="h-2.5 rounded-full primary-color-bg" style="width: 0%;"></div>
+                            <div id="progressBar" class="h-2.5 rounded-full primary-color-bg transition-all duration-300 ease-out" style="width: 0%;"></div>
                         </div>
                     </div>
                 </header>
@@ -100,85 +111,84 @@
                         <div class="flex flex-col items-center gap-1.5">
                             <div class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
                                 <p id="timerMinutes" class="text-gray-900 text-2xl sm:text-3xl font-bold">00</p>
-                            </div><p class="text-gray-600 text-xs font-medium">Minutes</p>
+                            </div><p class="text-gray-600 text-xs font-medium">Dakika</p>
                         </div>
                         <div class="flex items-center text-gray-400 text-xl sm:text-2xl font-bold pt-1 pb-5">:</div>
                         <div class="flex flex-col items-center gap-1.5">
                             <div class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
                                 <p id="timerSeconds" class="text-gray-900 text-2xl sm:text-3xl font-bold">15</p>
-                            </div><p class="text-gray-600 text-xs font-medium">Seconds</p>
+                            </div><p class="text-gray-600 text-xs font-medium">Saniye</p>
                         </div>
                     </div>
                     <div class="relative rounded-2xl overflow-hidden shadow-lg aspect-[3/4] min-h-[280px] sm:min-h-[300px] max-h-[450px] sm:max-h-[500px] mx-auto w-full max-w-sm sm:max-w-md">
-                        <img id="newsImage" alt="News article image" class="absolute inset-0 h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByU9lacn6K_FHOIMxM1uY7HjPdQFZ__M6DvLLXJ6kSOpQMeDOH-BIDmg_Kk9dpr5axSo2stf3VYHOYQQSB42AQjwWn9Lh1lS-lRS2LWGJT_M_RsM2F0veurVNVE6VCQSu65HocXyxr-qS8PiVAmNbkkZ_VyOzOGfwZpdgm4Kb3FeweyldN5OBrNAWl-3bfi6pX2gyS4DliiSgGilkxK-4oN4aY1oS38m9h5OrCJX-IUhm_aFOsjvJwQ_OZutosopo_8IvEzNASr6_0"/>
-                        <div class="absolute inset-0 card-gradient flex flex-col justify-end p-3 sm:p-5 space-y-1 sm:space-y-2">
+                        <img id="newsImage" alt="Haber Makalesi Resmi" class="absolute inset-0 h-full w-full object-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/> <div class="absolute inset-0 card-gradient flex flex-col justify-end p-3 sm:p-5 space-y-1 sm:space-y-2">
                             <h2 id="newsTitle" class="text-white text-xl sm:text-2xl font-bold leading-tight drop-shadow-md">Haber Başlığı</h2>
                             <p id="newsSnippet" class="text-gray-200 text-xs sm:text-sm font-normal leading-relaxed line-clamp-3 sm:line-clamp-4 drop-shadow-sm">Haber metni...</p>
-                            <button id="verifySourceButton" class="text-xs text-white font-medium underline self-start pt-1 opacity-80 hover:opacity-100 transition-opacity">Verify Source</button>
+                            <button id="verifySourceButton" class="text-xs text-white font-medium underline self-start pt-1 opacity-80 hover:opacity-100 transition-opacity btn-animated">Kaynağı Doğrula</button>
                         </div>
                     </div>
                     <div class="flex justify-around items-center pt-2 space-x-2 sm:space-x-4">
-                        <button id="fakeButton" class="flex flex-col items-center justify-center size-16 sm:size-20 rounded-full fake-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95">
-                            <span class="material-icons-outlined text-2xl sm:text-3xl">close</span><span class="text-xs font-semibold tracking-wide">FAKE</span>
+                        <button id="fakeButton" class="flex flex-col items-center justify-center size-16 sm:size-20 rounded-full fake-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95 btn-animated">
+                            <span class="material-icons-outlined text-2xl sm:text-3xl">close</span><span class="text-xs font-semibold tracking-wide">SAHTE</span>
                         </button>
-                        <button id="realButton" class="flex flex-col items-center justify-center size-16 sm:size-20 rounded-full real-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95">
-                            <span class="material-icons-outlined text-2xl sm:text-3xl">check</span><span class="text-xs font-semibold tracking-wide">REAL</span>
+                        <button id="realButton" class="flex flex-col items-center justify-center size-16 sm:size-20 rounded-full real-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95 btn-animated">
+                            <span class="material-icons-outlined text-2xl sm:text-3xl">check</span><span class="text-xs font-semibold tracking-wide">GERÇEK</span>
                         </button>
                     </div>
                 </main>
                 <nav class="sticky bottom-0 bg-white border-t border-gray-200 pb-safe z-10">
                      <div class="flex justify-around items-center h-16">
                         <a id="gameNavHome" href="#" class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3">
-                            <span class="material-icons-outlined text-2xl">cottage</span><span class="text-xs font-medium">Home</span>
+                            <span class="material-icons-outlined text-2xl">cottage</span><span class="text-xs font-medium">Ana Sayfa</span>
                         </a>
                         <a id="gameNavGame" href="#" class="flex flex-col items-center justify-center gap-0.5 primary-color-text hover:primary-color-text transition-colors w-1/3">
-                            <span class="material-icons-outlined text-2xl">gamepad</span><span class="text-xs font-medium">Game</span>
+                            <span class="material-icons-outlined text-2xl">gamepad</span><span class="text-xs font-medium">Oyun</span>
                         </a>
                         <a id="gameNavScores" href="#" class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3">
-                            <span class="material-icons-outlined text-2xl">leaderboard</span><span class="text-xs font-medium">Scores</span>
+                            <span class="material-icons-outlined text-2xl">leaderboard</span><span class="text-xs font-medium">Skorlar</span>
                         </a>
                     </div>
                 </nav>
             </div>
         </div>
 
-        <div id="howToPlayModal" class="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 hidden z-50">
-            <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto">
+        <div id="howToPlayModal" class="fixed inset-0 bg-slate-800 bg-opacity-75 items-center justify-center p-4 hidden z-50">
+             <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto feedback-content-appear">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-2xl font-bold text-slate-800 lexend-font">Nasıl Oynanır?</h3>
-                    <button id="closeModalBtn" class="text-slate-500 hover:text-slate-700">
+                    <button id="closeModalBtn" class="text-slate-500 hover:text-slate-700 btn-animated">
                         <span class="material-icons">close</span>
                     </button>
                 </div><div class="text-slate-600 space-y-3 lexend-font">
                     <p>NewsSwipe çok basit!</p>
                     <p>1. Sunulan haber başlığını ve kısa bir özetini okuyun.</p>
-                    <p>2. Haberin GERÇEK mi FAKE mi olduğuna karar verin.</p>
-                    <p>3. GERÇEK olduğunu düşünüyorsanız REAL butonuna basın.</p>
-                    <p>4. FAKE olduğunu düşünüyorsanız FAKE butonuna basın.</p>
+                    <p>2. Haberin GERÇEK mi SAHTE mi olduğuna karar verin.</p>
+                    <p>3. GERÇEK olduğunu düşünüyorsanız GERÇEK butonuna basın.</p>
+                    <p>4. SAHTE olduğunu düşünüyorsanız SAHTE butonuna basın.</p>
                     <p>Haber okuryazarlığınızı test edin ve ne kadar yüksek puan alabileceğinizi görün!</p>
                 </div>
             </div>
         </div>
 
-        <div id="timeUpPopup" class="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 hidden z-40">
-            <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-xs sm:max-w-sm w-full text-center">
+        <div id="timeUpPopup" class="fixed inset-0 bg-slate-800 bg-opacity-75 items-center justify-center p-4 hidden z-40">
+            <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-xs sm:max-w-sm w-full text-center feedback-content-appear">
                 <span class="material-icons-outlined timeup-icon mb-4" style="font-size: 48px;">timer_off</span>
                 <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3">Süren Doldu!</h3>
                 <p class="text-slate-600 mb-6 text-sm sm:text-base">Bu soru için cevap süreniz sona erdi.</p>
-                <button id="timeUpOkButton" class="w-full rounded-full h-11 px-6 bg-[#0b80ee] text-white text-lg font-semibold hover:bg-[#0968c3] transition-colors">Tamam</button>
+                <button id="timeUpOkButton" class="w-full rounded-full h-11 px-6 bg-[#0b80ee] text-white text-lg font-semibold hover:bg-[#0968c3] transition-colors btn-animated">Tamam</button>
             </div>
         </div>
 
-        <div id="feedbackScreen" class="hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto">
+        <div id="feedbackScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto">
             <header class="sticky top-0 z-10 bg-white shadow-sm">
                 <div class="mx-auto flex max-w-3xl items-center justify-end p-3 sm:p-4">
-                    <button id="closeFeedbackBtn" class="flex items-center justify-center rounded-full text-slate-700 hover:bg-slate-100 p-2 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2">
+                    <button id="closeFeedbackBtn" class="flex items-center justify-center rounded-full text-slate-700 hover:bg-slate-100 p-2 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 btn-animated">
                         <span class="material-icons-outlined">close</span>
                     </button>
                 </div>
             </header>
             <main class="flex-grow px-4 sm:px-6 py-6 sm:py-8">
-                <div class="mx-auto max-w-md text-center">
+                <div class="mx-auto max-w-md text-center feedback-content-appear">
                     <div class="mb-6 sm:mb-8">
                         <span id="feedbackIcon" class="material-icons-outlined" style="font-size: 56px sm:font-size: 64px;"></span>
                         <h2 id="feedbackTitle" class="mt-3 sm:mt-4 text-2xl sm:text-3xl font-bold text-slate-800"></h2>
@@ -200,28 +210,32 @@
             </main>
             <footer class="sticky bottom-0 bg-white border-t border-slate-200 p-4">
                 <div class="mx-auto max-w-md">
-                    <button id="feedbackNextButton" class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-[#0b80ee] text-white text-lg font-semibold leading-normal tracking-[0.015em] hover:bg-[#0968c3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0b80ee] focus:ring-offset-2">
+                    <button id="feedbackNextButton" class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-[#0b80ee] text-white text-lg font-semibold leading-normal tracking-[0.015em] hover:bg-[#0968c3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0b80ee] focus:ring-offset-2 btn-animated">
                         <span class="truncate">Sonraki Soru</span>
                     </button>
                 </div>
             </footer>
         </div>
         
-        <div id="resultsScreen" class="hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto">
+        <div id="resultsScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto">
             <header class="sticky top-0 z-10 bg-white shadow-sm">
                 <div class="mx-auto flex max-w-7xl items-center justify-between p-4">
-                    <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full">
+                    <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full btn-animated">
                         <span class="material-symbols-outlined">close</span>
                     </button>
-                    <h1 class="text-xl font-semibold text-slate-900">Results</h1>
+                    <h1 class="text-xl font-semibold text-slate-900">Sonuçlar</h1>
                     <div class="w-8 sm:w-10"></div>
                 </div>
             </header>
             <main class="flex-1 overflow-y-auto px-6 py-8">
                 <div class="mx-auto max-w-md text-center">
-                    <div class="mb-8 rounded-xl bg-white p-6 shadow-lg">
+                    <div class="mb-8 rounded-xl bg-white p-6 shadow-lg feedback-content-appear">
                         <h2 class="text-3xl sm:text-4xl font-bold text-slate-800">Skorun: <span id="finalScoreValue" class="text-blue-600">0/0</span></h2>
+                        <p class="mt-1 text-slate-600">En Yüksek Skor: <span id="highScoreDisplay" class="font-medium text-slate-700">0/0</span></p>
                         <p class="mt-2 text-slate-600">Harcanan Süre: <span id="timeTakenValue" class="font-medium text-slate-700">0 dakika 0 saniye</span></p>
+                        <h4 class="text-lg font-semibold text-slate-700 mt-6 mb-2">Başarımlar</h4>
+                        <div id="achievementsDisplay" class="text-sm text-green-600">
+                            </div>
                     </div>
                     <div class="rounded-xl bg-white p-6 shadow-lg">
                         <div class="flex items-center justify-between mb-6">
@@ -230,12 +244,11 @@
                         </div>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between rounded-lg bg-slate-100 p-4 transition-all hover:bg-slate-200">
-                                <div class="flex items-center gap-3"><span class="text-lg font-semibold text-slate-700">1.</span><p class="text-slate-700 font-medium">Oyuncu1</p></div>
-                                <p class="font-semibold text-slate-700">10/10</p>
-                            </div>
-                             <div class="flex items-center justify-between rounded-lg bg-slate-100 p-4 transition-all hover:bg-slate-200">
-                                <div class="flex items-center gap-3"><span class="text-lg font-semibold text-slate-700">2.</span><p id="yourLeaderboardName" class="text-slate-700 font-medium">SEN</p></div>
-                                <p id="yourLeaderboardScore" class="font-semibold text-slate-700">0/0</p>
+                                <div class="flex items-center gap-3"><span class="text-lg font-semibold text-slate-700">1.</span><p class="text-slate-700 font-medium">Oyuncu1 (Bot)</p></div>
+                                <p class="font-semibold text-slate-700">4/4</p> </div>
+                             <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 text-blue-700 ring-2 ring-blue-500">
+                                <div class="flex items-center gap-3"><span class="text-lg font-semibold">★</span><p id="yourLeaderboardName" class="font-medium">SEN</p></div>
+                                <p id="yourLeaderboardScoreResults" class="font-semibold">0/0</p>
                             </div>
                         </div>
                     </div>
@@ -243,10 +256,10 @@
             </main>
             <footer class="sticky bottom-0 bg-white/80 backdrop-blur-md p-4 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
                 <div class="mx-auto flex max-w-md flex-col gap-3">
-                    <button id="playAgainBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#dce8f3] px-5 text-base font-bold text-slate-900 tracking-wide shadow-sm transition-colors hover:bg-[#c9d9e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dce8f3]">
+                    <button id="playAgainBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#dce8f3] px-5 text-base font-bold text-slate-900 tracking-wide shadow-sm transition-colors hover:bg-[#c9d9e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dce8f3] btn-animated">
                         <span class="material-symbols-outlined mr-2">replay</span>Tekrar Oyna
                     </button>
-                    <button id="backToHomeResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-slate-200 px-5 text-base font-bold text-slate-700 tracking-wide shadow-sm transition-colors hover:bg-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400">
+                    <button id="backToHomeResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-slate-200 px-5 text-base font-bold text-slate-700 tracking-wide shadow-sm transition-colors hover:bg-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 btn-animated">
                         <span class="material-symbols-outlined mr-2">home</span>Ana Sayfaya Dön
                     </button>
                 </div>
@@ -255,103 +268,212 @@
 
     </div> <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Ana Ekran Elementleri
+        // HTML Elementleri
         const homeScreenDiv = document.getElementById('homeScreen');
         const playNowButton = document.getElementById('playNowBtn');
         const howToPlayButton = document.getElementById('howToPlayBtn');
         const leaderboardBtnHome = document.getElementById('leaderboardBtnHome');
-        // Modal Elementleri
-        const modal = document.getElementById('howToPlayModal'); // Bu 'howToPlayModal'ı temsil ediyor
-        const closeModalButton = document.getElementById('closeModalBtn'); // Modal içindeki 'X' butonu
+        const modal = document.getElementById('howToPlayModal');
+        const closeModalButton = document.getElementById('closeModalBtn');
         
-        // Oyun Ekranı Elementleri
         const gameScreenDiv = document.getElementById('gameScreen');
         const closeGameButton = document.getElementById('closeGameBtn');
         const currentQuestionDisplay = document.getElementById('currentQuestionDisplay');
         const totalQuestionsDisplay = document.getElementById('totalQuestionsDisplay');
         const scoreDisplay = document.getElementById('scoreDisplay');
+        const streakCounter = document.getElementById('streakCounter'); 
         const progressBar = document.getElementById('progressBar');
         const timerMinutes = document.getElementById('timerMinutes');
         const timerSeconds = document.getElementById('timerSeconds');
         const newsImage = document.getElementById('newsImage');
-        const newsTitleElement = document.getElementById('newsTitle');
+        const newsTitleElement = document.getElementById('newsTitle'); 
         const newsSnippet = document.getElementById('newsSnippet');
         const verifySourceButton = document.getElementById('verifySourceButton');
         const fakeButton = document.getElementById('fakeButton');
         const realButton = document.getElementById('realButton');
 
-        // Süre Doldu Pop-up Elementleri
         const timeUpPopup = document.getElementById('timeUpPopup');
         const timeUpOkButton = document.getElementById('timeUpOkButton');
 
-        // Geri Bildirim Ekranı Elementleri
         const feedbackScreen = document.getElementById('feedbackScreen');
-        const closeFeedbackBtn = document.getElementById('closeFeedbackBtn');
+        const closeFeedbackBtn = document.getElementById('closeFeedbackBtn'); 
         const feedbackIcon = document.getElementById('feedbackIcon');
         const feedbackTitle = document.getElementById('feedbackTitle');
         const feedbackBox = document.getElementById('feedbackBox');
         const feedbackText = document.getElementById('feedbackText');
         const feedbackSourceSection = document.getElementById('feedbackSourceSection');
-        const feedbackSourceLinkTag = document.getElementById('feedbackSourceLinkTag');
-        const feedbackSourceName = document.getElementById('feedbackSourceName');
+        const feedbackSourceLinkTag = document.getElementById('feedbackSourceLinkTag'); 
+        const feedbackSourceName = document.getElementById('feedbackSourceName'); 
         const feedbackNextButton = document.getElementById('feedbackNextButton');
 
-        // Sonuçlar Ekranı Elementleri
         const resultsScreen = document.getElementById('resultsScreen');
         const finalScoreValue = document.getElementById('finalScoreValue');
+        const highScoreDisplay = document.getElementById('highScoreDisplay'); 
         const timeTakenValue = document.getElementById('timeTakenValue');
+        const achievementsDisplay = document.getElementById('achievementsDisplay'); 
         const playAgainBtn = document.getElementById('playAgainBtn');
         const backToHomeResultsBtn = document.getElementById('backToHomeResultsBtn');
         const closeResultsHeaderBtn = document.getElementById('closeResultsHeaderBtn');
-        const yourLeaderboardScore = document.getElementById('yourLeaderboardScore');
+        const yourLeaderboardScoreResults = document.getElementById('yourLeaderboardScoreResults'); 
 
-        // Navigasyon Butonları
         const homeNavHome = document.getElementById('homeNavHome');
         const homeNavScores = document.getElementById('homeNavScores');
+        const homeNavProfile = document.getElementById('homeNavProfile'); 
         const gameNavHome = document.getElementById('gameNavHome');
+        const gameNavGame = document.getElementById('gameNavGame');
         const gameNavScores = document.getElementById('gameNavScores');
 
-        // Önceki yanıttaki newsData ve diğer oyun değişkenleri/fonksiyonları buraya gelecek...
-        const newsData = [
-            { id: 1, title: "Fatih'te çanak anten düştü: 1 yaralı", snippet: "Fatih'te sokakta yürüyen bir kişinin üzerine binanın çatısında bulunan çanak anten düştü...", image: "https://i.gzt.com/i/gl/21/219663_1200xD.jpg", link: "https://www.gzt.com/video/jurnalist/sokakta-yururken-uzerine-canak-anten-dustu-2258619", isReal: true, explanation: "Bu haber gerçektir. Olay, güvenlik kamerası kayıtları ve görgü tanıklarının ifadeleriyle doğrulanmış, birçok haber kaynağında yer almıştır.", displaySourceName: "GZT Video", displaySourceLink: "https://www.gzt.com/video/jurnalist/sokakta-yururken-uzerine-canak-anten-dustu-2258619" },
-            { id: 2, title: "Bilim İnsanları: Ay'da Kola Nehri Bulundu!", snippet: "NASA'nın son keşif aracı, Ay yüzeyinde akışkan halde bir kola nehri tespit etti...", image: "https://images.unsplash.com/photo-1567609593820-739083901303?q=80&w=800&auto=format&fit=crop", link: "#fake-news-1", isReal: false, explanation: "Bu haber sahtedir. Ay'da kola nehri bulunduğuna dair bilimsel bir kanıt veya güvenilir bir rapor bulunmamaktadır." },
-            { id: 3, title: "Uzmanlar Uyardı: Fazla Egzersiz Zekayı Azaltıyor!", snippet: "Günde 2 saatten fazla yoğun egzersiz yapan bireylerde IQ seviyesinde düşüş gözlemlendiği iddia edildi.", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=800&auto=format&fit=crop", link: "#fake-news-2", isReal: false, explanation: "Bu iddia bilimsel dayanaktan yoksundur. Düzenli egzersizin bilişsel fonksiyonlar üzerinde olumlu etkileri olduğu bilinmektedir." },
-            { id: 4, title: "Türkiye, 2030 Kış Olimpiyatları İçin Aday", snippet: "Türkiye Milli Olimpiyat Komitesi, 2030 Kış Olimpiyatları için Erzurum'un adaylık başvurusunu sundu.", image: "https://images.unsplash.com/photo-1600054836759-e8c36928855a?q=80&w=800&auto=format&fit=crop", link: "https://www.trthaber.com/haber/spor/erzurum-ve-saraybosnadan-2030-kis-olimpiyatlari-icin-is-birligi-750658.html", isReal: true, explanation: "Bu haber doğrudur. Türkiye'nin Kış Olimpiyatları için adaylık süreçleri olmuştur.", displaySourceName: "TRT Haber (Örnek)", displaySourceLink: "https://www.trthaber.com/haber/spor/" }
-        ];
+        // GÜNCELLENMİŞ NEWS DATA
+       // <script> etiketi içindeki newsData dizisini bu şekilde güncelleyin:
+const newsData = [
+    {
+        id: 1,
+        title: "Koca, 'Bulaşıkları Yıkamıyor' Diye Karısını ChatGPT'ye Şikayet Etti!",
+        snippet: "Ev işleri konusunda anlaşmazlık yaşayan bir adam, eşinin bulaşıkları yıkamadığını iddia ederek durumu yapay zeka sohbet robotu ChatGPT'ye bildirdi. ChatGPT'nin çifte 'iletişim ve empati' önerdiği öğrenildi.",
+        image: "https://images.unsplash.com/photo-1611162617213-6d22e4cf1c79?q=80&w=1000&auto=format&fit=crop", // Tartışan çift veya bilgisayar başında düşünen adam görseli
+        link: "#koca-karisini-chatgptye-sikayet-etti-kurgu",
+        isReal: false,
+        explanation: "Bu haber kurgusaldır. ChatGPT gibi yapay zeka modelleri kişisel şikayetleri işleme almaz veya hukuki bir çözüm sunmaz. Ancak, bu tür absürt durumlar mizah amaçlı sıkça üretilir ve yapay zekanın hayatımızdaki yerine dair eğlenceli bir yorumdur."
+    },
+    {
+        id: 2,
+        title: "Adamın Başına Uydu Anteni Düştü, Hafif Yaralandı!",
+        snippet: "İstanbul Fatih'te yolda yürüyen bir vatandaşın başına, yakındaki bir binanın çatısından kopan uydu anteni düştü. Şans eseri hafif yaralanan adam, olayın şokunu uzun süre üzerinden atamadı.",
+        image: "https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg", // Güvenlik kamerası görüntüsü veya benzeri bir sahne
+        link: "https://www.hurriyet.com.tr/gundem/fatihte-yolda-yuruyen-adamin-basina-canak-anten-dustu-41703370", // Gerçek bir haber linki (benzer olaylar yaşanmıştır)
+        isReal: true,
+        explanation: "Bu haber gerçektir. Şehirlerde, özellikle eski binalarda veya fırtınalı havalarda bu tür kazalar nadir de olsa yaşanabilmektedir. Genellikle yerel haber kaynaklarında bu tür olaylara rastlanır.",
+        displaySourceName: "Hürriyet / Yerel Haberler",
+        displaySourceLink: "https://www.hurriyet.com.tr/gundem/"
+    },
+    {
+        id: 3,
+        title: "Belediye Başkanı Adayı Kedi 'Mırmır', Vaatleriyle Gündem Yarattı!",
+        snippet: "Yaklaşan yerel seçimler öncesinde, 'Patiler İçin Adalet Partisi' adayı kedi Mırmır, her eve sınırsız ton balığı ve günlük 18 saat uyku hakkı vaatleriyle seçmenlerin gönlünü kazandı.",
+        image: "https://i.pinimg.com/736x/7a/7e/e6/7a7ee6a5a0399cc3d92364fd5e5def42.jpg", // Kravatlı, ciddi bir kedi fotoğrafı
+        link: "#kedi-baskan-adayi-mirmir-kurgu",
+        isReal: false,
+        explanation: "Bu haber tamamen kurgusaldır ve mizah amaçlıdır. Hayvanların yasal olarak seçimlere katılması mümkün değildir. Ancak, dünyada bazı kasabalarda sembolik olarak hayvanların 'fahri belediye başkanı' seçildiği eğlenceli durumlar olmuştur."
+    },
+    {
+        id: 4,
+        title: "Çiftçi, Tarlasını Süren Uzaylılara Domates İkram Etti!",
+        snippet: "Edirne'nin bir köyünde yaşayan çiftçi Mehmet Bey, gece tarlasında beliren ve ekinlerini daireler çizerek süren tanımlanamayan cisimden inen varlıklara sakin bir şekilde yaklaşıp onlara taze topladığı domateslerden ikram ettiğini iddia etti.",
+        image: "https://i.ytimg.com/vi/Agqjwq_jFzY/maxresdefault.jpg", // UFO ve şaşkın çiftçi görseli (kompozit)
+        link: "#ciftci-uzayli-domates-kurgu",
+        isReal: false,
+        explanation: "Bu haber kurgusaldır. UFO ve uzaylılarla temas iddiaları sıkça gündeme gelse de, bu spesifik olay ve çiftçinin tepkisi tamamen hayal ürünüdür. Genellikle bu tür iddiaların somut kanıtları bulunmaz."
+    },
+    {
+        id: 5,
+        title: "Papağan, Sahibinin Banka Hesap Şifresini Tekrarlayınca Hırsızlık Çözüldü!",
+        snippet: "Brezilya'da bir eve giren hırsız, evdeki papağanın sürekli olarak bir dizi sayıyı tekrarladığını fark etmedi. Polis, papağanın söylediği sayıların evin sahibinin çalınan banka kartının şifresi olduğunu anlayınca hırsızı kısa sürede yakaladı.",
+        image: "https://media.istockphoto.com/id/1168256576/tr/foto%C4%9Fraf/papa%C4%9Fan-mahkemede-ifade-veriyor.jpg?s=612x612&w=0&k=20&c=x60r5s0t8I4YjZqOqXf9c7W0kQoK1PjA5jZ4qE1xY_c=", // Şaşkın bir papağan veya mahkeme salonunda papağan (komik)
+        link: "https://www.reuters.com/article/us-brazil-parrot-odd-idUSKCN1S61XY", // Gerçekten yaşanmış benzer bir olay (detaylar farklı olabilir)
+        isReal: true,
+        explanation: "Bu haber gerçektir (veya gerçek bir olaydan esinlenilmiştir). Papağanların duydukları sesleri ve kelimeleri taklit etme yetenekleri çok gelişmiştir. Geçmişte, suç olaylarının çözümüne yardımcı olan papağanlarla ilgili doğrulanmış haberler bulunmaktadır.",
+        displaySourceName: "Reuters / Uluslararası Haber Ajansları",
+        displaySourceLink: "https://www.reuters.com/"
+    },
+    {
+        id: 6,
+        title: "Parktaki Ördekler, Kaybolan Çocuğu Annesine 'Vaklayarak' Götürdü!",
+        snippet: "İngiltere'de bir parkta annesinden kısa süreliğine ayrılan ve kaybolan 4 yaşındaki bir çocuk, bir grup ördeğin etrafını sarıp organize bir şekilde vaklayarak çocuğu annesinin bulunduğu yöne doğru yönlendirmesiyle bulundu.",
+        image: "https://media.istockphoto.com/id/1313175215/tr/foto%C4%9Fraf/%C3%B6rdek-s%C3%BCr%C3%BCs%C3%BC.jpg?s=612x612&w=0&k=20&c=y4pBZYH9k_hZTA90uDkRpk9NqQ7Rk7H05vF8sL7c_jg=", // Ördek sürüsü ve çocuk (konsept)
+        link: "https://www.bbc.com/news/uk-england-northamptonshire-61382879", // Gerçek bir olaydan esinlenilmiş veya benzeri
+        isReal: true,
+        explanation: "Bu haber gerçektir (veya gerçek bir olaydan esinlenilmiştir). Hayvanların bazen beklenmedik zeka ve yardımseverlik davranışları sergilediği bilinmektedir. Bu tür iç ısıtan olaylar zaman zaman haberlere konu olur.",
+        displaySourceName: "BBC News / Yerel Haberler",
+        displaySourceLink: "https://www.bbc.com/news"
+    },
+    {
+        id: 7,
+        title: "Tarihi Eser Kaçakçısı, Çaldığı Heykeli 'Fazla Ağır' Diye Geri Getirdi!",
+        snippet: "Mısır'da bir müzeden antik bir heykeli çalan acemi hırsız, heykeli taşıyamayacak kadar ağır bulunca birkaç sokak öteye bırakıp polise 'gelin alın, belim ağrıdı' diye ihbarda bulundu.",
+        image: "https://media.istockphoto.com/id/534863391/tr/foto%C4%9Fraf/stressed-man-carrying-heavy-box.jpg?s=612x612&w=0&k=20&c=9gQkXzGg9J_yJtQ_uWkS2Hw5T_Vj9vKkF_8p_l5hO3Y=", // Ağır bir şey taşıyan komik bir figür
+        link: "https://www.theguardian.com/world/2008/dec/10/egypt-archaeology", // Gerçek bir olaydan esinlenilmiş veya benzeri
+        isReal: true,
+        explanation: "Bu haber gerçektir (veya benzerleri yaşanmıştır). Sanat eseri hırsızlıklarında bazen planların beklenmedik şekilde ters gittiği ve hırsızların komik durumlara düştüğü olaylar yaşanmıştır ve basına yansımıştır.",
+        displaySourceName: "The Guardian / Uluslararası Haberler",
+        displaySourceLink: "https://www.theguardian.com/world"
+    }
+];
 
         let currentQuestionIndex = 0;
         let score = 0;
+        let currentStreak = 0; 
         let timerInterval;
         let timeLeft = 15;
         const TIME_PER_QUESTION = 15;
         let gameStartTime;
         let gamePlayedAtLeastOnce = false;
 
-        function showScreen(screenToShow) {
-            const allScreens = [homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen, timeUpPopup, modal]; // modal'ı da ekledik
-            allScreens.forEach(s => {
-                if (s) {
-                    s.classList.add('hidden');
-                    s.classList.remove('flex'); // Eğer flex ile gösteriliyorsa kaldır
+        let achievements = JSON.parse(localStorage.getItem('newsSwipeAchievements_tr')) || {
+            playedFirstGame: false, fiveInARow: false, scoreOver70Percent: false 
+        };
+
+        function saveAchievements() { localStorage.setItem('newsSwipeAchievements_tr', JSON.stringify(achievements)); }
+
+        function unlockAchievement(achievementId, message) {
+            if (!achievements[achievementId]) {
+                achievements[achievementId] = true;
+                saveAchievements();
+                console.log(`Başarı Kilidi Açıldı: ${message}`);
+            }
+        }
+        
+        function displayUnlockedAchievements() {
+            if (!achievementsDisplay) return;
+            achievementsDisplay.innerHTML = ''; 
+            let unlockedCount = 0;
+            if (achievements.playedFirstGame) { 
+                achievementsDisplay.innerHTML += '<p class="text-sm">🏅 İlk Oyun Tamamlandı!</p>'; unlockedCount++;
+            }
+            if (achievements.fiveInARow) { 
+                achievementsDisplay.innerHTML += '<p class="text-sm">🔥 Seri Uzmanı (5 Doğru)!</p>'; unlockedCount++;
+            }
+            if (achievements.scoreOver70Percent) { 
+                achievementsDisplay.innerHTML += '<p class="text-sm">🏆 Yüksek Skorlu Oyuncu!</p>'; unlockedCount++;
+            }
+            if(unlockedCount === 0){ achievementsDisplay.innerHTML = '<p class="text-sm text-slate-500">Henüz bir başarım kazanmadın.</p>'; }
+        }
+
+        function updateActiveNav(activeScreenId) {
+            const navLinks = [
+                { el: homeNavHome, id: 'homeScreen' }, { el: homeNavScores, id: 'resultsScreen' }, { el: homeNavProfile, id: 'profileScreen' },
+                { el: gameNavHome, id: 'homeScreen' }, { el: gameNavGame, id: 'gameScreen' }, { el: gameNavScores, id: 'resultsScreen' }
+            ];
+            navLinks.forEach(item => {
+                if (item.el) {
+                    if (item.id === activeScreenId) {
+                        item.el.classList.add('nav-item-active');
+                    } else {
+                        item.el.classList.remove('nav-item-active');
+                    }
                 }
             });
+        }
+
+        function showScreen(screenToShow) {
+            const allScreens = [homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen];
+            const allPopups = [timeUpPopup, modal];
+
+            allScreens.forEach(s => { if (s) { s.classList.add('hidden'); s.classList.remove('flex'); }});
+            allPopups.forEach(p => { if (p) { p.classList.add('hidden'); p.classList.remove('flex'); }});
 
             if (screenToShow) {
                  screenToShow.classList.remove('hidden');
-                 // Belirli ekranlar flex ile gösterilmeli
-                 if (screenToShow === homeScreenDiv || screenToShow === gameScreenDiv || 
-                     screenToShow === feedbackScreen || screenToShow === resultsScreen ||
-                     screenToShow === timeUpPopup || screenToShow === modal) {
+                 if (allScreens.includes(screenToShow) || allPopups.includes(screenToShow)) {
                     screenToShow.classList.add('flex');
                  }
-            }
-            if (screenToShow !== modal && screenToShow !== timeUpPopup) { // Modal veya popup gösterilmiyorsa sayfa başına git
-                window.scrollTo(0,0);
-            }
+                 if (allScreens.includes(screenToShow)) { updateActiveNav(screenToShow.id); }
+            } else { updateActiveNav(null); }
+            
+            if (!allPopups.includes(screenToShow) && screenToShow !== modal) { window.scrollTo(0,0); }
         }
-
-        function updateUIForNewQuestion() { /* ... (önceki gibi) ... */ 
-            if (!newsData || newsData.length === 0) { console.error("Haber verisi bulunamadı!"); return; }
+        
+        function updateUIForNewQuestion() {
+            if (!newsData || newsData.length === 0 || !newsImage || !newsTitleElement || !newsSnippet || !verifySourceButton || !currentQuestionDisplay || !progressBar || !fakeButton || !realButton || !streakCounter || !timerSeconds || !totalQuestionsDisplay) return;
             if (currentQuestionIndex >= newsData.length) { endGame(); return; }
             
             const question = newsData[currentQuestionIndex];
@@ -360,53 +482,69 @@
             newsSnippet.textContent = question.snippet;
             verifySourceButton.dataset.link = question.link;
             currentQuestionDisplay.textContent = currentQuestionIndex + 1;
+            totalQuestionsDisplay.textContent = newsData.length; // Total questions her zaman güncel olsun
+            streakCounter.textContent = currentStreak; 
             const progress = ((currentQuestionIndex) / newsData.length) * 100;
             progressBar.style.width = `${progress}%`;
             fakeButton.classList.remove('news-button-disabled');
             realButton.classList.remove('news-button-disabled');
+            timerSeconds.classList.remove('timer-pulse'); 
         }
 
-        function startTimer() { /* ... (önceki gibi) ... */
+        function startTimer() {
+            if (!timerSeconds || !timerMinutes) return;
             timeLeft = TIME_PER_QUESTION;
             timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
             timerMinutes.textContent = "00";
+            timerSeconds.classList.remove('timer-pulse');
             
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 timeLeft--;
                 timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
+                if (timeLeft <= 5 && timeLeft > 0) { timerSeconds.classList.add('timer-pulse'); } 
+                else { timerSeconds.classList.remove('timer-pulse'); }
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
+                    timerSeconds.classList.remove('timer-pulse');
                     showTimeUpPopup();
                 }
             }, 1000);
-         }
+        }
 
-        function showTimeUpPopup() { /* ... (önceki gibi) ... */ 
+        function showTimeUpPopup() {
+             if (!fakeButton || !realButton || !timeUpPopup) return;
             fakeButton.classList.add('news-button-disabled'); 
             realButton.classList.add('news-button-disabled');
             showScreen(timeUpPopup);
-        }
+         }
 
-        timeUpOkButton.addEventListener('click', () => { /* ... (önceki gibi) ... */
-            // timeUpPopup.classList.add('hidden'); // showScreen halledecek
-            // timeUpPopup.classList.remove('flex');
-            handleAnswer(null); 
-        });
+        if(timeUpOkButton) { timeUpOkButton.addEventListener('click', () => { handleAnswer(null); }); }
         
-        function handleAnswer(userChoiceIsReal) { /* ... (İSTEK 1 GÜNCELLEMESİ İLE ÖNCEKİ GİBİ) ... */
+        function handleAnswer(userChoiceIsReal) {
+            if (!fakeButton || !realButton || !scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
+            
             clearInterval(timerInterval);
+            timerSeconds.classList.remove('timer-pulse');
             fakeButton.classList.add('news-button-disabled');
             realButton.classList.add('news-button-disabled');
 
             const currentQuestion = newsData[currentQuestionIndex];
             const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
 
-            if (userChoiceIsReal !== null && wasCorrect) { score++; }
-            scoreDisplay.textContent = score;
+            if (userChoiceIsReal !== null && wasCorrect) {
+                score++;
+                currentStreak++;
+                if (currentStreak === 5) { unlockAchievement('fiveInARow', "Harika Seri! (5 doğru)"); }
+            } else if (userChoiceIsReal !== null && !wasCorrect) { currentStreak = 0; }
+            if(userChoiceIsReal === null){ currentStreak = 0; }
 
-            feedbackIcon.className = "material-icons-outlined"; 
-            feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8";
+            scoreDisplay.textContent = score;
+            streakCounter.textContent = currentStreak;
+
+            feedbackIcon.className = "material-icons-outlined feedback-content-appear"; 
+            feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8 feedback-content-appear"; 
+            feedbackTitle.classList.add("feedback-content-appear");
             feedbackSourceSection.classList.add('hidden');
             let feedbackStr = "";
 
@@ -422,13 +560,13 @@
                     feedbackSourceSection.classList.remove('hidden');
                 }
             } else if (wasCorrect) {
-                feedbackTitle.textContent = "Bildin!"; // GÜNCELLENDİ
+                feedbackTitle.textContent = "Bildin!";
                 feedbackIcon.textContent = "check_circle";
                 feedbackIcon.classList.add('status-icon-correct');
                 feedbackBox.classList.add('correct-feedback');
                 feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin.");
             } else { 
-                feedbackTitle.textContent = "Tekrar dene!"; // GÜNCELLENDİ
+                feedbackTitle.textContent = "Tekrar dene!";
                 feedbackIcon.textContent = "cancel";
                 feedbackIcon.classList.add('status-icon-incorrect');
                 feedbackBox.classList.add('incorrect-feedback');
@@ -441,17 +579,13 @@
             }
             feedbackText.innerHTML = feedbackStr; 
             
-            if (currentQuestionIndex >= newsData.length - 1) {
-                feedbackNextButton.textContent = "Sonuçları Gör";
-            } else {
-                feedbackNextButton.textContent = "Sonraki Soru";
-            }
+            if (currentQuestionIndex >= newsData.length - 1) { feedbackNextButton.textContent = "Sonuçları Gör"; } 
+            else { feedbackNextButton.textContent = "Sonraki Soru"; }
             showScreen(feedbackScreen);
         }
 
-        function proceedToNextStep() { /* ... (önceki gibi) ... */
-            // feedbackScreen.classList.add('hidden'); // showScreen halledecek
-            // feedbackScreen.classList.remove('flex');
+        function proceedToNextStep() {
+            if (!progressBar) return;
             currentQuestionIndex++;
             const progressAfterAnswer = (currentQuestionIndex / newsData.length) * 100;
             progressBar.style.width = `${progressAfterAnswer}%`;
@@ -463,91 +597,109 @@
             } else {
                 endGame();
             }
-         }
+        }
 
-        feedbackNextButton.addEventListener('click', proceedToNextStep);
-        closeFeedbackBtn.addEventListener('click', proceedToNextStep);
+        if(feedbackNextButton) feedbackNextButton.addEventListener('click', proceedToNextStep);
+        if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextStep);
 
-        function startGame() { /* ... (önceki gibi, gameStartTime eklendi) ... */ 
+        function startGame() {
+            if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) return;
             gameStartTime = Date.now();
             currentQuestionIndex = 0;
             score = 0;
+            currentStreak = 0;
             scoreDisplay.textContent = score;
+            streakCounter.textContent = currentStreak;
             totalQuestionsDisplay.textContent = newsData.length;
             progressBar.style.width = '0%';
+            unlockAchievement('playedFirstGame', "İlk Oyun!");
             showScreen(gameScreenDiv);
             updateUIForNewQuestion();
             startTimer();
-        }
+         }
 
-        function endGame() { /* ... (İSTEK 3 GÜNCELLEMESİ İLE ÖNCEKİ GİBİ) ... */
+        function endGame() {
+            if (!timeTakenValue || !finalScoreValue || !yourLeaderboardScoreResults || !highScoreDisplay) return;
             gamePlayedAtLeastOnce = true; 
             clearInterval(timerInterval);
+            if(timerSeconds) timerSeconds.classList.remove('timer-pulse');
             const gameEndTime = Date.now();
             const timeDiff = gameEndTime - gameStartTime;
             const minutes = Math.floor(timeDiff / 60000);
             const seconds = Math.floor((timeDiff % 60000) / 1000);
             timeTakenValue.textContent = `${minutes} dakika ${seconds} saniye`;
             finalScoreValue.textContent = `${score}/${newsData.length}`;
-            yourLeaderboardScore.textContent = `${score}/${newsData.length}`;
+            yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`;
+
+            let highScore = parseInt(localStorage.getItem('newsSwipeHighScore_tr')) || 0;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('newsSwipeHighScore_tr', highScore);
+            }
+            highScoreDisplay.textContent = `${highScore}/${newsData.length}`; 
+
+            if (newsData.length > 0 && score / newsData.length >= 0.7) { unlockAchievement('scoreOver70Percent', "Yüksek Skorlu Oyuncu!"); }
+            displayUnlockedAchievements(); 
             showScreen(resultsScreen);
         }
         
-        function resetGame() { /* ... (önceki gibi) ... */ clearInterval(timerInterval); }
+        function resetGame() { clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse');}
         
-        function navigateToHome() { /* ... (önceki gibi) ... */ resetGame(); showScreen(homeScreenDiv); }
+        function navigateToHome() { resetGame(); showScreen(homeScreenDiv); }
 
-        function navigateToResults() { /* ... (önceki gibi, "oyun oyna" mantığı ile) ... */
-             if (!gamePlayedAtLeastOnce && resultsScreen) {
+        function navigateToResults() {
+            if (!resultsScreen || !finalScoreValue || !timeTakenValue || !yourLeaderboardScoreResults || !highScoreDisplay) return;
+             if (!gamePlayedAtLeastOnce) {
                 const wantsToPlay = confirm("Henüz hiç oyun oynamadınız. Skorları görmek yerine oyuna başlamak ister misiniz?");
                 if (wantsToPlay) { startGame(); } 
                 else {
                     finalScoreValue.textContent = `0/${newsData.length}`;
                     timeTakenValue.textContent = `Oyun Oynanmadı`;
-                    yourLeaderboardScore.textContent = `0/${newsData.length}`;
+                    yourLeaderboardScoreResults.textContent = `0/${newsData.length}`;
+                    highScoreDisplay.textContent = (localStorage.getItem('newsSwipeHighScore_tr') || 0) + `/${newsData.length}`;
+                    displayUnlockedAchievements();
                     showScreen(resultsScreen);
                 }
-            } else if (resultsScreen) { 
+            } else { 
                 if(currentQuestionIndex < newsData.length && gameScreenDiv.classList.contains('hidden') === false && typeof timerInterval !== 'undefined'){ 
                      const wantsToEnd = confirm("Devam eden bir oyununuz var. Oyunu bitirip sonuçları görmek istediğinize emin misiniz?");
-                     if(wantsToEnd) endGame(); else return;
+                     if(wantsToEnd) endGame(); else return; 
                 } else if(gamePlayedAtLeastOnce === false){ 
                     finalScoreValue.textContent = `0/${newsData.length}`;
                     timeTakenValue.textContent = `Oyun Oynanmadı`;
-                    yourLeaderboardScore.textContent = `0/${newsData.length}`;
+                    yourLeaderboardScoreResults.textContent = `0/${newsData.length}`;
+                    highScoreDisplay.textContent = (localStorage.getItem('newsSwipeHighScore_tr') || 0) + `/${newsData.length}`;
+                    displayUnlockedAchievements();
                     showScreen(resultsScreen);
                 } else { 
-                    // Oyun daha önce bittiyse veya devam etmiyorsa, skoru tekrar ayarla (endGame zaten yapıyor ama garanti olsun)
-                    finalScoreValue.textContent = `${score}/${newsData.length}`; // mevcut skoru göster
-                    const gameEndTime = Date.now(); // Eğer oyun bitmemişse bu yanlış olabilir, gameStartTime'a göre ayarlanmalı
-                    if(gameStartTime){
-                        const timeDiff = gameEndTime - gameStartTime; 
-                        const minutes = Math.floor(timeDiff / 60000);
-                        const seconds = Math.floor((timeDiff % 60000) / 1000);
-                        timeTakenValue.textContent = `${minutes} dakika ${seconds} saniye`;
-                    } else {
-                         timeTakenValue.textContent = `Süre Hesaplanamadı`;
-                    }
-                    yourLeaderboardScore.textContent = `${score}/${newsData.length}`;
+                    finalScoreValue.textContent = `${score}/${newsData.length}`; 
+                    if(gameStartTime && gameEndTime){ // Sadece oyun bittiğinde endTime set ediliyor.
+                         const timeDiffCheck = gameEndTime - gameStartTime; 
+                         const minutesCheck = Math.floor(timeDiffCheck / 60000);
+                         const secondsCheck = Math.floor((timeDiffCheck % 60000) / 1000);
+                         timeTakenValue.textContent = `${minutesCheck} dakika ${secondsCheck} saniye`;
+                    } else if (!gamePlayedAtLeastOnce) { timeTakenValue.textContent = `Oyun Oynanmadı`; }
+                     else { timeTakenValue.textContent = `Süre bilgisi yok`;} 
+                    yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`;
+                    highScoreDisplay.textContent = (localStorage.getItem('newsSwipeHighScore_tr') || 0) + `/${newsData.length}`;
+                    displayUnlockedAchievements();
                     showScreen(resultsScreen);
                 }
             }
         }
 
-        // "Nasıl Oynanır?" Modal Event Listeners (GÜNCELLENDİ)
+        // "Nasıl Oynanır?" Modal Event Listeners
         if (howToPlayButton && modal && closeModalButton) {
             howToPlayButton.addEventListener('click', () => {
-                if (modal) {
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
+                if (modal) { 
+                    // Önce tüm ana ekranları ve diğer popupları gizle (showScreen(null) gibi), sonra modalı göster.
+                    // Ya da modalı overlay olarak göster. Mevcut showScreen(modal) mantığına sadık kalalım.
+                    showScreen(modal); // Bu, diğerlerini gizleyip modalı flex yapar.
                 }
             });
             const closeHowToPlayModalAndGoHome = () => {
-                if (modal) {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                }
-                navigateToHome(); // Ana ekrana dön
+                // Sadece modalı gizle, sonra ana ekranı göster. showScreen(homeScreenDiv) bunu yapar.
+                navigateToHome(); 
             };
             closeModalButton.addEventListener('click', closeHowToPlayModalAndGoHome);
             modal.addEventListener('click', (event) => {
@@ -557,15 +709,15 @@
 
         // Diğer Event Listeners
         if (playNowButton) { playNowButton.addEventListener('click', startGame); } 
-        else { console.error('Play Now butonu (playNowBtn) bulunamadı!'); }
+        else { console.error('Hemen Oyna butonu (playNowBtn) bulunamadı!'); }
 
         if (closeGameButton) { closeGameButton.addEventListener('click', navigateToHome); } 
-        else { console.error('Close Game butonu (closeGameBtn) bulunamadı!'); }
+        else { console.error('Oyun Kapatma butonu (closeGameBtn) bulunamadı!'); }
         
         if (fakeButton && realButton) {
             fakeButton.addEventListener('click', () => handleAnswer(false));
             realButton.addEventListener('click', () => handleAnswer(true));
-        } else { console.error("Fake veya Real butonları bulunamadı."); }
+        } else { console.error("SAHTE veya GERÇEK butonları bulunamadı."); }
 
         if(verifySourceButton){
             verifySourceButton.addEventListener('click', function() {
@@ -575,22 +727,19 @@
             });
         }
 
-        // Sonuçlar Ekranı Butonları
         if(playAgainBtn) playAgainBtn.addEventListener('click', startGame);
         if(backToHomeResultsBtn) backToHomeResultsBtn.addEventListener('click', navigateToHome);
         if(closeResultsHeaderBtn) closeResultsHeaderBtn.addEventListener('click', navigateToHome);
 
-        // Ana Ekran Navigasyon
         if(homeNavHome) homeNavHome.addEventListener('click', (e) => { e.preventDefault(); navigateToHome();});
         if(homeNavScores) homeNavScores.addEventListener('click', (e) => { e.preventDefault(); navigateToResults();});
         if(leaderboardBtnHome) leaderboardBtnHome.addEventListener('click', (e) => { e.preventDefault(); navigateToResults();});
 
-        // Oyun Ekranı Navigasyon
         if(gameNavHome) gameNavHome.addEventListener('click', (e) => { e.preventDefault(); navigateToHome();});
         if(gameNavScores) gameNavScores.addEventListener('click', (e) => { e.preventDefault(); navigateToResults();});
-
-        // Başlangıçta ana ekranı göster
-        showScreen(homeScreenDiv);
+        
+        displayUnlockedAchievements(); 
+        showScreen(homeScreenDiv); // Başlangıçta ana ekranı göster
     });
     </script>
 </body>
