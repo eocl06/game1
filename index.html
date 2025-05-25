@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8"/>
+<meta charset="utf-utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
 <link as="style" href="https://fonts.googleapis.com/css2?display=swap&family=Lexend%3Awght%40400%3B500%3B600%3B700%3B800%3B900&family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-<title>NewsSwipe - Haber Doğrula</title>
+<title>Fake or Take? - Gerçek mi Sahte mi?</title>
 <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <style>
@@ -74,7 +74,7 @@ html, body {
 <header id="homeHeader" class="bg-white shadow-sm sticky top-0 z-20">
 <div class="container mx-auto px-4 py-3 flex items-center justify-between">
   <div class="w-10"></div> 
-  <h1 class="text-xl font-bold text-slate-800 text-center flex-1">NewsSwipe</h1>
+  <h1 class="text-xl font-bold text-slate-800 text-center flex-1">Fake or Take?</h1>
   <div class="w-10 flex justify-end"> 
     <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated">
       <span class="material-icons">settings</span>
@@ -84,8 +84,8 @@ html, body {
 </header>
 <main id="homeMain" class="flex-grow container mx-auto px-6 py-8 text-center overflow-y-auto">
 <div class="max-w-md mx-auto">
-<img alt="NewsSwipe Uygulama İkonu" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
-<h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">NewsSwipe'a Hoş Geldiniz!</h2>
+<img alt="Fake or Take? Uygulama İkonu" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
+<h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">Hazır Mısın!</h2>
 <p class="text-lg sm:text-xl text-slate-600 mb-10">Haber okuryazarlığınızı test edin. Sahte mi gerçek mi, karar verin.</p>
 <div class="space-y-4">
 <button id="playNowBtn" class="btn-primary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:bg-blue-700 transition-colors duration-150">
@@ -192,7 +192,7 @@ Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong
 </button>
 </div>
 <div class="text-slate-600 space-y-3 lexend-font">
-<p>NewsSwipe'a hoş geldiniz!</p>
+<p>Fake or Take?'e hoş geldiniz!</p>
 <p>1. Ekranda beliren haber kartını dikkatlice okuyun.</p>
 <p>2. Haberin <strong>GERÇEK</strong> olduğuna inanıyorsanız kartı <strong>SAĞA</strong> doğru kaydırın.</p>
 <p>3. Haberin <strong>SAHTE</strong> olduğuna inanıyorsanız kartı <strong>SOLA</strong> doğru kaydırın.</p>
@@ -341,7 +341,8 @@ displaySourceLink: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-
 let currentQuestionIndex = 0; score = 0; currentStreak = 0;
 let timerInterval; timeLeft = 15; const TIME_PER_QUESTION = 15;
 let gameStartTime; let gamePlayedAtLeastOnce = false;
-let achievements = JSON.parse(localStorage.getItem('newsSwipeAchievements_tr')) || { playedFirstGame: false, fiveInARow: false, scoreOver70Percent: false };
+// DEĞİŞİKLİK: localStorage anahtarı oyun adına göre güncellendi
+let achievements = JSON.parse(localStorage.getItem('fakeOrTakeAchievements_tr')) || { playedFirstGame: false, fiveInARow: false, scoreOver70Percent: false };
 
 let isSwiping = false; let isMouseSwiping = false;
 let swipeStartX = 0; let swipeCurrentX = 0;
@@ -349,9 +350,10 @@ const SWIPE_THRESHOLD = 70;
 const CARD_MAX_ROTATION = 20;
 const CARD_ROTATION_FACTOR = CARD_MAX_ROTATION / 160; 
 let animateInTimeoutId = null;
-let timeUpAutoCloseTimeoutId = null; // YENİ: Süre doldu popup'ı için timeout ID
+let timeUpAutoCloseTimeoutId = null;
 
-function saveAchievements() { localStorage.setItem('newsSwipeAchievements_tr', JSON.stringify(achievements)); }
+// DEĞİŞİKLİK: localStorage anahtarı oyun adına göre güncellendi
+function saveAchievements() { localStorage.setItem('fakeOrTakeAchievements_tr', JSON.stringify(achievements)); }
 function unlockAchievement(id, msg) { if (!achievements[id]) { achievements[id] = true; saveAchievements(); console.log(`Başarı: ${msg}`);}}
 function displayUnlockedAchievements() { if (!achievementsDisplay) return; achievementsDisplay.innerHTML = ''; let count = 0; if(achievements.playedFirstGame){ achievementsDisplay.innerHTML += '<p class="text-sm">🏅 İlk Oyun Tamamlandı!</p>'; count++;} if(achievements.fiveInARow){ achievementsDisplay.innerHTML += '<p class="text-sm">🔥 Seri Uzmanı (5 Doğru)!</p>'; count++;} if(achievements.scoreOver70Percent){ achievementsDisplay.innerHTML += '<p class="text-sm">🏆 Yüksek Skorlu Oyuncu!</p>'; count++;} if(count === 0) achievementsDisplay.innerHTML = '<p class="text-sm text-slate-500">Henüz bir başarım kazanmadın.</p>'; }
 function updateActiveNav(activeId) { const navs = [ { el: homeNavHome, id: 'homeScreen' }, { el: homeNavScores, id: 'resultsScreen' }, { el: homeNavProfile, id: 'profileScreen' }, { el: gameNavHome, id: 'homeScreen' }, { el: gameNavGame, id: 'gameScreen' }, { el: gameNavScores, id: 'resultsScreen' } ]; navs.forEach(n => { if(n.el) { n.el.classList.toggle('nav-item-active', n.id === activeId); }}); if (activeId === 'homeScreen' && homeNavHome) homeNavHome.classList.add('nav-item-active'); else if (homeNavHome) homeNavHome.classList.remove('nav-item-active'); if (activeId === 'gameScreen' && gameNavGame) gameNavGame.classList.add('nav-item-active'); else if (gameNavGame) gameNavGame.classList.remove('nav-item-active'); if (activeId === 'resultsScreen') { if(homeNavScores) homeNavScores.classList.add('nav-item-active'); if(gameNavScores) gameNavScores.classList.add('nav-item-active'); } else { if(homeNavScores) homeNavScores.classList.remove('nav-item-active'); if(gameNavScores) gameNavScores.classList.remove('nav-item-active'); } }
@@ -410,7 +412,7 @@ function showTimeUpPopup() {
 
     timeUpAutoCloseTimeoutId = setTimeout(() => {
         if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) {
-             handleAnswer(null); 
+            handleAnswer(null); 
         }
     }, 1200); // 1.2 saniye sonra
 }
@@ -431,18 +433,9 @@ function handleAnswer(userChoiceIsReal) {
     clearInterval(timerInterval);
     if(timerSeconds) timerSeconds.classList.remove('timer-pulse');
     
-    // Eğer "Süren Doldu" popup'ı açıksa ve bu fonksiyon çağrılıyorsa,
-    // otomatik kapanma timeout'unu temizleyelim (butona basılmış olabilir veya timeout kendi kendine tetiklenmiş olabilir)
     if (timeUpAutoCloseTimeoutId) {
         clearTimeout(timeUpAutoCloseTimeoutId);
         timeUpAutoCloseTimeoutId = null;
-    }
-    // "Süren Doldu" popup'ını gizle, çünkü feedback ekranına geçilecek
-    if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) {
-        // showScreen fonksiyonu zaten diğerlerini gizleyeceği için ekstra gizlemeye gerek olmayabilir,
-        // ama handleAnswer'ın farklı yerlerden çağrılma ihtimaline karşı bir kontrol.
-        // Şimdilik bu satırı yoruma alıyorum, showScreen(feedbackScreen) halletmeli.
-        // timeUpPopup.classList.add('hidden');
     }
 
     const currentQuestion = newsData[currentQuestionIndex];
@@ -505,7 +498,13 @@ if(feedbackNextButton) feedbackNextButton.addEventListener('click', proceedToNex
 if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextStep);
 function startGame() { if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) { console.error("Oyun başlatma için UI elementleri eksik"); return; } gameStartTime = Date.now(); currentQuestionIndex = 0; score = 0; currentStreak = 0; scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; totalQuestionsDisplay.textContent = newsData.length; progressBar.style.width = '0%'; unlockAchievement('playedFirstGame', "İlk Oyun!"); showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); }
 let gameEndTimeVariable; 
-function endGame() { if (!timeTakenValue || !finalScoreValue || !yourLeaderboardScoreResults || !highScoreDisplay) return; gamePlayedAtLeastOnce = true; clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse'); gameEndTimeVariable = Date.now(); const timeDiff = gameEndTimeVariable - gameStartTime; const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000); timeTakenValue.textContent = `${mins} dakika ${secs} saniye`; finalScoreValue.textContent = `${score}/${newsData.length}`; yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`; let hs = parseInt(localStorage.getItem('newsSwipeHighScore_tr')) || 0; if (score > hs) { hs = score; localStorage.setItem('newsSwipeHighScore_tr', hs); } highScoreDisplay.textContent = `${hs}/${newsData.length}`;  if (newsData.length > 0 && score / newsData.length >= 0.7) { unlockAchievement('scoreOver70Percent', "Yüksek Skorlu Oyuncu!"); } displayUnlockedAchievements(); showScreen(resultsScreen); }
+function endGame() { if (!timeTakenValue || !finalScoreValue || !yourLeaderboardScoreResults || !highScoreDisplay) return; gamePlayedAtLeastOnce = true; clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse'); gameEndTimeVariable = Date.now(); const timeDiff = gameEndTimeVariable - gameStartTime; const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000); timeTakenValue.textContent = `${mins} dakika ${secs} saniye`; finalScoreValue.textContent = `${score}/${newsData.length}`; yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`; 
+// DEĞİŞİKLİK: localStorage anahtarı oyun adına göre güncellendi
+let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0; 
+if (score > hs) { hs = score; 
+// DEĞİŞİKLİK: localStorage anahtarı oyun adına göre güncellendi
+localStorage.setItem('fakeOrTakeHighScore_tr', hs); } 
+highScoreDisplay.textContent = `${hs}/${newsData.length}`;  if (newsData.length > 0 && score / newsData.length >= 0.7) { unlockAchievement('scoreOver70Percent', "Yüksek Skorlu Oyuncu!"); } displayUnlockedAchievements(); showScreen(resultsScreen); }
 function resetGame() { clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse');}
 function navigateToHome() { resetGame(); showScreen(homeScreenDiv); }
 function navigateToResults() { showScreen(resultsScreen); }
