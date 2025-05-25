@@ -59,14 +59,12 @@ body.loading #appRoot > .main-screen-view { opacity: 0; transition: none !import
 #newsCard.enter-anim { visibility: hidden; opacity: 0; transform: translateY(60px) scale(0.95) rotateX(-15deg); }
 #newsCard.enter-anim.active { visibility: visible; animation: cardEnterAnim 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
 
-/* YENİ EKLENEN STİLLER */
 html, body {
   height: 100%;
   overflow: hidden;
   margin: 0;
   padding: 0;
 }
-/* YENİ EKLENEN STİLLER BİTTİ */
 </style>
 </head>
 <body class="bg-slate-50 lexend-font loading">
@@ -281,7 +279,7 @@ id: 1,
 title: "Düğün konvoyunun yolunu İHA ile kestiler!",
 snippet: "Sakarya’nın Arifiye ilçesinde TEKNOFEST’e hazırlanan üniversiteli gençler, geliştirdikleri İnsansız Hava Aracı (İHA) ile sıra dışı bir geleneğe imza attı.",
 image: "https://i.ibb.co/2YZS2NvT/image.png",
-link: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", // Kaynak linkini ana link olarak da kullandım
+link: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522",
 isReal: true,
 explanation: "Valla gerçek! Sakarya'da üniversiteli gençler TEKNOFEST için yaptıkları İHA ile 'Durun bakalım, önce bizim bahşiş!' demişler resmen. Teknoloji ve gelenek böyle de birleşiyormuş demek ki, helal olsun gençlerimize.",
 displaySourceName: "Milliyet",
@@ -292,7 +290,7 @@ id: 2,
 title: "Etiyopyalı kabileye kebabı sevdiren Bursalı!",
 snippet: "Keçiden Adana yapınca kabile ayağa kalktı, o günden beri herkes ona “enişte” diyor.",
 image: "https://i.ibb.co/mVmKVnC0/Screenshot-2025-05-25-at-16-12-45.png",
-link: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262", // Kaynak linkini ana link olarak da kullandım
+link: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262",
 isReal: true,
 explanation: "Bu da gerçek çıktı! Bursalı bir aşçı almış eline satırı, Etiyopya'da bir kabileyi Adana kebabıyla tanıştırmış. Kabile o kadar beğenmiş ki, bizimkine 'enişte' demeye başlamışlar. Düşünsene, Etiyopya'da 'Enişte, bir Adana çek!' diyorlar.",
 displaySourceName: "Milliyet",
@@ -332,12 +330,11 @@ displaySourceLink: "https://www.bydauto.com.tr/tang"
 displaySourceName: "Hürriyet",
 displaySourceLink: "https://www.hurriyet.com.tr/gundem/4-yil-sonra-ogrendi-hayatinin-sokunu-yasadi-3-1-olarak-satin-aldigi-ev-1-1-cikti-42788236"}
 ,
-
 { id: 7, title: "Denizli Honaz Belediyesi, Şehir Sakinlerini Uyanmak İçin Yeni Horoz Uygulamasıyla Tanıştırdı!", snippet: "Uykucu vatandaşlara doğal çözüm: Belediye, sabahları klasik alarm seslerinden şikayet edenler için 'horozlu uyandırma hizmeti' başlattı. Gerçek horozlar, belirlenen adreslere sabah 06.30’da götürülüyor.", image: "https://i.ibb.co/qQ9kDcB/image.png", link: "#horozlu-uyandirici", isReal: false, explanation: "Hahaha, bu çok iyiymiş ama tabii ki uydurma! Denizli'de belediye 'Alarmla uyanamayanlara horoz yolluyoruz' dese ortalık yıkılırdı herhalde. Sabahın köründe kapına horoz gelmesi... Mizah sitelerinde falan döner anca böyle şeyler, gerçek hayatta yok (şimdilik!)." },
 { id: 8, title: "Sivaslı Çiftçi, 9 Deve Kuşu Alarak Babasının Hayalini Gerçekleştirdi", snippet: "Sivas'ta yaşayan Berat Öksüz, babasının yıllar önceki deve kuşu besleme hayalini gerçekleştirdi. 'Bayağı şaşıran oluyor çünkü Sivas’ta görmedikleri bir şey' diyerek duygularını paylaştı.", image: "https://i.ibb.co/YTwYG3LT/image.pnghttps://i.ibb.co/YTwYG3LT/image.png", link: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi", isReal: true, explanation: "Bu da capcanlı gerçek! Sivaslı bir çiftçi, babasının 'Ah bir deve kuşu çiftliğim olsa' hayalini gerçekleştirmiş. Yiğidin harman olduğu yerde deve kuşu ne arar demeyin, Sivaslı şaşırtmayı sever. Adam yapmış valla, görenler de 'Vay be!' diyormuş.",displaySourceName: "En Son Haber",
 displaySourceLink: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi" }
-
 ];
+
 let currentQuestionIndex = 0; score = 0; currentStreak = 0;
 let timerInterval; timeLeft = 15; const TIME_PER_QUESTION = 15;
 let gameStartTime; let gamePlayedAtLeastOnce = false;
@@ -345,10 +342,10 @@ let achievements = JSON.parse(localStorage.getItem('newsSwipeAchievements_tr')) 
 
 let isSwiping = false; let isMouseSwiping = false;
 let swipeStartX = 0; let swipeCurrentX = 0;
-const SWIPE_THRESHOLD = 70; // Sabit değer
+const SWIPE_THRESHOLD = 70; 
 const CARD_MAX_ROTATION = 20;
-const CARD_ROTATION_FACTOR = CARD_MAX_ROTATION / 160; // Ortalama kart genişliğine göre oran (max-w-sm ~384px/2 ~ 190px, biraz daha azı)
-
+const CARD_ROTATION_FACTOR = CARD_MAX_ROTATION / 160; 
+let animateInTimeoutId = null;
 
 function saveAchievements() { localStorage.setItem('newsSwipeAchievements_tr', JSON.stringify(achievements)); }
 function unlockAchievement(id, msg) { if (!achievements[id]) { achievements[id] = true; saveAchievements(); console.log(`Başarı: ${msg}`);}}
@@ -358,7 +355,44 @@ function showScreen(screen) { const allScreens = [homeScreenDiv, gameScreenDiv, 
 
 function resetCardState(isNewCard = false) { if (!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.classList.remove('fly-out-left', 'fly-out-right', 'enter-anim', 'active', 'swiping'); newsCard.style.animation = ''; if (isNewCard) { newsCard.classList.add('enter-anim'); newsCard.style.opacity = '0'; newsCard.style.transform = 'translateY(60px) scale(0.95) rotateX(-15deg)'; } else { newsCard.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)'; newsCard.style.transform = 'translateX(0px) rotate(0deg)'; newsCard.style.opacity = '1'; newsCard.style.visibility = 'visible'; } swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible');}
 function animateCardIn() { if (!newsCard) return; void newsCard.offsetWidth; newsCard.classList.add('active'); }
-function updateUIForNewQuestion() { if (!newsCard || !newsImage || !newsTitle || !newsSnippet || !currentQuestionDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter || !timerSeconds) return; resetCardState(true); if (currentQuestionIndex >= newsData.length) { endGame(); return; } const question = newsData[currentQuestionIndex]; if (newsImage) newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; if (newsImage && question.image) { newsImage.src = question.image; newsImage.onload = () => { setTimeout(animateCardIn, 50); }; newsImage.onerror = () => { console.warn("Haber resmi yüklenemedi:", question.image); newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; setTimeout(animateCardIn, 50); }; } else { setTimeout(animateCardIn, 50); } newsTitle.textContent = question.title; newsSnippet.textContent = question.snippet; currentQuestionDisplay.textContent = currentQuestionIndex + 1; totalQuestionsDisplay.textContent = newsData.length; streakCounter.textContent = currentStreak; progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`; timerSeconds.classList.remove('timer-pulse');}
+
+function updateUIForNewQuestion() {
+    if (!newsCard || !newsImage || !newsTitle || !newsSnippet || !currentQuestionDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter || !timerSeconds) return;
+    resetCardState(true);
+    if (currentQuestionIndex >= newsData.length) {
+        endGame();
+        return;
+    }
+    const question = newsData[currentQuestionIndex];
+
+    if (animateInTimeoutId) { 
+        clearTimeout(animateInTimeoutId);
+        animateInTimeoutId = null;
+    }
+
+    if (newsImage) newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; 
+
+    if (newsImage && question.image) {
+        newsImage.src = question.image;
+        newsImage.onload = () => {
+            animateInTimeoutId = setTimeout(animateCardIn, 50);
+        };
+        newsImage.onerror = () => {
+            console.warn("Haber resmi yüklenemedi:", question.image);
+            newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            animateInTimeoutId = setTimeout(animateCardIn, 50);
+        };
+    } else {
+        animateInTimeoutId = setTimeout(animateCardIn, 50);
+    }
+    newsTitle.textContent = question.title;
+    newsSnippet.textContent = question.snippet;
+    currentQuestionDisplay.textContent = currentQuestionIndex + 1;
+    totalQuestionsDisplay.textContent = newsData.length;
+    streakCounter.textContent = currentStreak;
+    progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`;
+    timerSeconds.classList.remove('timer-pulse');
+}
 
 function startTimer() { if(!timerSeconds || !timerMinutes) return; timeLeft = TIME_PER_QUESTION; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft; timerMinutes.textContent = "00"; timerSeconds.classList.remove('timer-pulse'); clearInterval(timerInterval); timerInterval = setInterval(() => { timeLeft--; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft; if (timeLeft <= 5 && timeLeft > 0) timerSeconds.classList.add('timer-pulse'); else timerSeconds.classList.remove('timer-pulse'); if (timeLeft <= 0) { clearInterval(timerInterval); timerSeconds.classList.remove('timer-pulse'); showTimeUpPopup(); }}, 1000); }
 function showTimeUpPopup() { if(!timeUpPopup) return; showScreen(timeUpPopup); }
@@ -381,55 +415,45 @@ function handleAnswer(userChoiceIsReal) {
     } else if (userChoiceIsReal !== null && !wasCorrect) {
         currentStreak = 0;
     }
-    if(userChoiceIsReal === null) currentStreak = 0; // Süre bittiyse de seri sıfırlanır
+    if(userChoiceIsReal === null) currentStreak = 0;
 
     scoreDisplay.textContent = score;
     streakCounter.textContent = currentStreak;
 
-    // Reset classes for icon and box
     feedbackIcon.className = "material-icons-outlined feedback-content-appear";
     feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8 feedback-content-appear";
     feedbackTitle.classList.add("feedback-content-appear");
-   
-    // Ensure source section is hidden by default at the start of feedback display.
-    // This line was already present and correctly placed.
     feedbackSourceSection.classList.add('hidden'); 
 
     let feedbackStr = "";
 
-    if (userChoiceIsReal === null) { // Süre bitti
+    if (userChoiceIsReal === null) { 
         feedbackTitle.textContent = "Süre Bitti!";
         feedbackIcon.textContent = "timer_off";
         feedbackIcon.classList.add('timeup-icon');
         feedbackBox.classList.add('incorrect-feedback'); 
         feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`;
-        // Eski kaynak gösterme mantığı buradan kaldırıldı.
-    } else if (wasCorrect) { // Doğru cevap
+    } else if (wasCorrect) { 
         feedbackTitle.textContent = "Bildin!";
         feedbackIcon.textContent = "check_circle";
         feedbackIcon.classList.add('status-icon-correct');
         feedbackBox.classList.add('correct-feedback');
         feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin.");
-        // Kaynak gösterme mantığı ortak alana taşındı.
-    } else { // Yanlış cevap
+    } else { 
         feedbackTitle.textContent = "Tekrar dene!";
         feedbackIcon.textContent = "cancel";
         feedbackIcon.classList.add('status-icon-incorrect');
         feedbackBox.classList.add('incorrect-feedback');
         feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`;
-        // Eski kaynak gösterme mantığı buradan kaldırıldı.
     }
 
     feedbackText.innerHTML = feedbackStr; 
 
-    // YENİ: Ortak kaynak gösterme mantığı
-    // Eğer soru için kaynak adı ve linki tanımlanmışsa, kaynak bölümünü göster.
     if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) {
         feedbackSourceName.textContent = currentQuestion.displaySourceName;
         feedbackSourceLinkTag.href = currentQuestion.displaySourceLink;
         feedbackSourceSection.classList.remove('hidden');
     }
-    // Eğer kaynak bilgisi yoksa, `feedbackSourceSection` zaten yukarıda gizlendiği için gizli kalacaktır.
 
     feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru";
     showScreen(feedbackScreen);
@@ -442,14 +466,100 @@ let gameEndTimeVariable;
 function endGame() { if (!timeTakenValue || !finalScoreValue || !yourLeaderboardScoreResults || !highScoreDisplay) return; gamePlayedAtLeastOnce = true; clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse'); gameEndTimeVariable = Date.now(); const timeDiff = gameEndTimeVariable - gameStartTime; const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000); timeTakenValue.textContent = `${mins} dakika ${secs} saniye`; finalScoreValue.textContent = `${score}/${newsData.length}`; yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`; let hs = parseInt(localStorage.getItem('newsSwipeHighScore_tr')) || 0; if (score > hs) { hs = score; localStorage.setItem('newsSwipeHighScore_tr', hs); } highScoreDisplay.textContent = `${hs}/${newsData.length}`;  if (newsData.length > 0 && score / newsData.length >= 0.7) { unlockAchievement('scoreOver70Percent', "Yüksek Skorlu Oyuncu!"); } displayUnlockedAchievements(); showScreen(resultsScreen); }
 function resetGame() { clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse');}
 function navigateToHome() { resetGame(); showScreen(homeScreenDiv); }
-function navigateToResults() { /* ... (önceki gibi) ... */ }
+function navigateToResults() { showScreen(resultsScreen); }
 
-// SWIPE EVENT LISTENERS
-let initialCardX = 0, initialCardY = 0; 
-function unifiedSwipeStart(e) { if (!newsCard || newsCard.classList.contains('fly-out-left') || newsCard.classList.contains('fly-out-right')) return; isSwiping = true; isMouseSwiping = (e.type === 'mousedown'); swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX; newsCard.style.transition = 'none'; newsCard.classList.add('swiping'); if (isMouseSwiping) { document.addEventListener('mousemove', unifiedSwipeMove); document.addEventListener('mouseup', unifiedSwipeEnd); } }
-function unifiedSwipeMove(e) { if (!isSwiping || !newsCard) return; swipeCurrentX = isMouseSwiping ? e.pageX : e.touches[0].pageX; let diffX = swipeCurrentX - swipeStartX; if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) { e.preventDefault(); } let rotation = diffX * CARD_ROTATION_FACTOR; rotation = Math.max(-CARD_MAX_ROTATION, Math.min(CARD_MAX_ROTATION, rotation)); newsCard.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`; if (diffX > SWIPE_THRESHOLD / 1.8) { swipeRealIndicator.classList.add('visible'); swipeFakeIndicator.classList.remove('visible'); } else if (diffX < -SWIPE_THRESHOLD / 1.8) { swipeFakeIndicator.classList.add('visible'); swipeRealIndicator.classList.remove('visible'); } else { swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible'); } }
-function unifiedSwipeEnd(e) { if (!isSwiping || !newsCard) return; if (isMouseSwiping) { document.removeEventListener('mousemove', unifiedSwipeMove); document.removeEventListener('mouseup', unifiedSwipeEnd); } isSwiping = false; isMouseSwiping = false; newsCard.classList.remove('swiping'); let diffX = swipeCurrentX - swipeStartX; if (Math.abs(diffX) > SWIPE_THRESHOLD) { if (diffX > 0) { swipeRealIndicator.classList.add('visible'); } else { swipeFakeIndicator.classList.add('visible'); } processSwipeDecision(diffX > 0); } else { resetCardState(false); } swipeStartX = 0; swipeCurrentX = 0; }
-if (newsCard) { newsCard.addEventListener('mousedown', unifiedSwipeStart); newsCard.addEventListener('touchstart', unifiedSwipeStart, { passive: true }); newsCard.addEventListener('touchmove', unifiedSwipeMove, { passive: false }); newsCard.addEventListener('touchend', unifiedSwipeEnd); newsCard.addEventListener('touchcancel', unifiedSwipeEnd); } else { console.error("Haber kartı (newsCard) DOM'da bulunamadı! Swipe çalışmayacak."); }
+
+function unifiedSwipeStart(e) {
+    if (!newsCard || newsCard.classList.contains('fly-out-left') || newsCard.classList.contains('fly-out-right')) return;
+
+    if (animateInTimeoutId) {
+        clearTimeout(animateInTimeoutId);
+        animateInTimeoutId = null;
+    }
+
+    if (newsCard.classList.contains('enter-anim') || (newsCard.style.animation && newsCard.style.animation !== 'none')) {
+        newsCard.classList.remove('enter-anim', 'active');
+        newsCard.style.animation = 'none';
+    }
+    
+    newsCard.style.opacity = '1';
+    newsCard.style.transform = ''; 
+
+    isSwiping = true;
+    isMouseSwiping = (e.type === 'mousedown');
+    swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX;
+    newsCard.style.transition = 'none'; 
+    newsCard.classList.add('swiping');
+
+    if (isMouseSwiping) {
+        document.addEventListener('mousemove', unifiedSwipeMove);
+        document.addEventListener('mouseup', unifiedSwipeEnd);
+    }
+}
+
+function unifiedSwipeMove(e) {
+    if (!isSwiping || !newsCard) return;
+    swipeCurrentX = isMouseSwiping ? e.pageX : e.touches[0].pageX;
+    let diffX = swipeCurrentX - swipeStartX;
+
+    if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) {
+        e.preventDefault();
+    }
+
+    let rotation = diffX * CARD_ROTATION_FACTOR;
+    rotation = Math.max(-CARD_MAX_ROTATION, Math.min(CARD_MAX_ROTATION, rotation));
+    
+    const newTransform = `translateX(${diffX}px) rotate(${rotation}deg)`;
+
+    requestAnimationFrame(() => {
+        if (isSwiping) { 
+            newsCard.style.transform = newTransform;
+        }
+    });
+
+    if (diffX > SWIPE_THRESHOLD / 1.8) {
+        swipeRealIndicator.classList.add('visible');
+        swipeFakeIndicator.classList.remove('visible');
+    } else if (diffX < -SWIPE_THRESHOLD / 1.8) {
+        swipeFakeIndicator.classList.add('visible');
+        swipeRealIndicator.classList.remove('visible');
+    } else {
+        swipeRealIndicator.classList.remove('visible');
+        swipeFakeIndicator.classList.remove('visible');
+    }
+}
+function unifiedSwipeEnd(e) { 
+    if (!isSwiping || !newsCard) return; 
+    if (isMouseSwiping) { 
+        document.removeEventListener('mousemove', unifiedSwipeMove); 
+        document.removeEventListener('mouseup', unifiedSwipeEnd); 
+    } 
+    isSwiping = false; 
+    isMouseSwiping = false; 
+    newsCard.classList.remove('swiping'); 
+    let diffX = swipeCurrentX - swipeStartX; 
+    if (Math.abs(diffX) > SWIPE_THRESHOLD) { 
+        if (diffX > 0) { 
+            swipeRealIndicator.classList.add('visible'); 
+        } else { 
+            swipeFakeIndicator.classList.add('visible'); 
+        } 
+        processSwipeDecision(diffX > 0); 
+    } else { 
+        resetCardState(false); 
+    } 
+    swipeStartX = 0; 
+    swipeCurrentX = 0; 
+}
+if (newsCard) { 
+    newsCard.addEventListener('mousedown', unifiedSwipeStart); 
+    newsCard.addEventListener('touchstart', unifiedSwipeStart, { passive: true }); 
+    newsCard.addEventListener('touchmove', unifiedSwipeMove, { passive: false }); 
+    newsCard.addEventListener('touchend', unifiedSwipeEnd); 
+    newsCard.addEventListener('touchcancel', unifiedSwipeEnd); 
+} else { 
+    console.error("Haber kartı (newsCard) DOM'da bulunamadı! Swipe çalışmayacak."); 
+}
 
 // Diğer Event Listeners
 if (howToPlayButton && modal && closeModalButton) { howToPlayButton.addEventListener('click', () => { if (modal) { showScreen(modal); }}); const closeHowToPlayModalAndGoHome = () => { navigateToHome(); }; closeModalButton.addEventListener('click', closeHowToPlayModalAndGoHome); modal.addEventListener('click', (event) => { if (event.target === modal) { closeHowToPlayModalAndGoHome(); }}); } else { console.error("Modal ('Nasıl Oynanır') elementleri bulunamadı."); }
