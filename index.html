@@ -73,8 +73,10 @@ html, body {
 <div id="homeScreen" class="main-screen-view flex flex-col h-full">
 <header id="homeHeader" class="bg-white shadow-sm sticky top-0 z-20">
 <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-  <div class="w-10"></div> <h1 class="text-xl font-bold text-slate-800 text-center flex-1">NewsSwipe</h1>
-  <div class="w-10 flex justify-end"> <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated">
+  <div class="w-10"></div> 
+  <h1 class="text-xl font-bold text-slate-800 text-center flex-1">NewsSwipe</h1>
+  <div class="w-10 flex justify-end"> 
+    <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated">
       <span class="material-icons">settings</span>
     </button>
   </div>
@@ -121,7 +123,8 @@ html, body {
     <span class="material-icons-outlined">close</span>
   </button>
   <h1 class="text-gray-900 text-xl font-semibold leading-tight tracking-tight text-center">Gerçek mi Sahte mi?</h1>
-  <div class="size-10"></div> </div>
+  <div class="size-10"></div> 
+</div>
 <div class="px-4 pb-3">
 <div class="flex items-center justify-between mb-1.5">
 <p class="text-gray-700 text-sm font-medium">Soru <span id="currentQuestionDisplay" class="font-bold text-gray-900">1</span>/<span id="totalQuestionsDisplay">7</span></p>
@@ -346,6 +349,7 @@ const SWIPE_THRESHOLD = 70;
 const CARD_MAX_ROTATION = 20;
 const CARD_ROTATION_FACTOR = CARD_MAX_ROTATION / 160; 
 let animateInTimeoutId = null;
+let timeUpAutoCloseTimeoutId = null; // YENİ: Süre doldu popup'ı için timeout ID
 
 function saveAchievements() { localStorage.setItem('newsSwipeAchievements_tr', JSON.stringify(achievements)); }
 function unlockAchievement(id, msg) { if (!achievements[id]) { achievements[id] = true; saveAchievements(); console.log(`Başarı: ${msg}`);}}
@@ -395,14 +399,52 @@ function updateUIForNewQuestion() {
 }
 
 function startTimer() { if(!timerSeconds || !timerMinutes) return; timeLeft = TIME_PER_QUESTION; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft; timerMinutes.textContent = "00"; timerSeconds.classList.remove('timer-pulse'); clearInterval(timerInterval); timerInterval = setInterval(() => { timeLeft--; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft; if (timeLeft <= 5 && timeLeft > 0) timerSeconds.classList.add('timer-pulse'); else timerSeconds.classList.remove('timer-pulse'); if (timeLeft <= 0) { clearInterval(timerInterval); timerSeconds.classList.remove('timer-pulse'); showTimeUpPopup(); }}, 1000); }
-function showTimeUpPopup() { if(!timeUpPopup) return; showScreen(timeUpPopup); }
-if(timeUpOkButton) { timeUpOkButton.addEventListener('click', () => { handleAnswer(null); }); }
+
+function showTimeUpPopup() {
+    if (!timeUpPopup) return;
+    showScreen(timeUpPopup); 
+
+    if (timeUpAutoCloseTimeoutId) {
+        clearTimeout(timeUpAutoCloseTimeoutId);
+    }
+
+    timeUpAutoCloseTimeoutId = setTimeout(() => {
+        if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) {
+             handleAnswer(null); 
+        }
+    }, 1200); // 1.2 saniye sonra
+}
+
+if (timeUpOkButton) {
+    timeUpOkButton.addEventListener('click', () => {
+        if (timeUpAutoCloseTimeoutId) {
+            clearTimeout(timeUpAutoCloseTimeoutId); 
+            timeUpAutoCloseTimeoutId = null;
+        }
+        handleAnswer(null);
+    });
+}
 
 function processSwipeDecision(isRealChoice) { if(!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = 'none'; if (isRealChoice) { newsCard.classList.add('fly-out-right'); swipeRealIndicator.classList.add('visible'); } else { newsCard.classList.add('fly-out-left'); swipeFakeIndicator.classList.add('visible'); } setTimeout(() => { handleAnswer(isRealChoice); }, 400); }
 function handleAnswer(userChoiceIsReal) {
     if (!scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
     clearInterval(timerInterval);
     if(timerSeconds) timerSeconds.classList.remove('timer-pulse');
+    
+    // Eğer "Süren Doldu" popup'ı açıksa ve bu fonksiyon çağrılıyorsa,
+    // otomatik kapanma timeout'unu temizleyelim (butona basılmış olabilir veya timeout kendi kendine tetiklenmiş olabilir)
+    if (timeUpAutoCloseTimeoutId) {
+        clearTimeout(timeUpAutoCloseTimeoutId);
+        timeUpAutoCloseTimeoutId = null;
+    }
+    // "Süren Doldu" popup'ını gizle, çünkü feedback ekranına geçilecek
+    if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) {
+        // showScreen fonksiyonu zaten diğerlerini gizleyeceği için ekstra gizlemeye gerek olmayabilir,
+        // ama handleAnswer'ın farklı yerlerden çağrılma ihtimaline karşı bir kontrol.
+        // Şimdilik bu satırı yoruma alıyorum, showScreen(feedbackScreen) halletmeli.
+        // timeUpPopup.classList.add('hidden');
+    }
+
     const currentQuestion = newsData[currentQuestionIndex];
     const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
 
