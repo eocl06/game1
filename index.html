@@ -12,7 +12,6 @@
     <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        /* ... (CSS stilleri öncekiyle aynı kalacak) ... */
         .material-icons, .material-icons-outlined { font-size: 28px; vertical-align: middle; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; vertical-align: middle; }
         .btn-primary { background-color: #3B82F6; color: white; }
@@ -27,9 +26,12 @@
         .status-icon-correct { color: #34D399; }
         .status-icon-incorrect { color: #F87171; }
         .timeup-icon { color: #F59E0B; }
+
+        #appRoot { overflow-y: hidden; }
         body.loading #appRoot > .main-screen-view { opacity: 0; transition: none !important; }
         .main-screen-view { opacity: 1; transform: translateY(0); transition: opacity 0.4s ease-out, transform 0.4s ease-out; }
         .main-screen-view.hidden { opacity: 0 !important; transform: translateY(20px) !important; pointer-events: none; display: none !important; }
+        
         .nav-item-active span:first-child { color: #0b80ee; transform: scale(1.1); transition: transform 0.2s ease-in-out; }
         .nav-item-active span:last-child { color: #0b80ee; font-weight: 600; }
         .btn-animated { transition: transform 0.1s ease-in-out, background-color 0.1s; }
@@ -38,35 +40,175 @@
         @keyframes scaleUpSpring { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
         .timer-pulse { animation: pulseTimerWarn 1s infinite ease-in-out; }
         @keyframes pulseTimerWarn { 0%, 100% { transform: scale(1); color: inherit; } 50% { transform: scale(1.15); color: #ef4444; } }
+
         #newsCardContainer { position: relative; width: 100%; max-width: calc(100% - 2rem); margin-left: auto; margin-right: auto; aspect-ratio: 3 / 4.2; min-height: 380px; sm:min-height: 450px; overflow: visible; }
-        #newsCard { position: absolute; top: 0; left: 0; right: 0; bottom: 0; cursor: grab; user-select: none; touch-action: pan-y; transition: transform 0.3s ease-out; will-change: transform, opacity; background-color: #f3f4f6; }
+        #newsCard { position: absolute; top: 0; left: 0; right: 0; bottom: 0; cursor: grab; user-select: none; touch-action: pan-y; transition: transform 0.3s ease-out; will-change: transform, opacity; background-color: #f3f4f6; border-radius: 1rem; /* rounded-2xl */ overflow:hidden; /* Resim taşmaması için */ }
         #newsCard.swiping { cursor: grabbing; transition: none; }
         .swipe-decision-indicator { position: absolute; top: 30px; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 1.25rem; font-weight: 700; color: white; border: 3px solid white; opacity: 0; transform: rotate(-15deg) scale(0.8); transition: opacity 0.3s ease-out, transform 0.3s ease-out; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .swipe-decision-indicator.real-indicator { background-color: rgba(5, 150, 105, 0.85); left: 30px; transform: rotate(-25deg) scale(0.8); }
         .swipe-decision-indicator.fake-indicator { background-color: rgba(220, 38, 38, 0.85); right: 30px; transform: rotate(25deg) scale(0.8); }
         .swipe-decision-indicator.visible { opacity: 1; transform: rotate(-15deg) scale(1.1); }
         .swipe-decision-indicator.fake-indicator.visible { transform: rotate(15deg) scale(1.1); }
-        @keyframes cardFlyOutLeftAnim { 0% { transform: translateX(0) rotate(0deg); opacity: 1; } 100% { transform: translateX(-120vw) rotate(-35deg); opacity: 0; } }
-        @keyframes cardFlyOutRightAnim { 0% { transform: translateX(0) rotate(0deg); opacity: 1; } 100% { transform: translateX(120vw) rotate(35deg); opacity: 0; } }
-        #newsCard.fly-out-left { animation: cardFlyOutLeftAnim 0.45s ease-in forwards; }
-        #newsCard.fly-out-right { animation: cardFlyOutRightAnim 0.45s ease-in forwards; }
-        @keyframes cardEnterAnim { from { transform: translateY(70vh) scale(0.8); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-        #newsCard.enter-anim { visibility: hidden; }
-        #newsCard.enter-anim.active { visibility: visible; animation: cardEnterAnim 0.55s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards; }
+
+        @keyframes cardFlyOutLeftAnim { 0% { transform: translateX(0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translateX(-130vw) rotate(-40deg) scale(0.7); opacity: 0; } }
+        @keyframes cardFlyOutRightAnim { 0% { transform: translateX(0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translateX(130vw) rotate(40deg) scale(0.7); opacity: 0; } }
+        #newsCard.fly-out-left { animation: cardFlyOutLeftAnim 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
+        #newsCard.fly-out-right { animation: cardFlyOutRightAnim 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
+
+        @keyframes cardEnterAnim { to { transform: translateY(0) scale(1) rotateX(0deg); opacity: 1; } }
+        #newsCard.enter-anim { visibility: hidden; opacity: 0; transform: translateY(60px) scale(0.95) rotateX(-15deg); }
+        #newsCard.enter-anim.active { visibility: visible; animation: cardEnterAnim 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
     </style>
 </head>
 <body class="bg-slate-50 lexend-font loading">
     <div id="appRoot" class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
-        <div id="homeScreen" class="main-screen-view flex flex-col min-h-screen"> <header id="homeHeader" class="bg-white shadow-sm sticky top-0 z-20"> <div class="container mx-auto px-4 py-3 flex items-center justify-between"> <div class="w-10"></div> <h1 class="text-xl font-bold text-slate-800 text-center">NewsSwipe</h1> <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated"> <span class="material-icons">settings</span> </button> </div> </header> <main id="homeMain" class="flex-grow container mx-auto px-6 py-8 text-center"> <div class="max-w-md mx-auto"> <img alt="NewsSwipe Uygulama İkonu" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/> <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">NewsSwipe'a Hoş Geldiniz!</h2> <p class="text-lg sm:text-xl text-slate-600 mb-10">Haber okuryazarlığınızı test edin. Sahte mi gerçek mi, karar verin.</p> <div class="space-y-4"> <button id="playNowBtn" class="btn-primary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:bg-blue-700 transition-colors duration-150"> <span class="material-icons mr-2">play_arrow</span>Hemen Oyna </button> <button id="leaderboardBtnHome" class="btn-secondary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150"> <span class="material-icons mr-2">leaderboard</span>Skorları Gör </button> <button id="howToPlayBtn" class="btn-secondary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150"> <span class="material-icons mr-2">help_outline</span>Nasıl Oynanır? </button> </div> </div> </main> <footer id="homeFooter" class="bg-white border-t border-slate-200 sticky bottom-0 z-20"> <nav class="container mx-auto px-4 h-16 flex justify-around items-center"> <a id="homeNavHome" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg"> <span class="material-icons">home</span><span class="text-xs font-medium">Ana Sayfa</span> </a> <a id="homeNavScores" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg"> <span class="material-icons">bar_chart</span><span class="text-xs font-medium">Skorlar</span> </a> <a id="homeNavProfile" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg"> <span class="material-icons">person_outline</span><span class="text-xs font-medium">Profil</span> </a> </nav> </footer> </div>
-        <div id="gameScreen" class="main-screen-view hidden flex-col min-h-screen"> <div class="relative flex size-full flex-col bg-white group/design-root overflow-x-hidden lexend-font"> <header class="sticky top-0 z-20 bg-white shadow-sm"> <div class="flex items-center p-4 pb-3"> <button id="closeGameBtn" class="text-gray-700 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 btn-animated"> <span class="material-icons-outlined">close</span> </button> <h1 class="text-gray-900 text-xl font-semibold leading-tight tracking-tight flex-1 text-center pr-10">Haber Doğrulama</h1> </div> <div class="px-4 pb-3"> <div class="flex items-center justify-between mb-1.5"> <p class="text-gray-700 text-sm font-medium">Soru <span id="currentQuestionDisplay" class="font-bold text-gray-900">1</span>/<span id="totalQuestionsDisplay">7</span></p> <div class="flex items-center gap-3"> <p class="text-gray-700 text-sm font-medium">Skor: <span id="scoreDisplay" class="font-bold text-gray-900">0</span></p> <p class="text-gray-700 text-sm font-medium">Seri: <span id="streakCounter" class="font-bold text-gray-900">0</span> 🔥</p> </div> </div> <div class="h-2.5 rounded-full bg-gray-200"> <div id="progressBar" class="h-2.5 rounded-full primary-color-bg transition-all duration-300 ease-out" style="width: 0%;"></div> </div> </div> </header> <main class="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center space-y-6"> <div class="flex gap-3 justify-center"> <div class="flex flex-col items-center gap-1.5"> <div class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner"> <p id="timerMinutes" class="text-gray-900 text-2xl sm:text-3xl font-bold">00</p> </div><p class="text-gray-600 text-xs font-medium">Dakika</p> </div> <div class="flex items-center text-gray-400 text-xl sm:text-2xl font-bold pt-1 pb-5">:</div> <div class="flex flex-col items-center gap-1.5"> <div class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner"> <p id="timerSeconds" class="text-gray-900 text-2xl sm:text-3xl font-bold">15</p> </div><p class="text-gray-600 text-xs font-medium">Saniye</p> </div> </div> <div id="newsCardContainer" class="relative w-full max-w-sm sm:max-w-md aspect-[3/4.2] rounded-2xl shadow-xl"> <div id="swipeRealIndicator" class="swipe-decision-indicator real-indicator">GERÇEK</div> <div id="swipeFakeIndicator" class="swipe-decision-indicator fake-indicator">SAHTE</div> <div id="newsCard" class="absolute inset-0 rounded-2xl overflow-hidden bg-slate-200"> <img id="newsImage" alt="Haber Makalesi Resmi" class="absolute inset-0 h-full w-full object-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/> <div class="absolute inset-0 card-gradient flex flex-col justify-end p-3 sm:p-5 space-y-1 sm:space-y-2"> <h2 id="newsTitle" class="text-white text-xl sm:text-2xl font-bold leading-tight drop-shadow-md">Haber Başlığı</h2> <p id="newsSnippet" class="text-gray-200 text-xs sm:text-sm font-normal leading-relaxed line-clamp-3 sm:line-clamp-4 drop-shadow-sm">Haber metni...</p> </div> </div> </div> <div class="text-center text-slate-500 mt-4 text-sm px-4"> Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong>sola (SAHTE)</strong> doğru kaydırın. </div> </main> <nav class="sticky bottom-0 bg-white border-t border-gray-200 pb-safe z-20"> <div class="flex justify-around items-center h-16"> <a id="gameNavHome" href="#" class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3"> <span class="material-icons-outlined text-2xl">cottage</span><span class="text-xs font-medium">Ana Sayfa</span> </a> <a id="gameNavGame" href="#" class="flex flex-col items-center justify-center gap-0.5 primary-color-text hover:primary-color-text transition-colors w-1/3"> <span class="material-icons-outlined text-2xl">gamepad</span><span class="text-xs font-medium">Oyun</span> </a> <a id="gameNavScores" href="#" class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3"> <span class="material-icons-outlined text-2xl">leaderboard</span><span class="text-xs font-medium">Skorlar</span> </a> </div> </nav> </div> </div>
-        <div id="howToPlayModal" class="fixed inset-0 bg-slate-800 bg-opacity-75 items-center justify-center p-4 hidden z-50"> <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto feedback-content-appear"> <div class="flex justify-between items-center mb-4"> <h3 class="text-2xl font-bold text-slate-800 lexend-font">Nasıl Oynanır?</h3> <button id="closeModalBtn" class="text-slate-500 hover:text-slate-700 btn-animated"> <span class="material-icons">close</span> </button> </div> <div class="text-slate-600 space-y-3 lexend-font"> <p>NewsSwipe'a hoş geldiniz!</p> <p>1. Ekranda beliren haber kartını dikkatlice okuyun.</p> <p>2. Haberin <strong>GERÇEK</strong> olduğuna inanıyorsanız kartı <strong>SAĞA</strong> doğru kaydırın.</p> <p>3. Haberin <strong>SAHTE</strong> olduğuna inanıyorsanız kartı <strong>SOLA</strong> doğru kaydırın.</p> <p>Haber okuryazarlığınızı test edin ve ne kadar yüksek puan alabileceğinizi görün!</p> </div> </div> </div>
-        <div id="timeUpPopup" class="fixed inset-0 bg-slate-800 bg-opacity-75 items-center justify-center p-4 hidden z-40"> <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-xs sm:max-w-sm w-full text-center feedback-content-appear"> <span class="material-icons-outlined timeup-icon mb-4" style="font-size: 48px;">timer_off</span> <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3">Süren Doldu!</h3> <p class="text-slate-600 mb-6 text-sm sm:text-base">Bu soru için cevap süreniz sona erdi.</p> <button id="timeUpOkButton" class="w-full rounded-full h-11 px-6 bg-[#0b80ee] text-white text-lg font-semibold hover:bg-[#0968c3] transition-colors btn-animated">Tamam</button> </div> </div>
-        <div id="feedbackScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto"> <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-3xl items-center justify-end p-3 sm:p-4"> <button id="closeFeedbackBtn" class="flex items-center justify-center rounded-full text-slate-700 hover:bg-slate-100 p-2 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 btn-animated"> <span class="material-icons-outlined">close</span> </button> </div> </header> <main class="flex-grow px-4 sm:px-6 py-6 sm:py-8"> <div class="mx-auto max-w-md text-center feedback-content-appear"> <div class="mb-6 sm:mb-8"> <span id="feedbackIcon" class="material-icons-outlined" style="font-size: 56px sm:font-size: 64px;"></span> <h2 id="feedbackTitle" class="mt-3 sm:mt-4 text-2xl sm:text-3xl font-bold text-slate-800"></h2> </div> <div id="feedbackBox" class="rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8"> <p id="feedbackText" class="text-slate-700 text-sm sm:text-base leading-relaxed"></p> </div> <div id="feedbackSourceSection" class="hidden rounded-lg bg-white p-5 sm:p-6 shadow-lg text-left"> <h3 class="text-lg sm:text-xl font-semibold text-slate-800 mb-3">Kaynak İncelemesi</h3> <a id="feedbackSourceLinkTag" class="flex items-center gap-3 text-slate-600 hover:text-blue-600 transition-colors group" href="#" target="_blank" rel="noopener noreferrer"> <div class="flex items-center justify-center rounded-lg bg-slate-100 group-hover:bg-blue-50 p-3 shrink-0"> <span class="material-icons-outlined text-slate-500 group-hover:text-blue-500">link</span> </div> <p id="feedbackSourceName" class="text-sm sm:text-base font-medium flex-1 truncate"></p> <span class="material-icons-outlined text-slate-400 group-hover:text-blue-500 text-lg">arrow_forward_ios</span> </a> </div> </div> </main> <footer class="sticky bottom-0 bg-white border-t border-slate-200 p-4"> <div class="mx-auto max-w-md"> <button id="feedbackNextButton" class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-[#0b80ee] text-white text-lg font-semibold leading-normal tracking-[0.015em] hover:bg-[#0968c3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0b80ee] focus:ring-offset-2 btn-animated"> <span class="truncate">Sonraki Soru</span> </button> </div> </footer> </div>
-        <div id="resultsScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto"> <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-7xl items-center justify-between p-4"> <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full btn-animated"> <span class="material-symbols-outlined">close</span> </button> <h1 class="text-xl font-semibold text-slate-900">Sonuçlar</h1> <div class="w-8 sm:w-10"></div> </div> </header> <main class="flex-1 overflow-y-auto px-6 py-8"> <div class="mx-auto max-w-md text-center"> <div class="mb-8 rounded-xl bg-white p-6 shadow-lg feedback-content-appear"> <h2 class="text-3xl sm:text-4xl font-bold text-slate-800">Skorun: <span id="finalScoreValue" class="text-blue-600">0/0</span></h2> <p class="mt-1 text-slate-600">En Yüksek Skor: <span id="highScoreDisplay" class="font-medium text-slate-700">0/0</span></p> <p class="mt-2 text-slate-600">Harcanan Süre: <span id="timeTakenValue" class="font-medium text-slate-700">0 dakika 0 saniye</span></p> <h4 class="text-lg font-semibold text-slate-700 mt-6 mb-2">Başarımlar</h4> <div id="achievementsDisplay" class="text-sm text-green-600"> </div> </div> <div class="rounded-xl bg-white p-6 shadow-lg"> <div class="flex items-center justify-between mb-6"> <h3 class="text-2xl font-semibold text-slate-800">Liderlik Tablosu</h3> <span class="material-symbols-outlined text-yellow-500 !text-3xl">emoji_events</span> </div> <div class="space-y-4"> <div class="flex items-center justify-between rounded-lg bg-slate-100 p-4 transition-all hover:bg-slate-200"> <div class="flex items-center gap-3"><span class="text-lg font-semibold text-slate-700">1.</span><p class="text-slate-700 font-medium">Oyuncu1 (Bot)</p></div> <p class="font-semibold text-slate-700">7/7</p> </div> <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 text-blue-700 ring-2 ring-blue-500"> <div class="flex items-center gap-3"><span class="text-lg font-semibold">★</span><p id="yourLeaderboardName" class="font-medium">SEN</p></div> <p id="yourLeaderboardScoreResults" class="font-semibold">0/0</p> </div> </div> </div> </div> </main> <footer class="sticky bottom-0 bg-white/80 backdrop-blur-md p-4 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"> <div class="mx-auto flex max-w-md flex-col gap-3"> <button id="playAgainBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#dce8f3] px-5 text-base font-bold text-slate-900 tracking-wide shadow-sm transition-colors hover:bg-[#c9d9e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dce8f3] btn-animated"> <span class="material-symbols-outlined mr-2">replay</span>Tekrar Oyna </button> <button id="backToHomeResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-slate-200 px-5 text-base font-bold text-slate-700 tracking-wide shadow-sm transition-colors hover:bg-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 btn-animated"> <span class="material-symbols-outlined mr-2">home</span>Ana Sayfaya Dön </button> </div> </footer> </div>
 
-    </div> <script>
+        <div id="homeScreen" class="main-screen-view flex flex-col min-h-screen">
+            <header id="homeHeader" class="bg-white shadow-sm sticky top-0 z-20">
+                <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+                    <div class="w-10"></div> 
+                    <h1 class="text-xl font-bold text-slate-800 text-center">NewsSwipe</h1>
+                    <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated">
+                        <span class="material-icons">settings</span>
+                    </button>
+                </div>
+            </header>
+            <main id="homeMain" class="flex-grow container mx-auto px-6 py-8 text-center overflow-y-auto">
+                <div class="max-w-md mx-auto">
+                    <img alt="NewsSwipe Uygulama İkonu" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">NewsSwipe'a Hoş Geldiniz!</h2>
+                    <p class="text-lg sm:text-xl text-slate-600 mb-10">Haber okuryazarlığınızı test edin. Sahte mi gerçek mi, karar verin.</p>
+                    <div class="space-y-4">
+                        <button id="playNowBtn" class="btn-primary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:bg-blue-700 transition-colors duration-150">
+                            <span class="material-icons mr-2">play_arrow</span>Hemen Oyna
+                        </button>
+                        <button id="leaderboardBtnHome" class="btn-secondary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
+                            <span class="material-icons mr-2">leaderboard</span>Skorları Gör
+                        </button>
+                        <button id="howToPlayBtn" class="btn-secondary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
+                            <span class="material-icons mr-2">help_outline</span>Nasıl Oynanır?
+                        </button>
+                    </div>
+                </div>
+            </main>
+            <footer id="homeFooter" class="bg-white border-t border-slate-200 sticky bottom-0 z-20">
+                <nav class="container mx-auto px-4 h-16 flex justify-around items-center">
+                    <a id="homeNavHome" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg">
+                        <span class="material-icons">home</span><span class="text-xs font-medium">Ana Sayfa</span>
+                    </a>
+                    <a id="homeNavScores" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg">
+                        <span class="material-icons">bar_chart</span><span class="text-xs font-medium">Skorlar</span>
+                    </a>
+                    <a id="homeNavProfile" href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg">
+                        <span class="material-icons">person_outline</span><span class="text-xs font-medium">Profil</span>
+                    </a>
+                </nav>
+            </footer>
+        </div>
+
+        <div id="gameScreen" class="main-screen-view hidden flex-col min-h-screen">
+            <div class="relative flex size-full flex-col bg-white group/design-root overflow-x-hidden lexend-font">
+                <header class="sticky top-0 z-20 bg-white shadow-sm">
+                    <div class="flex items-center p-4 pb-3">
+                        <button id="closeGameBtn" class="text-gray-700 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 btn-animated">
+                            <span class="material-icons-outlined">close</span>
+                        </button>
+                        <h1 class="text-gray-900 text-xl font-semibold leading-tight tracking-tight flex-1 text-center pr-10">Haber Doğrulama</h1>
+                    </div>
+                    <div class="px-4 pb-3">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <p class="text-gray-700 text-sm font-medium">Soru <span id="currentQuestionDisplay" class="font-bold text-gray-900">1</span>/<span id="totalQuestionsDisplay">7</span></p>
+                            <div class="flex items-center gap-3">
+                                <p class="text-gray-700 text-sm font-medium">Skor: <span id="scoreDisplay" class="font-bold text-gray-900">0</span></p>
+                                <p class="text-gray-700 text-sm font-medium">Seri: <span id="streakCounter" class="font-bold text-gray-900">0</span> 🔥</p>
+                            </div>
+                        </div>
+                        <div class="h-2.5 rounded-full bg-gray-200">
+                            <div id="progressBar" class="h-2.5 rounded-full primary-color-bg transition-all duration-300 ease-out" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </header>
+                <main class="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center space-y-6">
+                    <div class="flex gap-3 justify-center">
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
+                                <p id="timerMinutes" class="text-gray-900 text-2xl sm:text-3xl font-bold">00</p>
+                            </div><p class="text-gray-600 text-xs font-medium">Dakika</p>
+                        </div>
+                        <div class="flex items-center text-gray-400 text-xl sm:text-2xl font-bold pt-1 pb-5">:</div>
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
+                                <p id="timerSeconds" class="text-gray-900 text-2xl sm:text-3xl font-bold">15</p>
+                            </div><p class="text-gray-600 text-xs font-medium">Saniye</p>
+                        </div>
+                    </div>
+                    <div id="newsCardContainer" class="relative w-full max-w-sm sm:max-w-md aspect-[3/4.2] rounded-2xl shadow-xl">
+                        <div id="swipeRealIndicator" class="swipe-decision-indicator real-indicator">GERÇEK</div>
+                        <div id="swipeFakeIndicator" class="swipe-decision-indicator fake-indicator">SAHTE</div>
+                        <div id="newsCard" class="absolute inset-0 rounded-2xl overflow-hidden bg-slate-200">
+                            <img id="newsImage" alt="Haber Makalesi Resmi" class="absolute inset-0 h-full w-full object-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/>
+                            <div class="absolute inset-0 card-gradient flex flex-col justify-end p-3 sm:p-5 space-y-1 sm:space-y-2">
+                                <h2 id="newsTitle" class="text-white text-xl sm:text-2xl font-bold leading-tight drop-shadow-md">Haber Başlığı</h2>
+                                <p id="newsSnippet" class="text-gray-200 text-xs sm:text-sm font-normal leading-relaxed line-clamp-3 sm:line-clamp-4 drop-shadow-sm">Haber metni...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center text-slate-500 mt-4 text-sm px-4">
+                        Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong>sola (SAHTE)</strong> doğru kaydırın.
+                    </div>
+                </main>
+                <nav class="sticky bottom-0 bg-white border-t border-gray-200 pb-safe z-20">
+                    <div class="flex justify-around items-center h-16">
+                        <a id="gameNavHome" href="#" class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3">
+                            <span class="material-icons-outlined text-2xl">cottage</span><span class="text-xs font-medium">Ana Sayfa</span>
+                        </a>
+                        <a id="gameNavGame" href="#" class="flex flex-col items-center justify-center gap-0.5 primary-color-text hover:primary-color-text transition-colors w-1/3">
+                            <span class="material-icons-outlined text-2xl">gamepad</span><span class="text-xs font-medium">Oyun</span>
+                        </a>
+                        <a id="gameNavScores" href="#" class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3">
+                            <span class="material-icons-outlined text-2xl">leaderboard</span><span class="text-xs font-medium">Skorlar</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div id="howToPlayModal" class="fixed inset-0 bg-slate-800 bg-opacity-75 items-center justify-center p-4 hidden z-50">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto feedback-content-appear">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold text-slate-800 lexend-font">Nasıl Oynanır?</h3>
+                    <button id="closeModalBtn" class="text-slate-500 hover:text-slate-700 btn-animated">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="text-slate-600 space-y-3 lexend-font">
+                    <p>NewsSwipe'a hoş geldiniz!</p>
+                    <p>1. Ekranda beliren haber kartını dikkatlice okuyun.</p>
+                    <p>2. Haberin <strong>GERÇEK</strong> olduğuna inanıyorsanız kartı <strong>SAĞA</strong> doğru kaydırın.</p>
+                    <p>3. Haberin <strong>SAHTE</strong> olduğuna inanıyorsanız kartı <strong>SOLA</strong> doğru kaydırın.</p>
+                    <p>Haber okuryazarlığınızı test edin ve ne kadar yüksek puan alabileceğinizi görün!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="timeUpPopup" class="fixed inset-0 bg-slate-800 bg-opacity-75 items-center justify-center p-4 hidden z-40">
+            <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-xs sm:max-w-sm w-full text-center feedback-content-appear">
+                <span class="material-icons-outlined timeup-icon mb-4" style="font-size: 48px;">timer_off</span>
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3">Süren Doldu!</h3>
+                <p class="text-slate-600 mb-6 text-sm sm:text-base">Bu soru için cevap süreniz sona erdi.</p>
+                <button id="timeUpOkButton" class="w-full rounded-full h-11 px-6 bg-[#0b80ee] text-white text-lg font-semibold hover:bg-[#0968c3] transition-colors btn-animated">Tamam</button>
+            </div>
+        </div>
+
+        <div id="feedbackScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto">
+            <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-3xl items-center justify-end p-3 sm:p-4"> <button id="closeFeedbackBtn" class="flex items-center justify-center rounded-full text-slate-700 hover:bg-slate-100 p-2 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 btn-animated"> <span class="material-icons-outlined">close</span> </button> </div> </header> <main class="flex-grow px-4 sm:px-6 py-6 sm:py-8"> <div class="mx-auto max-w-md text-center feedback-content-appear"> <div class="mb-6 sm:mb-8"> <span id="feedbackIcon" class="material-icons-outlined" style="font-size: 56px sm:font-size: 64px;"></span> <h2 id="feedbackTitle" class="mt-3 sm:mt-4 text-2xl sm:text-3xl font-bold text-slate-800"></h2> </div> <div id="feedbackBox" class="rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8"> <p id="feedbackText" class="text-slate-700 text-sm sm:text-base leading-relaxed"></p> </div> <div id="feedbackSourceSection" class="hidden rounded-lg bg-white p-5 sm:p-6 shadow-lg text-left"> <h3 class="text-lg sm:text-xl font-semibold text-slate-800 mb-3">Kaynak İncelemesi</h3> <a id="feedbackSourceLinkTag" class="flex items-center gap-3 text-slate-600 hover:text-blue-600 transition-colors group" href="#" target="_blank" rel="noopener noreferrer"> <div class="flex items-center justify-center rounded-lg bg-slate-100 group-hover:bg-blue-50 p-3 shrink-0"> <span class="material-icons-outlined text-slate-500 group-hover:text-blue-500">link</span> </div> <p id="feedbackSourceName" class="text-sm sm:text-base font-medium flex-1 truncate"></p> <span class="material-icons-outlined text-slate-400 group-hover:text-blue-500 text-lg">arrow_forward_ios</span> </a> </div> </div> </main> <footer class="sticky bottom-0 bg-white border-t border-slate-200 p-4"> <div class="mx-auto max-w-md"> <button id="feedbackNextButton" class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-[#0b80ee] text-white text-lg font-semibold leading-normal tracking-[0.015em] hover:bg-[#0968c3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0b80ee] focus:ring-offset-2 btn-animated"> <span class="truncate">Sonraki Soru</span> </button> </div> </footer>
+        </div>
+        
+        <div id="resultsScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto"> <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-7xl items-center justify-between p-4"> <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full btn-animated"> <span class="material-symbols-outlined">close</span> </button> <h1 class="text-xl font-semibold text-slate-900">Sonuçlar</h1> <div class="w-8 sm:w-10"></div> </div> </header> <main class="flex-1 overflow-y-auto px-6 py-8"> <div class="mx-auto max-w-md text-center"> <div class="mb-8 rounded-xl bg-white p-6 shadow-lg feedback-content-appear"> <h2 class="text-3xl sm:text-4xl font-bold text-slate-800">Skorun: <span id="finalScoreValue" class="text-blue-600">0/0</span></h2> <p class="mt-1 text-slate-600">En Yüksek Skor: <span id="highScoreDisplay" class="font-medium text-slate-700">0/0</span></p> <p class="mt-2 text-slate-600">Harcanan Süre: <span id="timeTakenValue" class="font-medium text-slate-700">0 dakika 0 saniye</span></p> <h4 class="text-lg font-semibold text-slate-700 mt-6 mb-2">Başarımlar</h4> <div id="achievementsDisplay" class="text-sm text-green-600"> </div> </div> <div class="rounded-xl bg-white p-6 shadow-lg"> <div class="flex items-center justify-between mb-6"> <h3 class="text-2xl font-semibold text-slate-800">Liderlik Tablosu</h3> <span class="material-symbols-outlined text-yellow-500 !text-3xl">emoji_events</span> </div> <div class="space-y-4"> <div class="flex items-center justify-between rounded-lg bg-slate-100 p-4 transition-all hover:bg-slate-200"> <div class="flex items-center gap-3"><span class="text-lg font-semibold text-slate-700">1.</span><p class="text-slate-700 font-medium">Oyuncu1 (Bot)</p></div> <p class="font-semibold text-slate-700">7/7</p> </div> <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 text-blue-700 ring-2 ring-blue-500"> <div class="flex items-center gap-3"><span class="text-lg font-semibold">★</span><p id="yourLeaderboardName" class="font-medium">SEN</p></div> <p id="yourLeaderboardScoreResults" class="font-semibold">0/0</p> </div> </div> </div> </div> </main> <footer class="sticky bottom-0 bg-white/80 backdrop-blur-md p-4 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"> <div class="mx-auto flex max-w-md flex-col gap-3"> <button id="playAgainBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#dce8f3] px-5 text-base font-bold text-slate-900 tracking-wide shadow-sm transition-colors hover:bg-[#c9d9e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dce8f3] btn-animated"> <span class="material-symbols-outlined mr-2">replay</span>Tekrar Oyna </button> <button id="backToHomeResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-slate-200 px-5 text-base font-bold text-slate-700 tracking-wide shadow-sm transition-colors hover:bg-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 btn-animated"> <span class="material-symbols-outlined mr-2">home</span>Ana Sayfaya Dön </button> </div> </footer> </div>
+    </div>
+
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // HTML Elementleri
         const appRoot = document.getElementById('appRoot');
         const homeScreenDiv = document.getElementById('homeScreen');
         const playNowButton = document.getElementById('playNowBtn');
@@ -74,7 +216,6 @@
         const leaderboardBtnHome = document.getElementById('leaderboardBtnHome');
         const modal = document.getElementById('howToPlayModal');
         const closeModalButton = document.getElementById('closeModalBtn');
-        
         const gameScreenDiv = document.getElementById('gameScreen');
         const closeGameButton = document.getElementById('closeGameBtn');
         const currentQuestionDisplay = document.getElementById('currentQuestionDisplay');
@@ -84,7 +225,6 @@
         const progressBar = document.getElementById('progressBar');
         const timerMinutes = document.getElementById('timerMinutes');
         const timerSeconds = document.getElementById('timerSeconds');
-        
         const newsCardContainer = document.getElementById('newsCardContainer');
         const newsCard = document.getElementById('newsCard');
         const newsImage = document.getElementById('newsImage');
@@ -92,7 +232,6 @@
         const newsSnippet = document.getElementById('newsSnippet');
         const swipeRealIndicator = document.getElementById('swipeRealIndicator');
         const swipeFakeIndicator = document.getElementById('swipeFakeIndicator');
-
         const timeUpPopup = document.getElementById('timeUpPopup');
         const timeUpOkButton = document.getElementById('timeUpOkButton');
         const feedbackScreen = document.getElementById('feedbackScreen');
@@ -121,13 +260,11 @@
         const gameNavGame = document.getElementById('gameNavGame');
         const gameNavScores = document.getElementById('gameNavScores');
 
-        // Elementlerin varlığını kontrol et
-        if (!appRoot || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer) {
+        if (!appRoot || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen) {
             console.error("Kritik HTML elementlerinden biri veya birkaçı DOM'da bulunamadı! Lütfen ID'leri kontrol edin.");
-            document.body.innerHTML = "<p style='color:red; text-align:center; font-size:20px; margin-top:50px;'>Kritik bir hata oluştu. Lütfen konsolu kontrol edin.</p>";
-            return; // Script'in devamını engelle
+            if(document.body) document.body.innerHTML = "<p style='color:red; text-align:center; font-size:20px; margin-top:50px;'>Kritik bir hata oluştu. Lütfen geliştirici konsolunu kontrol edin.</p>";
+            return; 
         }
-
 
         const newsData = [
             { id: 1, title: "Koca, 'Bulaşıkları Yıkamıyor' Diye Karısını ChatGPT'ye Şikayet Etti!", snippet: "Ev işleri konusunda anlaşmazlık yaşayan bir adam, eşinin bulaşıkları yıkamadığını iddia ederek durumu yapay zeka sohbet robotu ChatGPT'ye bildirdi. ChatGPT'nin çifte 'iletişim ve empati' önerdiği öğrenildi.", image: "https://images.unsplash.com/photo-1611162617213-6d22e4cf1c79?q=80&w=1000&auto=format&fit=crop", link: "#koca-karisini-chatgptye-sikayet-etti-kurgu", isReal: false, explanation: "Bu haber kurgusaldır. ChatGPT gibi yapay zeka modelleri kişisel şikayetleri işleme almaz veya hukuki bir çözüm sunmaz. Ancak, bu tür absürt durumlar mizah amaçlı sıkça üretilir ve yapay zekanın hayatımızdaki yerine dair eğlenceli bir yorumdur." },
@@ -139,19 +276,16 @@
             { id: 7, title: "Tarihi Eser Kaçakçısı, Heykeli 'Ağır Geldi' Diye Geri Getirdi!", snippet: "Mısır'da bir müzeden antik bir heykeli çalan acemi hırsız, heykeli taşıyamayınca birkaç sokak öteye bırakıp polise 'gelin alın, belim koptu' diye ihbarda bulundu.", image: "https://media.istockphoto.com/id/534863391/tr/foto%C4%9Fraf/stressed-man-carrying-heavy-box.jpg?s=612x612&w=0&k=20&c=9gQkXzGg9J_yJtQ_uWkS2Hw5T_Vj9vKkF_8p_l5hO3Y=", link: "https://www.theguardian.com/world/2008/dec/10/egypt-archaeology", isReal: true, explanation: "Bu haber gerçektir (veya benzerleri yaşanmıştır). Sanat eseri hırsızlıklarında bazen planların beklenmedik şekilde ters gittiği ve hırsızların komik durumlara düştüğü olaylar yaşanmıştır.", displaySourceName: "The Guardian / Uluslararası Haberler", displaySourceLink: "https://www.theguardian.com/world" }
         ];
         
-        // Oyun Değişkenleri
         let currentQuestionIndex = 0; score = 0; currentStreak = 0; 
         let timerInterval; timeLeft = 15; const TIME_PER_QUESTION = 15;
         let gameStartTime; let gamePlayedAtLeastOnce = false;
         let achievements = JSON.parse(localStorage.getItem('newsSwipeAchievements_tr')) || { playedFirstGame: false, fiveInARow: false, scoreOver70Percent: false };
 
-        // Swipe Değişkenleri
         let isSwiping = false; let isMouseSwiping = false; 
         let swipeStartX = 0; let swipeCurrentX = 0;
-        // SABİT DEĞERLERLE BAŞLATILDI
-        const SWIPE_THRESHOLD = 80; 
+        const SWIPE_THRESHOLD = 70; // Sabit değer
         const CARD_MAX_ROTATION = 20; 
-        const CARD_ROTATION_FACTOR = CARD_MAX_ROTATION / 150; // Ortalama bir kart genişliği için oran
+        const CARD_ROTATION_FACTOR = CARD_MAX_ROTATION / 160; // Ortalama kart genişliğine göre oran (max-w-sm ~384px/2 ~ 190px, biraz daha azı)
 
 
         function saveAchievements() { localStorage.setItem('newsSwipeAchievements_tr', JSON.stringify(achievements)); }
@@ -160,102 +294,32 @@
         function updateActiveNav(activeId) { const navs = [ { el: homeNavHome, id: 'homeScreen' }, { el: homeNavScores, id: 'resultsScreen' }, { el: homeNavProfile, id: 'profileScreen' }, { el: gameNavHome, id: 'homeScreen' }, { el: gameNavGame, id: 'gameScreen' }, { el: gameNavScores, id: 'resultsScreen' } ]; navs.forEach(n => { if(n.el) { n.el.classList.toggle('nav-item-active', n.id === activeId); }}); if (activeId === 'homeScreen' && homeNavHome) homeNavHome.classList.add('nav-item-active'); else if (homeNavHome) homeNavHome.classList.remove('nav-item-active'); if (activeId === 'gameScreen' && gameNavGame) gameNavGame.classList.add('nav-item-active'); else if (gameNavGame) gameNavGame.classList.remove('nav-item-active'); if (activeId === 'resultsScreen') { if(homeNavScores) homeNavScores.classList.add('nav-item-active'); if(gameNavScores) gameNavScores.classList.add('nav-item-active'); } else { if(homeNavScores) homeNavScores.classList.remove('nav-item-active'); if(gameNavScores) gameNavScores.classList.remove('nav-item-active'); } }
         function showScreen(screen) { const allScreens = [homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen]; const allPopups = [timeUpPopup, modal]; allScreens.forEach(s => { if (s) { s.classList.add('hidden'); s.classList.remove('flex'); }}); allPopups.forEach(p => { if (p) { p.classList.add('hidden'); p.classList.remove('flex'); }}); if(screen){ screen.classList.remove('hidden'); if (allScreens.includes(screen) || allPopups.includes(screen)) { screen.classList.add('flex');} if (allScreens.includes(screen)) { updateActiveNav(screen.id); }} else { updateActiveNav(null); } if (!allPopups.includes(screen) && screen !== modal) { window.scrollTo(0,0); }}
         
-        function resetCardState(isNewCard = false) { if (!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = isNewCard ? 'none' : 'transform 0.3s ease-out'; newsCard.style.transform = 'translateX(0px) rotate(0deg)'; newsCard.classList.remove('fly-out-left', 'fly-out-right', 'swiping'); swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible'); if (isNewCard) { newsCard.classList.remove('enter-anim', 'active'); newsCard.style.opacity = '0'; }}
-        function animateCardIn() { if (!newsCard) return; newsCard.classList.add('enter-anim'); newsCard.style.opacity = '0'; newsCard.style.transform = 'translateY(70vh) scale(0.7)'; requestAnimationFrame(() => { newsCard.classList.add('active'); });}
-        function updateUIForNewQuestion() { if (!newsCard || !newsImage || !newsTitle || !newsSnippet || !currentQuestionDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter || !timerSeconds) return; resetCardState(true); if (currentQuestionIndex >= newsData.length) { endGame(); return; } const question = newsData[currentQuestionIndex]; newsImage.src = question.image; newsTitle.textContent = question.title; newsSnippet.textContent = question.snippet; currentQuestionDisplay.textContent = currentQuestionIndex + 1; totalQuestionsDisplay.textContent = newsData.length; streakCounter.textContent = currentStreak; progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`; timerSeconds.classList.remove('timer-pulse'); setTimeout(animateCardIn, 100); /* Küçük bir gecikme eklendi */}
+        function resetCardState(isNewCard = false) { if (!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.classList.remove('fly-out-left', 'fly-out-right', 'enter-anim', 'active', 'swiping'); newsCard.style.animation = ''; if (isNewCard) { newsCard.classList.add('enter-anim'); newsCard.style.opacity = '0'; newsCard.style.transform = 'translateY(60px) scale(0.95) rotateX(-15deg)'; } else { newsCard.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)'; newsCard.style.transform = 'translateX(0px) rotate(0deg)'; newsCard.style.opacity = '1'; newsCard.style.visibility = 'visible'; } swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible');}
+        function animateCardIn() { if (!newsCard) return; void newsCard.offsetWidth; newsCard.classList.add('active'); }
+        function updateUIForNewQuestion() { if (!newsCard || !newsImage || !newsTitle || !newsSnippet || !currentQuestionDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter || !timerSeconds) return; resetCardState(true); if (currentQuestionIndex >= newsData.length) { endGame(); return; } const question = newsData[currentQuestionIndex]; if (newsImage) newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; if (newsImage && question.image) { newsImage.src = question.image; newsImage.onload = () => { setTimeout(animateCardIn, 50); }; newsImage.onerror = () => { console.warn("Haber resmi yüklenemedi:", question.image); newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; setTimeout(animateCardIn, 50); }; } else { setTimeout(animateCardIn, 50); } newsTitle.textContent = question.title; newsSnippet.textContent = question.snippet; currentQuestionDisplay.textContent = currentQuestionIndex + 1; totalQuestionsDisplay.textContent = newsData.length; streakCounter.textContent = currentStreak; progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`; timerSeconds.classList.remove('timer-pulse');}
         
         function startTimer() { if(!timerSeconds || !timerMinutes) return; timeLeft = TIME_PER_QUESTION; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft; timerMinutes.textContent = "00"; timerSeconds.classList.remove('timer-pulse'); clearInterval(timerInterval); timerInterval = setInterval(() => { timeLeft--; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft; if (timeLeft <= 5 && timeLeft > 0) timerSeconds.classList.add('timer-pulse'); else timerSeconds.classList.remove('timer-pulse'); if (timeLeft <= 0) { clearInterval(timerInterval); timerSeconds.classList.remove('timer-pulse'); showTimeUpPopup(); }}, 1000); }
         function showTimeUpPopup() { if(!timeUpPopup) return; showScreen(timeUpPopup); }
         if(timeUpOkButton) { timeUpOkButton.addEventListener('click', () => { handleAnswer(null); }); }
         
-        function processSwipeDecision(isRealChoice) { if(!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = 'none'; if (isRealChoice) { newsCard.classList.add('fly-out-right'); swipeRealIndicator.classList.add('visible'); } else { newsCard.classList.add('fly-out-left'); swipeFakeIndicator.classList.add('visible'); } setTimeout(() => { handleAnswer(isRealChoice); }, 450); }
-        function handleAnswer(userChoiceIsReal) { if (!scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return; clearInterval(timerInterval); timerSeconds.classList.remove('timer-pulse'); const currentQuestion = newsData[currentQuestionIndex]; const wasCorrect = userChoiceIsReal === currentQuestion.isReal; if (userChoiceIsReal !== null && wasCorrect) { score++; currentStreak++; if (currentStreak === 5) { unlockAchievement('fiveInARow', "Harika Seri! (5 doğru)"); } } else if (userChoiceIsReal !== null && !wasCorrect) { currentStreak = 0; } if(userChoiceIsReal === null) currentStreak = 0; scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; feedbackIcon.className = "material-icons-outlined feedback-content-appear"; feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8 feedback-content-appear"; feedbackTitle.classList.add("feedback-content-appear"); feedbackSourceSection.classList.add('hidden'); let feedbackStr = ""; if (userChoiceIsReal === null) { feedbackTitle.textContent = "Süre Bitti!"; feedbackIcon.textContent = "timer_off"; feedbackIcon.classList.add('timeup-icon'); feedbackBox.classList.add('incorrect-feedback');  feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`; if (currentQuestion.isReal && currentQuestion.displaySourceName && currentQuestion.displaySourceLink) { feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden'); } } else if (wasCorrect) { feedbackTitle.textContent = "Bildin!"; feedbackIcon.textContent = "check_circle"; feedbackIcon.classList.add('status-icon-correct'); feedbackBox.classList.add('correct-feedback'); feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin."); } else {  feedbackTitle.textContent = "Tekrar dene!"; feedbackIcon.textContent = "cancel"; feedbackIcon.classList.add('status-icon-incorrect'); feedbackBox.classList.add('incorrect-feedback'); feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`; if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) { feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden'); } } feedbackText.innerHTML = feedbackStr;  feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru"; showScreen(feedbackScreen); }
+        function processSwipeDecision(isRealChoice) { if(!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = 'none'; if (isRealChoice) { newsCard.classList.add('fly-out-right'); swipeRealIndicator.classList.add('visible'); } else { newsCard.classList.add('fly-out-left'); swipeFakeIndicator.classList.add('visible'); } setTimeout(() => { handleAnswer(isRealChoice); }, 400); }
+        function handleAnswer(userChoiceIsReal) { if (!scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return; clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse'); const currentQuestion = newsData[currentQuestionIndex]; const wasCorrect = userChoiceIsReal === currentQuestion.isReal; if (userChoiceIsReal !== null && wasCorrect) { score++; currentStreak++; if (currentStreak === 5) { unlockAchievement('fiveInARow', "Harika Seri! (5 doğru)"); } } else if (userChoiceIsReal !== null && !wasCorrect) { currentStreak = 0; } if(userChoiceIsReal === null) currentStreak = 0; scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; feedbackIcon.className = "material-icons-outlined feedback-content-appear"; feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8 feedback-content-appear"; feedbackTitle.classList.add("feedback-content-appear"); feedbackSourceSection.classList.add('hidden'); let feedbackStr = ""; if (userChoiceIsReal === null) { feedbackTitle.textContent = "Süre Bitti!"; feedbackIcon.textContent = "timer_off"; feedbackIcon.classList.add('timeup-icon'); feedbackBox.classList.add('incorrect-feedback');  feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`; if (currentQuestion.isReal && currentQuestion.displaySourceName && currentQuestion.displaySourceLink) { feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden'); } } else if (wasCorrect) { feedbackTitle.textContent = "Bildin!"; feedbackIcon.textContent = "check_circle"; feedbackIcon.classList.add('status-icon-correct'); feedbackBox.classList.add('correct-feedback'); feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin."); } else {  feedbackTitle.textContent = "Tekrar dene!"; feedbackIcon.textContent = "cancel"; feedbackIcon.classList.add('status-icon-incorrect'); feedbackBox.classList.add('incorrect-feedback'); feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`; if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) { feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden'); } } feedbackText.innerHTML = feedbackStr;  feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru"; showScreen(feedbackScreen); }
         function proceedToNextStep() { if (!progressBar) return; currentQuestionIndex++; progressBar.style.width = `${(currentQuestionIndex / newsData.length) * 100}%`; if (currentQuestionIndex < newsData.length) { showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); } else { endGame(); }}
         if(feedbackNextButton) feedbackNextButton.addEventListener('click', proceedToNextStep);
         if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextStep);
-        function startGame() { if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) return; gameStartTime = Date.now(); currentQuestionIndex = 0; score = 0; currentStreak = 0; scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; totalQuestionsDisplay.textContent = newsData.length; progressBar.style.width = '0%'; unlockAchievement('playedFirstGame', "İlk Oyun!"); showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); }
+        function startGame() { if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) { console.error("Oyun başlatma için UI elementleri eksik"); return; } gameStartTime = Date.now(); currentQuestionIndex = 0; score = 0; currentStreak = 0; scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; totalQuestionsDisplay.textContent = newsData.length; progressBar.style.width = '0%'; unlockAchievement('playedFirstGame', "İlk Oyun!"); showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); }
         let gameEndTimeVariable; 
         function endGame() { if (!timeTakenValue || !finalScoreValue || !yourLeaderboardScoreResults || !highScoreDisplay) return; gamePlayedAtLeastOnce = true; clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse'); gameEndTimeVariable = Date.now(); const timeDiff = gameEndTimeVariable - gameStartTime; const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000); timeTakenValue.textContent = `${mins} dakika ${secs} saniye`; finalScoreValue.textContent = `${score}/${newsData.length}`; yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`; let hs = parseInt(localStorage.getItem('newsSwipeHighScore_tr')) || 0; if (score > hs) { hs = score; localStorage.setItem('newsSwipeHighScore_tr', hs); } highScoreDisplay.textContent = `${hs}/${newsData.length}`;  if (newsData.length > 0 && score / newsData.length >= 0.7) { unlockAchievement('scoreOver70Percent', "Yüksek Skorlu Oyuncu!"); } displayUnlockedAchievements(); showScreen(resultsScreen); }
         function resetGame() { clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse');}
         function navigateToHome() { resetGame(); showScreen(homeScreenDiv); }
         function navigateToResults() { /* ... (önceki gibi) ... */ }
 
-        // SWIPE EVENT LISTENERS (DÜZENLENMİŞ)
-        let initialCardX = 0, initialCardY = 0; // Kartın drag sırasındaki pozisyonu için
-
-        function unifiedSwipeStart(e) {
-            if (!newsCard || newsCard.classList.contains('fly-out-left') || newsCard.classList.contains('fly-out-right')) return;
-            isSwiping = true;
-            isMouseSwiping = (e.type === 'mousedown');
-            swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX;
-            // Kartın mevcut transform değerlerini sıfırlamadan önce anlık pozisyonunu almamız gerekmiyor,
-            // çünkü diffX'i kullanarak her zaman başlangıca göre hareket ettireceğiz.
-            newsCard.style.transition = 'none'; 
-            newsCard.classList.add('swiping');
-
-            if (isMouseSwiping) {
-                document.addEventListener('mousemove', unifiedSwipeMove);
-                document.addEventListener('mouseup', unifiedSwipeEnd);
-            }
-        }
-
-        function unifiedSwipeMove(e) {
-            if (!isSwiping || !newsCard) return;
-            
-            swipeCurrentX = isMouseSwiping ? e.pageX : e.touches[0].pageX;
-            let diffX = swipeCurrentX - swipeStartX;
-
-            if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) { // Dokunmatikte yatay kaydırmada sayfa scroll'unu engelle
-                e.preventDefault();
-            }
-            
-            let rotation = diffX * CARD_ROTATION_FACTOR;
-            rotation = Math.max(-CARD_MAX_ROTATION, Math.min(CARD_MAX_ROTATION, rotation)); // Döndürmeyi sınırla
-            
-            newsCard.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`;
-
-            if (diffX > SWIPE_THRESHOLD / 1.8) { // Damga görünürlük eşiğini biraz düşürdüm
-                swipeRealIndicator.classList.add('visible'); swipeFakeIndicator.classList.remove('visible');
-            } else if (diffX < -SWIPE_THRESHOLD / 1.8) {
-                swipeFakeIndicator.classList.add('visible'); swipeRealIndicator.classList.remove('visible');
-            } else {
-                swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible');
-            }
-        }
-
-        function unifiedSwipeEnd(e) {
-            if (!isSwiping || !newsCard) return;
-            
-            if (isMouseSwiping) {
-                document.removeEventListener('mousemove', unifiedSwipeMove);
-                document.removeEventListener('mouseup', unifiedSwipeEnd);
-            }
-            isSwiping = false;
-            isMouseSwiping = false;
-            newsCard.classList.remove('swiping');
-
-            let diffX = swipeCurrentX - swipeStartX;
-
-            if (Math.abs(diffX) > SWIPE_THRESHOLD) {
-                if (diffX > 0) { swipeRealIndicator.classList.add('visible'); } 
-                else { swipeFakeIndicator.classList.add('visible'); }
-                processSwipeDecision(diffX > 0);
-            } else {
-                resetCardState(false); // Kartı yerine sektir (false = yeni kart değil)
-            }
-            swipeStartX = 0; swipeCurrentX = 0; // Değerleri sıfırla
-        }
-
-        if (newsCard) {
-            newsCard.addEventListener('mousedown', unifiedSwipeStart);
-            newsCard.addEventListener('touchstart', unifiedSwipeStart, { passive: true });
-            // Touchmove ve Touchend document'a değil, karta eklenecek (start'ta eklenip end'de kaldırılabilir ya da hep kartta kalabilir)
-            // Şimdilik direkt karta ekleyelim
-            newsCard.addEventListener('touchmove', unifiedSwipeMove, { passive: false });
-            newsCard.addEventListener('touchend', unifiedSwipeEnd);
-            newsCard.addEventListener('touchcancel', unifiedSwipeEnd); // İptal durumunda da bitir
-        } else { console.error("Haber kartı (newsCard) DOM'da bulunamadı! Swipe çalışmayacak."); }
-
+        // SWIPE EVENT LISTENERS
+        let initialCardX = 0, initialCardY = 0; 
+        function unifiedSwipeStart(e) { if (!newsCard || newsCard.classList.contains('fly-out-left') || newsCard.classList.contains('fly-out-right')) return; isSwiping = true; isMouseSwiping = (e.type === 'mousedown'); swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX; newsCard.style.transition = 'none'; newsCard.classList.add('swiping'); if (isMouseSwiping) { document.addEventListener('mousemove', unifiedSwipeMove); document.addEventListener('mouseup', unifiedSwipeEnd); } }
+        function unifiedSwipeMove(e) { if (!isSwiping || !newsCard) return; swipeCurrentX = isMouseSwiping ? e.pageX : e.touches[0].pageX; let diffX = swipeCurrentX - swipeStartX; if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) { e.preventDefault(); } let rotation = diffX * CARD_ROTATION_FACTOR; rotation = Math.max(-CARD_MAX_ROTATION, Math.min(CARD_MAX_ROTATION, rotation)); newsCard.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`; if (diffX > SWIPE_THRESHOLD / 1.8) { swipeRealIndicator.classList.add('visible'); swipeFakeIndicator.classList.remove('visible'); } else if (diffX < -SWIPE_THRESHOLD / 1.8) { swipeFakeIndicator.classList.add('visible'); swipeRealIndicator.classList.remove('visible'); } else { swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible'); } }
+        function unifiedSwipeEnd(e) { if (!isSwiping || !newsCard) return; if (isMouseSwiping) { document.removeEventListener('mousemove', unifiedSwipeMove); document.removeEventListener('mouseup', unifiedSwipeEnd); } isSwiping = false; isMouseSwiping = false; newsCard.classList.remove('swiping'); let diffX = swipeCurrentX - swipeStartX; if (Math.abs(diffX) > SWIPE_THRESHOLD) { if (diffX > 0) { swipeRealIndicator.classList.add('visible'); } else { swipeFakeIndicator.classList.add('visible'); } processSwipeDecision(diffX > 0); } else { resetCardState(false); } swipeStartX = 0; swipeCurrentX = 0; }
+        if (newsCard) { newsCard.addEventListener('mousedown', unifiedSwipeStart); newsCard.addEventListener('touchstart', unifiedSwipeStart, { passive: true }); newsCard.addEventListener('touchmove', unifiedSwipeMove, { passive: false }); newsCard.addEventListener('touchend', unifiedSwipeEnd); newsCard.addEventListener('touchcancel', unifiedSwipeEnd); } else { console.error("Haber kartı (newsCard) DOM'da bulunamadı! Swipe çalışmayacak."); }
 
         // Diğer Event Listeners
         if (howToPlayButton && modal && closeModalButton) { howToPlayButton.addEventListener('click', () => { if (modal) { showScreen(modal); }}); const closeHowToPlayModalAndGoHome = () => { navigateToHome(); }; closeModalButton.addEventListener('click', closeHowToPlayModalAndGoHome); modal.addEventListener('click', (event) => { if (event.target === modal) { closeHowToPlayModalAndGoHome(); }}); } else { console.error("Modal ('Nasıl Oynanır') elementleri bulunamadı."); }
@@ -272,7 +336,7 @@
         
         displayUnlockedAchievements(); 
         showScreen(homeScreenDiv); 
-        document.body.classList.remove('loading');
+        if(document.body) document.body.classList.remove('loading');
 
     });
     </script>
