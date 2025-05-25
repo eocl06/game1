@@ -76,8 +76,8 @@ html, body {
   <div class="w-10"></div>
   <h1 class="text-xl font-bold text-slate-800 text-center flex-1">Fake or Take?</h1>
   <div class="w-10 flex justify-end">
-    <button class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated">
-      <span class="material-icons">settings</span>
+    <button id="aboutBtn" class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 btn-animated">
+      <span class="material-icons">info_outline</span>
     </button>
   </div>
 </div>
@@ -200,6 +200,22 @@ Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong
 </div>
 </div>
 
+<div id="aboutModal" class="fixed inset-0 bg-slate-800 bg-opacity-75 items-center justify-center p-4 hidden z-50">
+<div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto feedback-content-appear">
+<div class="flex justify-between items-center mb-4">
+    <h3 class="text-2xl font-bold text-slate-800 lexend-font">Hakkında</h3>
+    <button id="closeAboutModalBtn" class="text-slate-500 hover:text-slate-700 btn-animated">
+        <span class="material-icons">close</span>
+    </button>
+</div>
+<div class="text-slate-600 space-y-3 lexend-font">
+    <p>Her gün sadece bizim coğrafyada olabileceğine inandığımız, “bu da ancak burada olur” dedirten olaylarla karşılaşıyoruz. İşte bu oyun, ülkemizin kendine has gündemini, bitmek bilmeyen sürprizlerini ve eşsiz mizah anlayışını yansıtmak amacıyla tamamen eğlence için geliştirilmiştir.</p>
+    <p>Geliştirici: Gemini + ChatGPT</p>
+    <p class="text-sm text-slate-500">(Konsept & Prompt Whisperer: Emre Öcal)</p>
+</div>
+</div>
+</div>
+
 <div id="timeUpPopup" class="fixed inset-0 bg-slate-800 bg-opacity-75 items-center justify-center p-4 hidden z-40">
 <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-xs sm:max-w-sm w-full text-center feedback-content-appear">
 <span class="material-icons-outlined timeup-icon mb-4" style="font-size: 48px;">timer_off</span>
@@ -213,7 +229,7 @@ Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong
 <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-3xl items-center justify-end p-3 sm:p-4"> <button id="closeFeedbackBtn" class="flex items-center justify-center rounded-full text-slate-700 hover:bg-slate-100 p-2 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 btn-animated"> <span class="material-icons-outlined">close</span> </button> </div> </header> <main class="flex-grow px-4 sm:px-6 py-6 sm:py-8"> <div class="mx-auto max-w-md text-center feedback-content-appear"> <div class="mb-6 sm:mb-8"> <span id="feedbackIcon" class="material-icons-outlined" style="font-size: 56px sm:font-size: 64px;"></span> <h2 id="feedbackTitle" class="mt-3 sm:mt-4 text-2xl sm:text-3xl font-bold text-slate-800"></h2> </div> <div id="feedbackBox" class="rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8"> <p id="feedbackText" class="text-slate-700 text-sm sm:text-base leading-relaxed"></p> </div> <div id="feedbackSourceSection" class="hidden rounded-lg bg-white p-5 sm:p-6 shadow-lg text-left"> <h3 class="text-lg sm:text-xl font-semibold text-slate-800 mb-3">Kaynak İncelemesi</h3> <a id="feedbackSourceLinkTag" class="flex items-center gap-3 text-slate-600 hover:text-blue-600 transition-colors group" href="#" target="_blank" rel="noopener noreferrer"> <div class="flex items-center justify-center rounded-lg bg-slate-100 group-hover:bg-blue-50 p-3 shrink-0"> <span class="material-icons-outlined text-slate-500 group-hover:text-blue-500">link</span> </div> <p id="feedbackSourceName" class="text-sm sm:text-base font-medium flex-1 truncate"></p> <span class="material-icons-outlined text-slate-400 group-hover:text-blue-500 text-lg">arrow_forward_ios</span> </a> </div> </div> </main> <footer class="sticky bottom-0 bg-white border-t border-slate-200 p-4"> <div class="mx-auto max-w-md"> <button id="feedbackNextButton" class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-[#0b80ee] text-white text-lg font-semibold leading-normal tracking-[0.015em] hover:bg-[#0968c3] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0b80ee] focus:ring-offset-2 btn-animated"> <span class="truncate">Sonraki Soru</span> </button> </div> </footer>
 </div>
 
-<div id="resultsScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto h-full"> <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-7xl items-center justify-between p-4"> <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full btn-animated"> <span class="material-symbols-outlined">close</span> </button> <h1 class="text-xl font-semibold text-slate-900">Sonuçlar</h1> <div class="w-8 sm:w-10"></div> </div> </header> <main class="flex-1 overflow-y-auto px-6 py-8"> <div class="mx-auto max-w-md text-center"> <div class="mb-8 rounded-xl bg-white p-6 shadow-lg feedback-content-appear"> <h2 class="text-3xl sm:text-4xl font-bold text-slate-800">Skorun: <span id="finalScoreValue" class="text-blue-600">0/0</span></h2> <p class="mt-1 text-slate-600">En Yüksek Skor: <span id="highScoreDisplay" class="font-medium text-slate-700">0/0</span></p> <p class="mt-2 text-slate-600">Harcanan Süre: <span id="timeTakenValue" class="font-medium text-slate-700">0 dakika 0 saniye</span></p> <h4 class="text-lg font-semibold text-slate-700 mt-6 mb-2">Başarımlar</h4> <div id="achievementsDisplay" class="text-sm text-green-600"> </div> </div> <div class="rounded-xl bg-white p-6 shadow-lg"> <div class="flex items-center justify-between mb-6"> <h3 class="text-2xl font-semibold text-slate-800">Liderlik Tablosu</h3> <span class="material-symbols-outlined text-yellow-500 !text-3xl">emoji_events</span> </div> <div class="space-y-4"> <div class="flex items-center justify-between rounded-lg bg-slate-100 p-4 transition-all hover:bg-slate-200"> <div class="flex items-center gap-3"><span class="text-lg font-semibold text-slate-700">1.</span><p class="text-slate-700 font-medium">Oyuncu1 (Bot)</p></div> <p class="font-semibold text-slate-700">7/7</p> </div> <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 text-blue-700 ring-2 ring-blue-500"> <div class="flex items-center gap-3"><span class="text-lg font-semibold">★</span><p id="yourLeaderboardName" class="font-medium">SEN</p></div> <p id="yourLeaderboardScoreResults" class="font-semibold">0/0</p> </div> </div> </div> </div> </main>
+<div id="resultsScreen" class="main-screen-view hidden bg-slate-50 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto h-full"> <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-7xl items-center justify-between p-4"> <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full btn-animated"> <span class="material-symbols-outlined">close</span> </button> <h1 class="text-xl font-semibold text-slate-900">Sonuçlar</h1> <div class="w-8 sm:w-10"></div> </div> </header> <main class="flex-1 overflow-y-auto px-6 py-8"> <div class="mx-auto max-w-md text-center"> <div class="mb-8 rounded-xl bg-white p-6 shadow-lg feedback-content-appear"> <h2 class="text-3xl sm:text-4xl font-bold text-slate-800">Skorun: <span id="finalScoreValue" class="text-blue-600">0/0</span></h2> <p class="mt-1 text-slate-600">En Yüksek Skor: <span id="highScoreDisplay" class="font-medium text-slate-700">0/0</span></p> <p class="mt-2 text-slate-600">Harcanan Süre: <span id="timeTakenValue" class="font-medium text-slate-700">0 dakika 0 saniye</span></p> <h4 class="text-lg font-semibold text-slate-700 mt-6 mb-2">Başarımlar</h4> <div id="achievementsDisplay" class="text-sm text-green-600"> </div> </div> <div class="rounded-xl bg-white p-6 shadow-lg"> <div class="flex items-center justify-between mb-6"> <h3 class="text-2xl font-semibold text-slate-800">Liderlik Tablosu</h3> <span class="material-symbols-outlined text-yellow-500 !text-3xl">emoji_events</span> </div> <div id="leaderboardEntriesContainer" class="space-y-4"> </div> </div> </div> </main>
 <footer class="sticky bottom-0 bg-white/80 backdrop-blur-md p-4 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
   <div class="mx-auto flex max-w-md flex-col gap-3">
     <button id="shareResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-green-500 px-5 text-base font-bold text-white tracking-wide shadow-sm transition-colors hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 btn-animated">
@@ -237,8 +253,11 @@ const homeScreenDiv = document.getElementById('homeScreen');
 const playNowButton = document.getElementById('playNowBtn');
 const howToPlayButton = document.getElementById('howToPlayBtn');
 const leaderboardBtnHome = document.getElementById('leaderboardBtnHome');
-const modal = document.getElementById('howToPlayModal');
+const modal = document.getElementById('howToPlayModal'); // This is howToPlayModal
 const closeModalButton = document.getElementById('closeModalBtn');
+const aboutBtn = document.getElementById('aboutBtn');
+const aboutModal = document.getElementById('aboutModal');
+const closeAboutModalBtn = document.getElementById('closeAboutModalBtn');
 const gameScreenDiv = document.getElementById('gameScreen');
 const closeGameButton = document.getElementById('closeGameBtn');
 const currentQuestionDisplay = document.getElementById('currentQuestionDisplay');
@@ -272,11 +291,11 @@ const finalScoreValue = document.getElementById('finalScoreValue');
 const highScoreDisplay = document.getElementById('highScoreDisplay');
 const timeTakenValue = document.getElementById('timeTakenValue');
 const achievementsDisplay = document.getElementById('achievementsDisplay');
+const leaderboardEntriesContainer = document.getElementById('leaderboardEntriesContainer');
 const playAgainBtn = document.getElementById('playAgainBtn');
 const backToHomeResultsBtn = document.getElementById('backToHomeResultsBtn');
 const closeResultsHeaderBtn = document.getElementById('closeResultsHeaderBtn');
-const yourLeaderboardScoreResults = document.getElementById('yourLeaderboardScoreResults');
-const shareResultsBtn = document.getElementById('shareResultsBtn'); // Share button
+const shareResultsBtn = document.getElementById('shareResultsBtn');
 const homeNavHome = document.getElementById('homeNavHome');
 const homeNavScores = document.getElementById('homeNavScores');
 const homeNavProfile = document.getElementById('homeNavProfile');
@@ -284,7 +303,7 @@ const gameNavHome = document.getElementById('gameNavHome');
 const gameNavGame = document.getElementById('gameNavGame');
 const gameNavScores = document.getElementById('gameNavScores');
 
-if (!appRoot || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen) {
+if (!appRoot || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen || !aboutModal) {
 console.error("Kritik HTML elementlerinden biri veya birkaçı DOM'da bulunamadı! Lütfen ID'leri kontrol edin.");
 if(document.body) document.body.innerHTML = "<p style='color:red; text-align:center; font-size:20px; margin-top:50px;'>Kritik bir hata oluştu. Lütfen geliştirici konsolunu kontrol edin.</p>";
 return;
@@ -369,7 +388,24 @@ function saveAchievements() { localStorage.setItem('fakeOrTakeAchievements_tr', 
 function unlockAchievement(id, msg) { if (!achievements[id]) { achievements[id] = true; saveAchievements(); console.log(`Başarı: ${msg}`);}}
 function displayUnlockedAchievements() { if (!achievementsDisplay) return; achievementsDisplay.innerHTML = ''; let count = 0; if(achievements.playedFirstGame){ achievementsDisplay.innerHTML += '<p class="text-sm">🏅 İlk Oyun Tamamlandı!</p>'; count++;} if(achievements.fiveInARow){ achievementsDisplay.innerHTML += '<p class="text-sm">🔥 Seri Uzmanı (5 Doğru)!</p>'; count++;} if(achievements.scoreOver70Percent){ achievementsDisplay.innerHTML += '<p class="text-sm">🏆 Yüksek Skorlu Oyuncu!</p>'; count++;} if(count === 0) achievementsDisplay.innerHTML = '<p class="text-sm text-slate-500">Henüz bir başarım kazanmadın.</p>'; }
 function updateActiveNav(activeId) { const navs = [ { el: homeNavHome, id: 'homeScreen' }, { el: homeNavScores, id: 'resultsScreen' }, { el: homeNavProfile, id: 'profileScreen' }, { el: gameNavHome, id: 'homeScreen' }, { el: gameNavGame, id: 'gameScreen' }, { el: gameNavScores, id: 'resultsScreen' } ]; navs.forEach(n => { if(n.el) { n.el.classList.toggle('nav-item-active', n.id === activeId); }}); if (activeId === 'homeScreen' && homeNavHome) homeNavHome.classList.add('nav-item-active'); else if (homeNavHome) homeNavHome.classList.remove('nav-item-active'); if (activeId === 'gameScreen' && gameNavGame) gameNavGame.classList.add('nav-item-active'); else if (gameNavGame) gameNavGame.classList.remove('nav-item-active'); if (activeId === 'resultsScreen') { if(homeNavScores) homeNavScores.classList.add('nav-item-active'); if(gameNavScores) gameNavScores.classList.add('nav-item-active'); } else { if(homeNavScores) homeNavScores.classList.remove('nav-item-active'); if(gameNavScores) gameNavScores.classList.remove('nav-item-active'); } }
-function showScreen(screen) { const allScreens = [homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen]; const allPopups = [timeUpPopup, modal]; allScreens.forEach(s => { if (s) { s.classList.add('hidden'); s.classList.remove('flex'); }}); allPopups.forEach(p => { if (p) { p.classList.add('hidden'); p.classList.remove('flex'); }}); if(screen){ screen.classList.remove('hidden'); if (allScreens.includes(screen) || allPopups.includes(screen)) { screen.classList.add('flex');} if (allScreens.includes(screen)) { updateActiveNav(screen.id); }} else { updateActiveNav(null); } if (!allPopups.includes(screen) && screen !== modal) { window.scrollTo(0,0); }}
+
+function showScreen(screen) {
+    const allScreens = [homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen];
+    const allPopups = [timeUpPopup, modal, aboutModal];
+    allScreens.forEach(s => { if (s) { s.classList.add('hidden'); s.classList.remove('flex'); }});
+    allPopups.forEach(p => { if (p) { p.classList.add('hidden'); p.classList.remove('flex'); }});
+    if(screen){
+        screen.classList.remove('hidden');
+        if (allScreens.includes(screen) || allPopups.includes(screen)) { screen.classList.add('flex');}
+        if (allScreens.includes(screen)) { updateActiveNav(screen.id); }
+    } else {
+        updateActiveNav(null);
+    }
+    if (!allPopups.includes(screen) && screen !== modal && screen !== aboutModal) {
+        window.scrollTo(0,0);
+    }
+}
+
 
 function resetCardState(isNewCard = false) { if (!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.classList.remove('fly-out-left', 'fly-out-right', 'enter-anim', 'active', 'swiping'); newsCard.style.animation = ''; if (isNewCard) { newsCard.classList.add('enter-anim'); newsCard.style.opacity = '0'; newsCard.style.transform = 'translateY(60px) scale(0.95) rotateX(-15deg)'; } else { newsCard.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)'; newsCard.style.transform = 'translateX(0px) rotate(0deg)'; newsCard.style.opacity = '1'; newsCard.style.visibility = 'visible'; } swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible');}
 function animateCardIn() { if (!newsCard) return; void newsCard.offsetWidth; newsCard.classList.add('active'); }
@@ -409,7 +445,7 @@ function updateUIForNewQuestion() {
     totalQuestionsDisplay.textContent = newsData.length;
     streakCounter.textContent = currentStreak;
     progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`;
-    timerSeconds.classList.remove('timer-pulse', 'text-red-500'); // GÜNCELLENDİ: Kırmızı renk sınıfı temizleniyor
+    timerSeconds.classList.remove('timer-pulse', 'text-red-500');
 }
 
 function startTimer() {
@@ -417,28 +453,26 @@ function startTimer() {
     timeLeft = TIME_PER_QUESTION;
     timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
     timerMinutes.textContent = "00";
-    timerSeconds.classList.remove('timer-pulse', 'text-red-500'); // GÜNCELLENDİ: Temizlik
+    timerSeconds.classList.remove('timer-pulse', 'text-red-500');
     clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         timeLeft--;
         timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
 
-        if (timeLeft <= 5 && timeLeft > 0) { // 5 saniye ve altı (0 hariç) için pulse
+        if (timeLeft <= 5 && timeLeft > 0) {
             timerSeconds.classList.add('timer-pulse');
         } else {
             timerSeconds.classList.remove('timer-pulse');
         }
 
-        if (timeLeft < 5) { // 4 saniye ve altı için kırmızı renk (0 dahil)
-            timerSeconds.classList.add('text-red-500'); // Tailwind red-500 (veya -600)
+        if (timeLeft < 5) {
+            timerSeconds.classList.add('text-red-500');
         } else {
             timerSeconds.classList.remove('text-red-500');
         }
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            // showTimeUpPopup çağrılmadan önce pulse ve renk temizliği gerekmeyebilir,
-            // çünkü showTimeUpPopup sonrası handleAnswer -> proceedToNextStep -> updateUIForNewQuestion ile temizlenecek.
             showTimeUpPopup();
         }
     }, 1000);
@@ -446,7 +480,8 @@ function startTimer() {
 
 function showTimeUpPopup() {
     if (!timeUpPopup) return;
-    showScreen(timeUpPopup);
+    timeUpPopup.classList.remove('hidden');
+    timeUpPopup.classList.add('flex');
 
     if (timeUpAutoCloseTimeoutId) {
         clearTimeout(timeUpAutoCloseTimeoutId);
@@ -475,12 +510,16 @@ function handleAnswer(userChoiceIsReal) {
     if (!scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
     clearInterval(timerInterval);
     if(timerSeconds) {
-        timerSeconds.classList.remove('timer-pulse', 'text-red-500'); // GÜNCELLENDİ
+        timerSeconds.classList.remove('timer-pulse', 'text-red-500');
     }
 
     if (timeUpAutoCloseTimeoutId) {
         clearTimeout(timeUpAutoCloseTimeoutId);
         timeUpAutoCloseTimeoutId = null;
+    }
+    if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) {
+      timeUpPopup.classList.add('hidden');
+      timeUpPopup.classList.remove('flex');
     }
 
     const currentQuestion = newsData[currentQuestionIndex];
@@ -546,12 +585,103 @@ if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextSte
 function startGame() { if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) { console.error("Oyun başlatma için UI elementleri eksik"); return; } gameStartTime = Date.now(); currentQuestionIndex = 0; score = 0; currentStreak = 0; scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; totalQuestionsDisplay.textContent = newsData.length; progressBar.style.width = '0%'; unlockAchievement('playedFirstGame', "İlk Oyun!"); showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); }
 
 let gameEndTimeVariable;
+
+function populateLeaderboard() {
+    if (!leaderboardEntriesContainer || !newsData || newsData.length === 0) return;
+    leaderboardEntriesContainer.innerHTML = ''; // Clear existing entries
+
+    const botNamesAndPersonalities = [
+        { name: "Fatih Mandalina", scoreMultiplier: 0.92 },
+        { name: "İsmail Büyükyaya", scoreMultiplier: 0.88 },
+        { name: "Cüneyt Sazdemir", scoreMultiplier: 0.95 },
+        { name: "Nevşin Bambu", scoreMultiplier: 0.85 },
+        { name: "Ahmet Haktan", scoreMultiplier: 0.78 },
+        { name: "Enver Taysever", scoreMultiplier: 0.90 },
+        { name: "Ece Döner", scoreMultiplier: 0.82 },
+        { name: "Deniz Zeybek", scoreMultiplier: 0.75 },
+        { name: "Yılmaz Özil", scoreMultiplier: 0.97 },
+        { name: "Fatih Ortaylı", scoreMultiplier: 0.80 }
+    ];
+
+    let botEntries = botNamesAndPersonalities.map(bot => ({
+        name: bot.name,
+        score: Math.min(newsData.length, Math.floor(Math.random() * (newsData.length / 2) + (newsData.length * bot.scoreMultiplier * 0.5))),
+        isPlayer: false
+    }));
+    
+    botEntries.sort(() => 0.5 - Math.random()); 
+    const numBotsToBoost = Math.min(3, botEntries.length); 
+    for(let i = 0; i < numBotsToBoost; i++) { 
+        botEntries[i].score = Math.floor(newsData.length * (0.7 + Math.random() * 0.3));
+    }
+
+    const playerScoreEntry = { name: "SEN", score: score, isPlayer: true };
+    let allEntries = [...botEntries, playerScoreEntry];
+
+    allEntries.sort((a, b) => {
+        if (b.score === a.score) {
+            if (a.isPlayer) return -1; 
+            if (b.isPlayer) return 1;
+            return a.name.localeCompare(b.name);
+        }
+        return b.score - a.score;
+    });
+
+    const maxEntriesToShow = 7;
+    let displayEntries = [];
+    
+    if (allEntries.length <= maxEntriesToShow) {
+        displayEntries = [...allEntries];
+    } else {
+        const playerRank = allEntries.findIndex(entry => entry.isPlayer);
+        if (playerRank < maxEntriesToShow) { 
+            displayEntries = allEntries.slice(0, maxEntriesToShow);
+        } else { 
+            displayEntries = allEntries.slice(0, maxEntriesToShow - 1);
+            displayEntries.push(playerScoreEntry); // Add player if not in top N-1
+            // Re-sort displayEntries to correctly place the player if added
+             displayEntries.sort((a, b) => {
+                if (b.score === a.score) {
+                    if (a.isPlayer) return -1; if (b.isPlayer) return 1; return a.name.localeCompare(b.name);
+                }
+                return b.score - a.score;
+            });
+        }
+    }
+    
+    displayEntries.forEach((entry) => {
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'flex items-center justify-between rounded-lg p-3 sm:p-4 transition-all text-sm sm:text-base';
+        
+        let rankDisplay;
+        const actualRank = allEntries.findIndex(e => e.name === entry.name && e.score === entry.score && e.isPlayer === entry.isPlayer) + 1;
+
+        if (entry.isPlayer) {
+            entryDiv.classList.add('bg-blue-100', 'text-blue-700', 'ring-2', 'ring-blue-500');
+            rankDisplay = `<span class="text-lg font-semibold">★ ${actualRank}.</span>`;
+        } else {
+            entryDiv.classList.add('bg-slate-100', 'hover:bg-slate-200');
+            rankDisplay = `<span class="text-base sm:text-lg font-semibold text-slate-700">${actualRank}.</span>`;
+        }
+
+        entryDiv.innerHTML = `
+            <div class="flex items-center gap-2 sm:gap-3">
+                ${rankDisplay}
+                <p class="font-medium ${entry.isPlayer ? '' : 'text-slate-700'}">${entry.name}</p>
+            </div>
+            <p class="font-semibold ${entry.isPlayer ? '' : 'text-slate-700'}">${entry.score}/${newsData.length}</p>
+        `;
+        leaderboardEntriesContainer.appendChild(entryDiv);
+    });
+}
+
+
 function endGame() {
-    if (!timeTakenValue || !finalScoreValue || !yourLeaderboardScoreResults || !highScoreDisplay) return;
+    if (!timeTakenValue || !finalScoreValue || !highScoreDisplay) return;
     gamePlayedAtLeastOnce = true;
     clearInterval(timerInterval);
     if(timerSeconds) {
-        timerSeconds.classList.remove('timer-pulse', 'text-red-500'); // GÜNCELLENDİ
+        timerSeconds.classList.remove('timer-pulse', 'text-red-500');
     }
     gameEndTimeVariable = Date.now();
     const timeDiff = gameEndTimeVariable - gameStartTime;
@@ -559,11 +689,12 @@ function endGame() {
     const secs = Math.floor((timeDiff % 60000) / 1000);
     timeTakenValue.textContent = `${mins} dakika ${secs} saniye`;
     finalScoreValue.textContent = `${score}/${newsData.length}`;
-    yourLeaderboardScoreResults.textContent = `${score}/${newsData.length}`;
     let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
     if (score > hs) { hs = score; localStorage.setItem('fakeOrTakeHighScore_tr', hs); }
     highScoreDisplay.textContent = `${hs}/${newsData.length}`;
     if (newsData.length > 0 && score / newsData.length >= 0.7) { unlockAchievement('scoreOver70Percent', "Yüksek Skorlu Oyuncu!"); }
+    
+    populateLeaderboard();
     displayUnlockedAchievements();
     showScreen(resultsScreen);
 }
@@ -571,15 +702,19 @@ function endGame() {
 function resetGame() {
     clearInterval(timerInterval);
     if(timerSeconds) {
-        timerSeconds.classList.remove('timer-pulse', 'text-red-500'); // GÜNCELLENDİ
+        timerSeconds.classList.remove('timer-pulse', 'text-red-500');
     }
 }
 function navigateToHome() { resetGame(); showScreen(homeScreenDiv); }
+
 function navigateToResults() {
-    // Eğer oyun bitmediyse ve skorlar sayfasına doğrudan geçiliyorsa, mevcut oyunu bitir.
-    // Bu, örneğin oyun sırasında skorlar nav ikonuna basılırsa senaryosu için.
-    // Ama şu anki akışta bu doğrudan olmaz, endGame zaten çağrılır.
-    // Eğer emin olmak isterseniz: if (!resultsScreen.classList.contains('flex')) endGame();
+    if (!gamePlayedAtLeastOnce && typeof score === 'undefined') { score = 0; } // Initialize score if game not played
+     if (!gamePlayedAtLeastOnce && !gameStartTime && newsData.length > 0) { // Simulate a zero-score game for leaderboard if accessed directly
+        gameStartTime = Date.now(); // Mock start time for timeTaken display consistency if needed, though not strictly for leaderboard
+    }
+    if (resultsScreen.classList.contains('hidden') || !gamePlayedAtLeastOnce) { 
+        populateLeaderboard();
+    }
     showScreen(resultsScreen);
 }
 
@@ -657,8 +792,57 @@ async function handleShareResults() {
     }
 }
 
-// Diğer Event Listeners
-if (howToPlayButton && modal && closeModalButton) { howToPlayButton.addEventListener('click', () => { if (modal) { showScreen(modal); }}); const closeHowToPlayModalAndGoHome = () => { navigateToHome(); }; closeModalButton.addEventListener('click', closeHowToPlayModalAndGoHome); modal.addEventListener('click', (event) => { if (event.target === modal) { closeHowToPlayModalAndGoHome(); }}); } else { console.error("Modal ('Nasıl Oynanır') elementleri bulunamadı."); }
+// "Nasıl Oynanır?" Modal Logic
+if (howToPlayButton && modal && closeModalButton) {
+    const openHowToPlayModal = () => {
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+    };
+    const closeHowToPlayModal = () => {
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    };
+    howToPlayButton.addEventListener('click', openHowToPlayModal);
+    closeModalButton.addEventListener('click', closeHowToPlayModal);
+    modal.addEventListener('click', (event) => { 
+        if (event.target === modal) {
+            closeHowToPlayModal();
+        }
+    });
+} else {
+    console.error("Modal ('Nasıl Oynanır') elementleri bulunamadı.");
+}
+
+// "Hakkında" Modal Logic
+if (aboutBtn && aboutModal && closeAboutModalBtn) {
+    const openAboutModal = () => {
+        if (aboutModal) {
+            aboutModal.classList.remove('hidden');
+            aboutModal.classList.add('flex');
+        }
+    };
+    const closeAboutModal = () => {
+        if (aboutModal) {
+            aboutModal.classList.add('hidden');
+            aboutModal.classList.remove('flex');
+        }
+    };
+    aboutBtn.addEventListener('click', openAboutModal);
+    closeAboutModalBtn.addEventListener('click', closeAboutModal);
+    aboutModal.addEventListener('click', (event) => { 
+        if (event.target === aboutModal) {
+            closeAboutModal();
+        }
+    });
+} else {
+    console.error("Hakkında Modal elementleri bulunamadı.");
+}
+
+
 if (playNowButton) { playNowButton.addEventListener('click', startGame); } else { console.error('Hemen Oyna butonu (playNowBtn) bulunamadı!'); }
 if (closeGameButton) { closeGameButton.addEventListener('click', navigateToHome); } else { console.error('Oyun Kapatma butonu (closeGameBtn) bulunamadı!'); }
 
