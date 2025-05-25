@@ -2,57 +2,30 @@
 <html>
 <head>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
     <link as="style" href="https://fonts.googleapis.com/css2?display=swap&family=Lexend%3Awght%40400%3B500%3B700%3B900&family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
-
-    <title>NewsSwipe - Verify News with a Swipe</title> <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+    <title>NewsSwipe - Verify News with a Swipe</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        /* Ana Ekran Stilleri */
-        .material-icons { /* Bu, hem normal hem de outlined ikonlar için genel bir boyut ayarı olabilir */
-          font-size: 28px;
-        }
-        .btn-primary {
-          background-color: #3B82F6; /* Tailwind blue-500 */
-          color: white;
-        }
-        .btn-secondary {
-          background-color: #E5E7EB; /* Tailwind slate-200 */
-          color: #1F2937; /* Tailwind slate-800 */
-        }
-        .lexend-font { /* Bu sınıfı body'de ve gerekirse spesifik elementlerde kullanıyoruz */
-          font-family: 'Lexend', "Noto Sans", sans-serif;
-        }
-        
-        /* Oyun Ekranı Stilleri */
-        .card-gradient {
-          background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.8) 100%);
-        }
-        .primary-color-text { /* Oyun ekranı için özel renk */
-          color: #0c7ff2;
-        }
-        .primary-color-bg { /* Oyun ekranı için özel renk */
-          background-color: #0c7ff2;
-        }
-        .primary-color-border { /* Oyun ekranı için özel renk */
-          border-color: #0c7ff2;
-        }
-        .fake-news-button {
-          background-color: #FF3B30;
-        }
-        .real-news-button {
-          background-color: #34C759;
-        }
-
-        /* Genel body stili */
-        body {
-          min-height: max(884px, 100dvh);
-        }
+        .material-icons, .material-icons-outlined { font-size: 28px; }
+        .btn-primary { background-color: #3B82F6; color: white; }
+        .btn-secondary { background-color: #E5E7EB; color: #1F2937; }
+        .lexend-font { font-family: 'Lexend', "Noto Sans", sans-serif; }
+        .card-gradient { background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.8) 100%); }
+        .primary-color-text { color: #0c7ff2; }
+        .primary-color-bg { background-color: #0c7ff2; }
+        .primary-color-border { border-color: #0c7ff2; }
+        .fake-news-button { background-color: #FF3B30; }
+        .real-news-button { background-color: #34C759; }
+        .news-button-disabled { opacity: 0.6; pointer-events: none; }
     </style>
 </head>
-<body class="bg-slate-50 lexend-font"> <div id="appRoot" class="relative size-full min-h-screen flex-col group/design-root overflow-x-hidden">
+<body class="bg-slate-50 lexend-font">
+    <div id="appRoot" class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
 
         <div id="homeScreen">
             <header id="homeHeader" class="bg-white shadow-sm sticky top-0 z-10">
@@ -67,14 +40,14 @@
             <main id="homeMain" class="flex-grow container mx-auto px-6 py-8 text-center">
                 <div class="max-w-md mx-auto">
                     <img alt="NewsSwipe App Icon" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
-                    <h2 class="text-3xl font-bold text-slate-800 mb-3">Welcome to NewsSwipe!</h2>
-                    <p class="text-slate-600 text-lg mb-10">Test your news literacy. Swipe left for fake, right for real.</p>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">Welcome to NewsSwipe!</h2>
+                    <p class="text-lg sm:text-xl text-slate-600 mb-10">Test your news literacy. Swipe left for fake, right for real.</p>
                     <div class="space-y-4">
                         <button id="playNowBtn" class="btn-primary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:bg-blue-700 transition-colors duration-150">
                             <span class="material-icons mr-2">play_arrow</span>
                             Play Now
                         </button>
-                        <button class="btn-secondary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
+                        <button id="leaderboardBtn" class="btn-secondary w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-sm hover:bg-slate-200 transition-colors duration-150">
                             <span class="material-icons mr-2">leaderboard</span>
                             View Scores
                         </button>
@@ -91,18 +64,20 @@
                         <span class="material-icons">home</span>
                         <span class="text-xs font-medium">Home</span>
                     </a>
-                    <a class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg" href="#">
+                    <a id="scoresNavBtn" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg" href="#">
                         <span class="material-icons">bar_chart</span>
                         <span class="text-xs font-medium">Scores</span>
                     </a>
-                    <a class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg" href="#">
+                    <a id="profileNavBtn" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 transition-colors duration-150 p-2 rounded-lg" href="#">
                         <span class="material-icons">person_outline</span>
                         <span class="text-xs font-medium">Profile</span>
                     </a>
                 </nav>
             </footer>
-        </div> <div id="gameScreen" class="hidden">
-            <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Lexend, "Noto Sans", sans-serif;'>
+        </div>
+
+        <div id="gameScreen" class="hidden">
+            <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden lexend-font">
                 <header class="sticky top-0 z-10 bg-white shadow-sm">
                     <div class="flex items-center p-4 pb-3">
                         <button id="closeGameBtn" class="text-gray-700 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100">
@@ -112,139 +87,263 @@
                     </div>
                     <div class="px-4 pb-3">
                         <div class="flex items-center justify-between mb-1.5">
-                            <p class="text-gray-700 text-sm font-medium">Question <span class="font-bold text-gray-900">1</span>/7</p>
-                            <p class="text-gray-700 text-sm font-medium"><span class="font-bold text-gray-900">Score: 0</span></p>
+                            <p class="text-gray-700 text-sm font-medium">Question <span id="currentQuestionDisplay" class="font-bold text-gray-900">1</span>/<span id="totalQuestionsDisplay">3</span></p>
+                            <p class="text-gray-700 text-sm font-medium">Score: <span id="scoreDisplay" class="font-bold text-gray-900">0</span></p>
                         </div>
                         <div class="h-2.5 rounded-full bg-gray-200">
-                            <div class="h-2.5 rounded-full primary-color-bg" style="width: 14%;"></div>
+                            <div id="progressBar" class="h-2.5 rounded-full primary-color-bg" style="width: 0%;"></div>
                         </div>
                     </div>
                 </header>
                 <main class="flex-1 overflow-y-auto p-4 space-y-6">
                     <div class="flex gap-3 justify-center">
                         <div class="flex flex-col items-center gap-1.5">
-                            <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
-                                <p class="text-gray-900 text-3xl font-bold">00</p>
+                            <div class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
+                                <p id="timerMinutes" class="text-gray-900 text-2xl sm:text-3xl font-bold">00</p>
                             </div>
                             <p class="text-gray-600 text-xs font-medium">Minutes</p>
                         </div>
-                        <div class="flex items-center text-gray-400 text-2xl font-bold pt-1 pb-5">:</div>
+                        <div class="flex items-center text-gray-400 text-xl sm:text-2xl font-bold pt-1 pb-5">:</div>
                         <div class="flex flex-col items-center gap-1.5">
-                            <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
-                                <p class="text-gray-900 text-3xl font-bold">15</p>
+                            <div class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-gray-100 shadow-inner">
+                                <p id="timerSeconds" class="text-gray-900 text-2xl sm:text-3xl font-bold">15</p>
                             </div>
                             <p class="text-gray-600 text-xs font-medium">Seconds</p>
                         </div>
                     </div>
-                    <div class="relative rounded-2xl overflow-hidden shadow-lg aspect-[3/4] min-h-[300px] max-h-[500px] mx-auto w-full max-w-md">
-                        <img alt="News article image" class="absolute inset-0 h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByU9lacn6K_FHOIMxM1uY7HjPdQFZ__M6DvLLXJ6kSOpQMeDOH-BIDmg_Kk9dpr5axSo2stf3VYHOYQQSB42AQjwWn9Lh1lS-lRS2LWGJT_M_RsM2F0veurVNVE6VCQSu65HocXyxr-qS8PiVAmNbkkZ_VyOzOGfwZpdgm4Kb3FeweyldN5OBrNAWl-3bfi6pX2gyS4DliiSgGilkxK-4oN4aY1oS38m9h5OrCJX-IUhm_aFOsjvJwQ_OZutosopo_8IvEzNASr6_0"/>
-                        <div class="absolute inset-0 card-gradient flex flex-col justify-end p-5 space-y-2">
-                            <h2 class="text-white text-2xl font-bold leading-tight drop-shadow-md">Breaking: New Study Links Coffee Consumption to Increased Lifespan</h2>
-                            <p class="text-gray-200 text-sm font-normal leading-relaxed line-clamp-4 drop-shadow-sm">
-                                A recent study published in the Journal of Nutritional Science claims that regular coffee consumption is associated with a longer lifespan. Researchers followed
-                                over 100,000 participants for 10 years, finding that those who drank 2-4 cups of coffee daily had a lower risk of mortality compared to non-coffee drinkers. The
-                                study controlled for various lifestyle factors, including diet and exercise, suggesting a direct link between coffee and longevity. However, experts caution that
-                                more research is needed to confirm these findings and understand the underlying mechanisms.
-                            </p>
-                            <button class="text-xs text-white font-medium underline self-start pt-1 opacity-80 hover:opacity-100 transition-opacity">Verify Source</button>
+                    <div class="relative rounded-2xl overflow-hidden shadow-lg aspect-[3/4] min-h-[280px] sm:min-h-[300px] max-h-[450px] sm:max-h-[500px] mx-auto w-full max-w-sm sm:max-w-md">
+                        <img id="newsImage" alt="News article image" class="absolute inset-0 h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByU9lacn6K_FHOIMxM1uY7HjPdQFZ__M6DvLLXJ6kSOpQMeDOH-BIDmg_Kk9dpr5axSo2stf3VYHOYQQSB42AQjwWn9Lh1lS-lRS2LWGJT_M_RsM2F0veurVNVE6VCQSu65HocXyxr-qS8PiVAmNbkkZ_VyOzOGfwZpdgm4Kb3FeweyldN5OBrNAWl-3bfi6pX2gyS4DliiSgGilkxK-4oN4aY1oS38m9h5OrCJX-IUhm_aFOsjvJwQ_OZutosopo_8IvEzNASr6_0"/>
+                        <div class="absolute inset-0 card-gradient flex flex-col justify-end p-3 sm:p-5 space-y-1 sm:space-y-2">
+                            <h2 id="newsTitle" class="text-white text-xl sm:text-2xl font-bold leading-tight drop-shadow-md">Haber Başlığı Buraya Gelecek</h2>
+                            <p id="newsSnippet" class="text-gray-200 text-xs sm:text-sm font-normal leading-relaxed line-clamp-3 sm:line-clamp-4 drop-shadow-sm">Haber metni buraya gelecek...</p>
+                            <button id="verifySourceButton" class="text-xs text-white font-medium underline self-start pt-1 opacity-80 hover:opacity-100 transition-opacity">Verify Source</button>
                         </div>
                     </div>
-                    <div class="flex justify-around items-center pt-2 space-x-4">
-                        <button class="flex flex-col items-center justify-center size-20 rounded-full fake-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95">
-                            <span class="material-icons-outlined text-3xl">close</span>
+                    <div class="flex justify-around items-center pt-2 space-x-2 sm:space-x-4">
+                        <button id="fakeButton" class="flex flex-col items-center justify-center size-16 sm:size-20 rounded-full fake-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95">
+                            <span class="material-icons-outlined text-2xl sm:text-3xl">close</span>
                             <span class="text-xs font-semibold tracking-wide">FAKE</span>
                         </button>
-                        <button class="flex flex-col items-center justify-center size-20 rounded-full real-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95">
-                            <span class="material-icons-outlined text-3xl">check</span>
+                        <button id="realButton" class="flex flex-col items-center justify-center size-16 sm:size-20 rounded-full real-news-button text-white shadow-md hover:opacity-90 transition-opacity active:scale-95">
+                            <span class="material-icons-outlined text-2xl sm:text-3xl">check</span>
                             <span class="text-xs font-semibold tracking-wide">REAL</span>
                         </button>
                     </div>
                 </main>
                 <nav class="sticky bottom-0 bg-white border-t border-gray-200 pb-safe">
-                    <div class="flex justify-around items-center h-16">
+                     <div class="flex justify-around items-center h-16">
                         <a class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3" href="#">
-                            <span class="material-icons-outlined text-2xl">cottage</span>
-                            <span class="text-xs font-medium">Home</span>
+                            <span class="material-icons-outlined text-2xl">cottage</span><span class="text-xs font-medium">Home</span>
                         </a>
                         <a class="flex flex-col items-center justify-center gap-0.5 primary-color-text hover:primary-color-text transition-colors w-1/3" href="#">
-                            <span class="material-icons-outlined text-2xl">gamepad</span>
-                            <span class="text-xs font-medium">Game</span>
+                            <span class="material-icons-outlined text-2xl">gamepad</span><span class="text-xs font-medium">Game</span>
                         </a>
                         <a class="flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text transition-colors w-1/3" href="#">
-                            <span class="material-icons-outlined text-2xl">leaderboard</span>
-                            <span class="text-xs font-medium">Scores</span>
+                            <span class="material-icons-outlined text-2xl">leaderboard</span><span class="text-xs font-medium">Scores</span>
                         </a>
                     </div>
                 </nav>
             </div>
-        </div> <div id="howToPlayModal" class="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 hidden z-50">
-          <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-2xl font-bold text-slate-800 lexend-font">Nasıl Oynanır?</h3>
-              <button id="closeModalBtn" class="text-slate-500 hover:text-slate-700">
-                <span class="material-icons">close</span>
-              </button>
+        </div>
+
+        <div id="howToPlayModal" class="fixed inset-0 bg-slate-800 bg-opacity-75 flex items-center justify-center p-4 hidden z-50">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold text-slate-800 lexend-font">Nasıl Oynanır?</h3>
+                    <button id="closeModalBtn" class="text-slate-500 hover:text-slate-700">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="text-slate-600 space-y-3 lexend-font">
+                    <p>NewsSwipe çok basit!</p>
+                    <p>1. Sunulan haber başlığını ve kısa bir özetini okuyun.</p>
+                    <p>2. Haberin GERÇEK mi FAKE mi olduğuna karar verin.</p>
+                    <p>3. GERÇEK olduğunu düşünüyorsanız REAL butonuna basın.</p>
+                    <p>4. FAKE olduğunu düşünüyorsanız FAKE butonuna basın.</p>
+                    <p>Haber okuryazarlığınızı test edin ve ne kadar yüksek puan alabileceğinizi görün!</p>
+                </div>
             </div>
-            <div class="text-slate-600 space-y-3 lexend-font">
-              <p>NewsSwipe çok basit!</p>
-              <p>1. Sunulan haber başlığını ve kısa bir özetini okuyun.</p>
-              <p>2. Haberin GERÇEK mi FAKE mi olduğuna karar verin.</p>
-              <p>3. GERÇEK olduğunu düşünüyorsanız SAĞA kaydırın.</p>
-              <p>4. FAKE olduğunu düşünüyorsanız SOLA kaydırın.</p>
-              <p>Haber okuryazarlığınızı test edin ve ne kadar yüksek puan alabileceğinizi görün!</p>
-            </div>
-          </div>
-        </div> </div> <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        // --- Modal ("How to Play") Logic ---
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // HTML Elementleri
+        const homeScreenDiv = document.getElementById('homeScreen');
+        const playNowButton = document.getElementById('playNowBtn');
         const howToPlayButton = document.getElementById('howToPlayBtn');
         const modal = document.getElementById('howToPlayModal');
         const closeModalButton = document.getElementById('closeModalBtn');
-
-        if (howToPlayButton && modal && closeModalButton) {
-          howToPlayButton.addEventListener('click', () => {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-          });
-
-          closeModalButton.addEventListener('click', () => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-          });
-
-          modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-              modal.classList.add('hidden');
-              modal.classList.remove('flex');
-            }
-          });
-        } else {
-          console.error('Modal için HTML elementleri bulunamadı. IDleri kontrol edin: howToPlayBtn, howToPlayModal, closeModalBtn');
-        }
-
-        // --- Ekran Değiştirme Logic ---
-        const playNowButton = document.getElementById('playNowBtn');
-        const homeScreenDiv = document.getElementById('homeScreen');
         const gameScreenDiv = document.getElementById('gameScreen');
         const closeGameButton = document.getElementById('closeGameBtn');
+        const currentQuestionDisplay = document.getElementById('currentQuestionDisplay');
+        const totalQuestionsDisplay = document.getElementById('totalQuestionsDisplay');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const progressBar = document.getElementById('progressBar');
+        const timerMinutes = document.getElementById('timerMinutes');
+        const timerSeconds = document.getElementById('timerSeconds');
+        const newsImage = document.getElementById('newsImage');
+        const newsTitle = document.getElementById('newsTitle');
+        const newsSnippet = document.getElementById('newsSnippet');
+        const verifySourceButton = document.getElementById('verifySourceButton');
+        const fakeButton = document.getElementById('fakeButton');
+        const realButton = document.getElementById('realButton');
 
-        if (playNowButton && homeScreenDiv && gameScreenDiv && closeGameButton) {
-          playNowButton.addEventListener('click', () => {
-            homeScreenDiv.classList.add('hidden');
-            gameScreenDiv.classList.remove('hidden'); 
-            // gameScreenDiv zaten kendi içinde flex container olduğu için ayrıca .add('flex') yapmaya gerek yok.
-            // Sayfa başına scroll etmeyi düşünebilirsiniz: window.scrollTo(0, 0);
-          });
+        const newsData = [
+            { id: 1, title: "Fatih'te çanak anten düştü: 1 yaralı", snippet: "Fatih'te sokakta yürüyen bir kişinin üzerine binanın çatısında bulunan çanak anten düştü. Hafif yaralanan adamın yardımına çevredekiler koşarken, olay güvenlik kamerasına yansıdı.", image: "https://i.gzt.com/i/gl/21/219663_1200xD.jpg", link: "https://www.gzt.com/video/jurnalist/sokakta-yururken-uzerine-canak-anten-dustu-2258619", isReal: true },
+            { id: 2, title: "Bilim İnsanları: Ay'da Kola Nehri Bulundu!", snippet: "NASA'nın son keşif aracı, Ay yüzeyinde akışkan halde bir kola nehri tespit etti. Bilim insanları, bu gazlı içeceğin kaynağını ve Ay'daki yaşam için ne anlama geldiğini araştırıyor.", image: "https://images.unsplash.com/photo-1567609593820-739083901303?q=80&w=800&auto=format&fit=crop", link: "#", isReal: false },
+            { id: 3, title: "Uzmanlar Uyardı: Çok Fazla Egzersiz Zekayı Azaltıyor!", snippet: "Yapılan yeni bir araştırmaya göre, günde 2 saatten fazla yoğun egzersiz yapan bireylerde IQ seviyesinde düşüş gözlemlendi. Uzmanlar, dengeli bir yaşam tarzının önemini vurguluyor.", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=800&auto=format&fit=crop", link: "#", isReal: false },
+            { id: 4, title: "Türkiye, 2030 Kış Olimpiyatları İçin Erzurum'u Aday Gösterdi", snippet: "Türkiye Milli Olimpiyat Komitesi, 2030 Kış Olimpiyatları ve Paralimpik Oyunları için Erzurum'un adaylık başvurusunu Uluslararası Olimpiyat Komitesi'ne sundu.", image: "https://images.unsplash.com/photo-1600054836759-e8c36928855a?q=80&w=800&auto=format&fit=crop", link: "https://www.trthaber.com/haber/spor/erzurum-ve-saraybosnadan-2030-kis-olimpiyatlari-icin-is-birligi-750658.html", isReal: true }
+        ];
 
-          closeGameButton.addEventListener('click', () => {
-            gameScreenDiv.classList.add('hidden');
-            homeScreenDiv.classList.remove('hidden');
-            // Sayfa başına scroll etmeyi düşünebilirsiniz: window.scrollTo(0, 0);
-          });
-        } else {
-          console.error('Ekran değiştirme elementleri bulunamadı. IDleri kontrol edin: playNowBtn, homeScreen, gameScreen, closeGameBtn');
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timerInterval;
+        let timeLeft = 15;
+        const TIME_PER_QUESTION = 15;
+
+        function updateUIForNewQuestion() {
+            if (!newsData || newsData.length === 0) { console.error("Haber verisi bulunamadı!"); return; }
+            if (currentQuestionIndex >= newsData.length) { console.error("Soru indeksi hatalı!"); return; }
+            
+            const question = newsData[currentQuestionIndex];
+            newsImage.src = question.image;
+            newsTitle.textContent = question.title;
+            newsSnippet.textContent = question.snippet;
+            verifySourceButton.dataset.link = question.link;
+            currentQuestionDisplay.textContent = currentQuestionIndex + 1;
+            scoreDisplay.textContent = score;
+            const progress = ((currentQuestionIndex) / newsData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            fakeButton.classList.remove('news-button-disabled');
+            realButton.classList.remove('news-button-disabled');
         }
-      });
+
+        function startTimer() {
+            timeLeft = TIME_PER_QUESTION;
+            if(timerSeconds) timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
+            if(timerMinutes) timerMinutes.textContent = "00";
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                if(timerSeconds) timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Süren doldu!"); // <-- "SÜREN DOLDU" MESAJI EKLENDİ
+                    handleAnswer(null); 
+                }
+            }, 1000);
+        }
+        
+        function handleAnswer(userChoiceIsReal) {
+            clearInterval(timerInterval); // Sayacı her durumda durdur
+            if(fakeButton) fakeButton.classList.add('news-button-disabled');
+            if(realButton) realButton.classList.add('news-button-disabled');
+
+            const currentQuestion = newsData[currentQuestionIndex];
+            if (userChoiceIsReal !== null && currentQuestion && userChoiceIsReal === currentQuestion.isReal) {
+                score++;
+            }
+            if(scoreDisplay) scoreDisplay.textContent = score;
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                const progressAfterAnswer = (currentQuestionIndex / newsData.length) * 100;
+                if(progressBar) progressBar.style.width = `${progressAfterAnswer}%`;
+
+                if (currentQuestionIndex < newsData.length) {
+                    updateUIForNewQuestion();
+                    startTimer();
+                } else {
+                    endGame();
+                }
+            }, 1500);
+        }
+
+        function startGame() {
+            console.log("startGame function called");
+            if (!homeScreenDiv || !gameScreenDiv || !scoreDisplay || !totalQuestionsDisplay || !progressBar) {
+                console.error("startGame için gerekli UI elementlerinden biri/birkaçı eksik!");
+                return;
+            }
+            currentQuestionIndex = 0;
+            score = 0;
+            scoreDisplay.textContent = score;
+            totalQuestionsDisplay.textContent = newsData.length;
+            progressBar.style.width = '0%';
+            
+            homeScreenDiv.classList.add('hidden');
+            gameScreenDiv.classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            updateUIForNewQuestion();
+            startTimer();
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            alert(`Oyun Bitti! Skorunuz: ${score}/${newsData.length}\nTekrar oynamak için ana sayfaya yönlendiriliyorsunuz.`);
+            if(gameScreenDiv) gameScreenDiv.classList.add('hidden');
+            if(homeScreenDiv) homeScreenDiv.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+        
+        function resetGame() {
+            clearInterval(timerInterval);
+        }
+
+        // Event Listeners
+        if (howToPlayButton && modal && closeModalButton) {
+            howToPlayButton.addEventListener('click', () => { modal.classList.remove('hidden'); modal.classList.add('flex'); });
+            closeModalButton.addEventListener('click', () => { modal.classList.add('hidden'); modal.classList.remove('flex'); });
+            modal.addEventListener('click', (event) => { if (event.target === modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }});
+        } else {
+            console.error("Modal elementleri (howToPlayBtn, howToPlayModal, closeModalBtn) bulunamadı.");
+        }
+
+        if (playNowButton) {
+            if (homeScreenDiv && gameScreenDiv) {
+                playNowButton.addEventListener('click', startGame);
+            } else {
+                console.error('PlayNow için homeScreenDiv veya gameScreenDiv bulunamadı.');
+            }
+        } else {
+            console.error('Play Now butonu (playNowBtn) bulunamadı!');
+        }
+
+        if (closeGameButton) {
+            if (homeScreenDiv && gameScreenDiv) {
+                closeGameButton.addEventListener('click', () => {
+                    resetGame(); 
+                    gameScreenDiv.classList.add('hidden');
+                    homeScreenDiv.classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                });
+            } else {
+                console.error('CloseGame için homeScreenDiv veya gameScreenDiv bulunamadı.');
+            }
+        } else {
+             console.error('Close Game butonu (closeGameBtn) bulunamadı!');
+        }
+        
+        if (fakeButton && realButton) {
+            fakeButton.addEventListener('click', () => handleAnswer(false));
+            realButton.addEventListener('click', () => handleAnswer(true));
+        } else {
+            console.error("Fake veya Real butonları bulunamadı.");
+        }
+
+        if(verifySourceButton){
+            verifySourceButton.addEventListener('click', function() {
+                const link = this.dataset.link;
+                if(link && link !== "#"){ window.open(link, '_blank'); } 
+                else { alert("Bu haber için kaynak linki bulunmamaktadır."); }
+            });
+        } else {
+            console.error("Verify Source butonu bulunamadı.");
+        }
+    });
     </script>
 </body>
 </html>
