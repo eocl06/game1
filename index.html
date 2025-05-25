@@ -368,7 +368,75 @@ function showTimeUpPopup() { if(!timeUpPopup) return; showScreen(timeUpPopup); }
 if(timeUpOkButton) { timeUpOkButton.addEventListener('click', () => { handleAnswer(null); }); }
 
 function processSwipeDecision(isRealChoice) { if(!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = 'none'; if (isRealChoice) { newsCard.classList.add('fly-out-right'); swipeRealIndicator.classList.add('visible'); } else { newsCard.classList.add('fly-out-left'); swipeFakeIndicator.classList.add('visible'); } setTimeout(() => { handleAnswer(isRealChoice); }, 400); }
-function handleAnswer(userChoiceIsReal) { if (!scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return; clearInterval(timerInterval); if(timerSeconds) timerSeconds.classList.remove('timer-pulse'); const currentQuestion = newsData[currentQuestionIndex]; const wasCorrect = userChoiceIsReal === currentQuestion.isReal; if (userChoiceIsReal !== null && wasCorrect) { score++; currentStreak++; if (currentStreak === 5) { unlockAchievement('fiveInARow', "Harika Seri! (5 doğru)"); } } else if (userChoiceIsReal !== null && !wasCorrect) { currentStreak = 0; } if(userChoiceIsReal === null) currentStreak = 0; scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; feedbackIcon.className = "material-icons-outlined feedback-content-appear"; feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8 feedback-content-appear"; feedbackTitle.classList.add("feedback-content-appear"); feedbackSourceSection.classList.add('hidden'); let feedbackStr = ""; if (userChoiceIsReal === null) { feedbackTitle.textContent = "Süre Bitti!"; feedbackIcon.textContent = "timer_off"; feedbackIcon.classList.add('timeup-icon'); feedbackBox.classList.add('incorrect-feedback');  feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`; if (currentQuestion.isReal && currentQuestion.displaySourceName && currentQuestion.displaySourceLink) { feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden'); } } else if (wasCorrect) { feedbackTitle.textContent = "Bildin!"; feedbackIcon.textContent = "check_circle"; feedbackIcon.classList.add('status-icon-correct'); feedbackBox.classList.add('correct-feedback'); feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin."); } else {  feedbackTitle.textContent = "Tekrar dene!"; feedbackIcon.textContent = "cancel"; feedbackIcon.classList.add('status-icon-incorrect'); feedbackBox.classList.add('incorrect-feedback'); feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`; if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) { feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden'); } } feedbackText.innerHTML = feedbackStr;  feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru"; showScreen(feedbackScreen); }
+function handleAnswer(userChoiceIsReal) {
+    if (!scoreDisplay || !feedbackTitle || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
+    clearInterval(timerInterval);
+    if(timerSeconds) timerSeconds.classList.remove('timer-pulse');
+    const currentQuestion = newsData[currentQuestionIndex];
+    const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
+
+    if (userChoiceIsReal !== null && wasCorrect) {
+        score++;
+        currentStreak++;
+        if (currentStreak === 5) {
+            unlockAchievement('fiveInARow', "Harika Seri! (5 doğru)");
+        }
+    } else if (userChoiceIsReal !== null && !wasCorrect) {
+        currentStreak = 0;
+    }
+    if(userChoiceIsReal === null) currentStreak = 0; // Süre bittiyse de seri sıfırlanır
+
+    scoreDisplay.textContent = score;
+    streakCounter.textContent = currentStreak;
+
+    // Reset classes for icon and box
+    feedbackIcon.className = "material-icons-outlined feedback-content-appear";
+    feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-lg mb-6 sm:mb-8 feedback-content-appear";
+    feedbackTitle.classList.add("feedback-content-appear");
+    
+    // Ensure source section is hidden by default at the start of feedback display.
+    // This line was already present and correctly placed.
+    feedbackSourceSection.classList.add('hidden'); 
+
+    let feedbackStr = "";
+
+    if (userChoiceIsReal === null) { // Süre bitti
+        feedbackTitle.textContent = "Süre Bitti!";
+        feedbackIcon.textContent = "timer_off";
+        feedbackIcon.classList.add('timeup-icon');
+        feedbackBox.classList.add('incorrect-feedback'); 
+        feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`;
+        // Eski kaynak gösterme mantığı buradan kaldırıldı.
+    } else if (wasCorrect) { // Doğru cevap
+        feedbackTitle.textContent = "Bildin!";
+        feedbackIcon.textContent = "check_circle";
+        feedbackIcon.classList.add('status-icon-correct');
+        feedbackBox.classList.add('correct-feedback');
+        feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin.");
+        // Kaynak gösterme mantığı ortak alana taşındı.
+    } else { // Yanlış cevap
+        feedbackTitle.textContent = "Tekrar dene!";
+        feedbackIcon.textContent = "cancel";
+        feedbackIcon.classList.add('status-icon-incorrect');
+        feedbackBox.classList.add('incorrect-feedback');
+        feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`;
+        // Eski kaynak gösterme mantığı buradan kaldırıldı.
+    }
+
+    feedbackText.innerHTML = feedbackStr; 
+
+    // YENİ: Ortak kaynak gösterme mantığı
+    // Eğer soru için kaynak adı ve linki tanımlanmışsa, kaynak bölümünü göster.
+    if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) {
+        feedbackSourceName.textContent = currentQuestion.displaySourceName;
+        feedbackSourceLinkTag.href = currentQuestion.displaySourceLink;
+        feedbackSourceSection.classList.remove('hidden');
+    }
+    // Eğer kaynak bilgisi yoksa, `feedbackSourceSection` zaten yukarıda gizlendiği için gizli kalacaktır.
+
+    feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru";
+    showScreen(feedbackScreen);
+}
 function proceedToNextStep() { if (!progressBar) return; currentQuestionIndex++; progressBar.style.width = `${(currentQuestionIndex / newsData.length) * 100}%`; if (currentQuestionIndex < newsData.length) { showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); } else { endGame(); }}
 if(feedbackNextButton) feedbackNextButton.addEventListener('click', proceedToNextStep);
 if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextStep);
