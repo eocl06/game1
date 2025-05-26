@@ -71,37 +71,11 @@ body.loading #appRoot > .main-screen-view { opacity: 0; transform: scale(0.98); 
 
 .modal-backdrop { background-color: rgba(30, 41, 59, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 
-/* SPONSORLU KART STİLLERİ */
-.sponsored-news-card {
-    border: 3px solid #FFBF00; /* Canlı altın sarısı kenarlık */
-}
+.sponsored-news-card { border: 3px solid #FFBF00; }
+.sponsored-badge { display: none; background-color: rgba(255, 191, 0, 0.95); color: #1F2937; padding: 3px 8px; border-radius: 0.375rem; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; align-self: flex-start; line-height: 1; }
+.sponsored-news-card .sponsored-badge { display: inline-block; }
 
-.sponsored-badge {
-    display: none; /* Varsayılan olarak gizli */
-    background-color: rgba(255, 191, 0, 0.95); /* Altın sarısı arka plan */
-    color: #1F2937; /* Koyu gri (Tailwind slate-800) */
-    padding: 3px 8px;
-    border-radius: 0.375rem; /* Tailwind rounded-md */
-    font-size: 0.6rem;  /* Çok küçük */
-    font-weight: 700;   /* Kalın */
-    text-transform: uppercase;
-    align-self: flex-start; /* Metin bloğunun başında sola yaslı */
-    line-height: 1; /* Dikey hizalamayı iyileştirmek için */
-    /* `card-gradient` div'indeki `space-y-1 sm:space-y-2`
-       etiket ile başlık arasında zaten boşluk bırakacaktır. */
-}
-
-.sponsored-news-card .sponsored-badge {
-    display: inline-block; /* Sponsorlu kartlarda görünür yap */
-}
-/* SPONSORLU KART STİLLERİ BİTİŞ */
-
-html, body {
-  height: 100%;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-}
+html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; }
 </style>
 </head>
 <body class="bg-slate-100 lexend-font loading">
@@ -202,7 +176,15 @@ html, body {
     </div>
 </div>
 </div>
-<div class="text-center text-slate-500/80 mt-4 text-sm px-4">
+<div class="mt-4 flex justify-center">
+    <button id="komsuTeyzeJokerBtn" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md flex items-center btn-animated focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2">
+        <div class="w-6 h-6 mr-2 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden">
+            <img src="https://i.ibb.co/QFxchd2v/old-woman-3554891.png" alt="Naciye Teyze" class="w-full h-full object-cover">
+        </div>
+        Naciye Teyze'ye Sor!
+    </button>
+</div>
+<div class="text-center text-slate-500/80 mt-2 text-sm px-4">
 Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong>sola (SAHTE)</strong> doğru kaydırın.
 </div>
 </main>
@@ -221,6 +203,20 @@ Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong
 </nav>
 </div>
 </div>
+
+<div id="teyzeHintPopup" class="fixed inset-0 items-center justify-center p-4 hidden z-50 modal-backdrop">
+    <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-auto feedback-content-appear relative">
+        <button id="closeTeyzeHintPopupBtn" class="absolute top-2 right-2 text-slate-500 hover:text-slate-700 btn-animated p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#5667F8] transition-colors duration-150">
+            <span class="material-icons">close</span>
+        </button>
+        <div class="flex items-center mb-4">
+            <img src="https://i.ibb.co/QFxchd2v/old-woman-3554891.png" alt="Naciye Teyze" class="w-16 h-16 rounded-full mr-4 border-2 border-amber-400 bg-slate-200 p-0.5 object-cover">
+            <h3 class="text-xl font-bold text-slate-800 lexend-font">Naciye Teyze Diyor ki...</h3>
+        </div>
+        <p id="teyzeHintText" class="text-slate-600 text-sm leading-relaxed text-left"></p>
+    </div>
+</div>
+
 
 <div id="howToPlayModal" class="fixed inset-0 items-center justify-center p-4 hidden z-50 modal-backdrop">
 <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto feedback-content-appear">
@@ -352,6 +348,12 @@ const gameNavGame = document.getElementById('gameNavGame');
 const gameNavScores = document.getElementById('gameNavScores');
 const profileDisabledPopup = document.getElementById('profileDisabledPopup');
 
+const komsuTeyzeJokerBtn = document.getElementById('komsuTeyzeJokerBtn');
+const teyzeHintPopup = document.getElementById('teyzeHintPopup');
+const teyzeHintText = document.getElementById('teyzeHintText');
+const closeTeyzeHintPopupBtn = document.getElementById('closeTeyzeHintPopupBtn');
+
+
 if (!appRoot || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen || !aboutModal || !profileDisabledPopup || !newsTitle || !feedbackTitleElement || !timerMinutesBox || !timerSecondsBox) {
 console.error("Kritik HTML elementlerinden biri veya birkaçı DOM'da bulunamadı! Lütfen ID'leri kontrol edin.");
 if(document.body) document.body.innerHTML = "<p style='color:red; text-align:center; font-size:20px; margin-top:50px;'>Kritik bir hata oluştu. Lütfen geliştirici konsolunu kontrol edin.</p>";
@@ -359,15 +361,68 @@ return;
 }
 
 const newsData = [
-{id: 1, title: "Düğün konvoyunun yolunu İHA ile kestiler!", snippet: "Sakarya’nın Arifiye ilçesinde TEKNOFEST’e hazırlanan üniversiteli gençler, geliştirdikleri İnsansız Hava Aracı (İHA) ile sıra dışı bir geleneğe imza attı.", image: "https://i.ibb.co/2YZS2NvT/image.png", link: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", isReal: true, explanation: "Valla gerçek! Sakarya'da üniversiteli gençler TEKNOFEST için yaptıkları İHA ile 'Durun bakalım, önce bizim bahşiş!' demişler resmen. Teknoloji ve gelenek böyle de birleşiyormuş demek ki, helal olsun gençlerimize.", displaySourceName: "Milliyet", displaySourceLink: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", isSponsored: false},
-{id: 2, title: "Bursalı işletmeci Etiyopya'lı kabileye kebabı sevdirdi!", snippet: "Keçiden Adana yapınca kabile ayağa kalktı, o günden beri herkes ona “enişte” diyor.", image: "https://i.ibb.co/mVmKVnC0/Screenshot-2025-05-25-at-16-12-45.png", link: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262", isReal: true, explanation: "Bu da gerçek çıktı! Bursalı bir aşçı almış eline satırı, Etiyopya'da bir kabileyi Adana kebabıyla tanıştırmış. Kabile o kadar beğenmiş ki, bizimkine 'enişte' demeye başlamışlar. Düşünsene, Etiyopya'da 'Enişte, bir Adana çek!' diyorlar.", displaySourceName: "Milliyet", displaySourceLink: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262", isSponsored: false},
-{id: 3, title: "Muhtar, Köyde Yapay Zekâ ile Düğün Organize Etti: 'Davulcuya Gerek Kalmadı!'", snippet: "Çorum'un Bayat ilçesine bağlı bir köyde muhtar, köydeki genç çift için ChatGPT'den düğün organizasyonu planladı. Halay sırasını bile yapay zekâ belirledi.", image: "https://i.ibb.co/4RZqspXY/image.png", link: "#muhtar-chatgpt-dugun", isReal: false, explanation: "Yok artık, bu tamamen uydurma! Çorum'da muhtar ChatGPT'ye düğün planlatmış da, halay sırasını bile o belirlemiş falan... Kulağa komik geliyor ama maalesef (ya da neyse ki) böyle bir şey yaşanmamış. Sosyal medyada geyiği dönmüştür kesin, ama haber değeri yok, sallamasyon.", isSponsored: false},
-{id: 4, title: "BYD'nin en büyüğü Tang tam 7 Kişilikmiş! ", snippet: "Geniş İç Hacmi Görenleri Şaşırtan araca tam 7 kişilik bir aile rahatça sığabilen araç 'bu kadar da rahat olur mu?' dedirtiyor.", image: "https://i.ibb.co/mFSdLh8X/image.png", link: "^byd-tang", isReal: true, explanation: "Evet, bu haber gerçekten doğru! BYD'nin Tang modeli tam 7 koltuklu ve içi acayip geniş, yani büyük aileler ya da arkadaş grupları için süper rahat. Elektrikli olması, havalı tasarımı ve teknolojik sürüş özellikleriyle Tang, Türkiye'deki SUV'lara yeni bir soluk getiriyor. ", displaySourceName: "Hemen Keşfet!", displaySourceLink: "https://www.bydauto.com.tr/tang", isSponsored: true},
-{id: 5, title: "İstanbul'da Yeni Trafik Uygulaması: Kornaya Fazla Basana Ehliyet Dondurma Cezası!", snippet: "İBB'nin başlattığı pilot uygulamada, trafikte 3 saniyeden uzun süre korna çalan sürücülerin ehliyetine 1 hafta el konuluyor. Tepkiler karışık.", image: "https://i.ibb.co/RpB72wQm/image.png", link: "#korna-cezasi-kurgu", isReal: false, explanation: "Keşke gerçek olsa diyenler olabilir ama bu haber de maalesef gerçek değil. İstanbul trafiğinde kornaya abananın ehliyetine el koymak... Güzel fikir ama şimdilik sadece hayal. Olsa kimse şaşırmazdı o ayrı konu tabii, o kornalarla az çekmedik!", isSponsored: false},
-{id: 6, title: "Ankara'da 3+1 Diye Aldığı Daire, 1+1 Çıktı!", snippet: "Almanya’da yaşayan Mehmet Ü., Ankara’da 140 metrekare olarak satın aldığı dairenin aslında 78 metrekare ve 1+1 olduğunu fark edince şoke oldu. Konuyla ilgili dava açıldı.", image: "https://i.ibb.co/MxBPdvqN/image.png", link: "https://www.ensonhaber.com/3-sayfa/ankarada-31-diye-aldigi-daire-11-cikti", isReal: true, explanation: "Ah be Mehmet abi! Bu haber maalesef gerçek. Almanya'dan gelip Ankara'da 'Geniş geniş otururum' diye aldığı ev, kuş yuvası çıkmış resmen. 3+1 diye al, 1+1 çıksın... Tam 'Türkiye'de emlakçılık' fıkrası gibi ama yaşanmış. Basında da bayağı konuşuldu bu olay." , displaySourceName: "Hürriyet", displaySourceLink: "https://www.hurriyet.com.tr/gundem/4-yil-sonra-ogrendi-hayatinin-sokunu-yasadi-3-1-olarak-satin-aldigi-ev-1-1-cikti-42788236", isSponsored: false},
-{id: 7, title: "Denizli Honaz Belediyesi, Şehir Sakinlerini Uyanmak İçin Yeni Horoz Uygulamasıyla Tanıştırdı!", snippet: "Uykucu vatandaşlara doğal çözüm: Belediye, sabahları klasik alarm seslerinden şikayet edenler için 'horozlu uyandırma hizmeti' başlattı. Gerçek horozlar, belirlenen adreslere sabah 06.30’da götürülüyor.", image: "https://i.ibb.co/qQ9kDcB/image.png", link: "#horozlu-uyandirici", isReal: false, explanation: "Hahaha, bu çok iyiymiş ama tabii ki uydurma! Denizli'de belediye 'Alarmla uyanamayanlara horoz yolluyoruz' dese ortalık yıkılırdı herhalde. Sabahın köründe kapına horoz gelmesi... Mizah sitelerinde falan döner anca böyle şeyler, gerçek hayatta yok (şimdilik!).", isSponsored: false },
-{id: 8, title: "Sivaslı Çiftçi, 9 Deve Kuşu Alarak Babasının Hayalini Gerçekleştirdi", snippet: "Sivas'ta yaşayan Berat Öksüz, babasının yıllar önceki deve kuşu besleme hayalini gerçekleştirdi. 'Bayağı şaşıran oluyor çünkü Sivas’ta görmedikleri bir şey' diyerek duygularını paylaştı.", image: "https://i.ibb.co/YTwYG3LT/image.png", link: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi", isReal: true, explanation: "Bu da capcanlı gerçek! Sivaslı bir çiftçi, babasının 'Ah bir deve kuşu çiftliğim olsa' hayalini gerçekleştirmiş. Yiğidin harman olduğu yerde deve kuşu ne arar demeyin, Sivaslı şaşırtmayı sever. Adam yapmış valla, görenler de 'Vay be!' diyormuş.",displaySourceName: "En Son Haber", displaySourceLink: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi", isSponsored: false }
+    {
+        id: 1, title: "Düğün konvoyunun yolunu İHA ile kestiler!", snippet: "Sakarya’nın Arifiye ilçesinde TEKNOFEST’e hazırlanan üniversiteli gençler, geliştirdikleri İnsansız Hava Aracı (İHA) ile sıra dışı bir geleneğe imza attı.", image: "https://i.ibb.co/2YZS2NvT/image.png", link: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", 
+        isReal: true, 
+        explanation: "Valla gerçek! Sakarya'da üniversiteli gençler TEKNOFEST için yaptıkları İHA ile 'Durun bakalım, önce bizim bahşiş!' demişler resmen. Teknoloji ve gelenek böyle de birleşiyormuş demek ki, helal olsun gençlerimize.", 
+        teyzeDedikodusu: "Ayol bizim komşunun oğlu da o Teknofest'e gidip duruyor, 'İHA'larla neler yapıyorlar bir görsen teyze!' diyordu. Düğünde bahşiş için İHA uçurmuşlarsa hiç şaşırmam valla, bu gençler bir alem!",
+        displaySourceName: "Milliyet", displaySourceLink: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", isSponsored: false
+    },
+    {
+        id: 2, title: "Bursalı işletmeci Etiyopya'lı kabileye kebabı sevdirdi!", snippet: "Keçiden Adana yapınca kabile ayağa kalktı, o günden beri herkes ona “enişte” diyor.", image: "https://i.ibb.co/mVmKVnC0/Screenshot-2025-05-25-at-16-12-45.png", link: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262", 
+        isReal: true, 
+        explanation: "Bu da gerçek çıktı! Bursalı bir aşçı almış eline satırı, Etiyopya'da bir kabileyi Adana kebabıyla tanıştırmış. Kabile o kadar beğenmiş ki, bizimkine 'enişte' demeye başlamışlar. Düşünsene, Etiyopya'da 'Enişte, bir Adana çek!' diyorlar.", 
+        teyzeDedikodusu: "Kızım o Bursalılar zaten pek bir hamarattır, her yere giderler. Etiyopya'ya gidip kebap sevdirmiş diyorlar ya, bizim enişte de bir gittiydi oraya, 'Aç kaldım aç!' diye döndüydü. Ama bu demek ki işini biliyormuş, helal olsun!",
+        displaySourceName: "Milliyet", displaySourceLink: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262", isSponsored: false
+    },
+    {
+        id: 3, title: "Muhtar, Köyde Yapay Zekâ ile Düğün Organize Etti: 'Davulcuya Gerek Kalmadı!'", snippet: "Çorum'un Bayat ilçesine bağlı bir köyde muhtar, köydeki genç çift için ChatGPT'den düğün organizasyonu planladı. Halay sırasını bile yapay zekâ belirledi.", image: "https://i.ibb.co/4RZqspXY/image.png", link: "#muhtar-chatgpt-dugun", 
+        isReal: false, 
+        explanation: "Yok artık, bu tamamen uydurma! Çorum'da muhtar ChatGPT'ye düğün planlatmış da, halay sırasını bile o belirlemiş falan... Kulağa komik geliyor ama maalesef (ya da neyse ki) böyle bir şey yaşanmamış. Sosyal medyada geyiği dönmüştür kesin, ama haber değeri yok, sallamasyon.", 
+        fakeNewsAnalysis: "Bu tür haberler genellikle 'teknolojiyle absürt yerel geleneklerin birleşimi' temasını işleyerek mizah amaçlar. Gerçekçilikten ziyade 'vay be, neler oluyor' dedirtme potansiyeli taşır.", 
+        teyzeDedikodusu: "Canım benim, o muhtar da pek bir teknolojikmiş ama yapay zekayla düğün organize etmek ne demekmiş? Davulcuya ne gerek kalmadıymış? Olur mu öyle şey, bizim köyün muhtarı anca WhatsApp grubu kurar valla, ötesi yok!",
+        isSponsored: false
+    },
+    {
+        id: 4, title: "BYD'nin en büyüğü Tang tam 7 Kişilikmiş! ", snippet: "Geniş İç Hacmi Görenleri Şaşırtan araca tam 7 kişilik bir aile rahatça sığabilen araç 'bu kadar da rahat olur mu?' dedirtiyor.", image: "https://i.ibb.co/mFSdLh8X/image.png", link: "^byd-tang", 
+        isReal: true, 
+        explanation: "Evet, bu haber gerçekten doğru! BYD'nin Tang modeli tam 7 koltuklu ve içi acayip geniş, yani büyük aileler ya da arkadaş grupları için süper rahat. Elektrikli olması, havalı tasarımı ve teknolojik sürüş özellikleriyle Tang, Türkiye'deki SUV'lara yeni bir soluk getiriyor. ", 
+        teyzeDedikodusu: "Ayol o yeni arabalar çıkmış ya, kocaman kocaman, içine yedi sülale sığıyormuş diyorlar. Bizim dünürler de bakıyordu öyle bir şeye, 'Elektrikliymiş de pek havalıymış' diye. E doğruysa ne güzel, kalabalık aileye birebir!",
+        displaySourceName: "Hemen Keşfet!", displaySourceLink: "https://www.bydauto.com.tr/tang", isSponsored: true
+    },
+    {
+        id: 5, title: "İstanbul'da Yeni Trafik Uygulaması: Kornaya Fazla Basana Ehliyet Dondurma Cezası!", snippet: "İBB'nin başlattığı pilot uygulamada, trafikte 3 saniyeden uzun süre korna çalan sürücülerin ehliyetine 1 hafta el konuluyor. Tepkiler karışık.", image: "https://i.ibb.co/RpB72wQm/image.png", link: "#korna-cezasi-kurgu", 
+        isReal: false, 
+        explanation: "Keşke gerçek olsa diyenler olabilir ama bu haber de maalesef gerçek değil. İstanbul trafiğinde kornaya abananın ehliyetine el koymak... Güzel fikir ama şimdilik sadece hayal. Olsa kimse şaşırmazdı o ayrı konu tabii, o kornalarla az çekmedik!", 
+        fakeNewsAnalysis: "Bu tip 'keşke gerçek olsa' dedirten, gündelik bir soruna radikal çözüm getiren haberler genelde ilgi çeker ama resmi bir duyuru veya pilot uygulama detayı olmadan şüpheyle yaklaşılmalıdır.", 
+        teyzeDedikodusu: "Ah be yavrum, keşke öyle bir şey olsa da şu korna sesinden kurtulsak! Ama bizim millet o kornayı süs diye mi takıyor sanıyorsun? Üç saniye uzun basanın ehliyetini alacaklarmış... Güldürme beni Allah aşkına, kim inanır buna?",
+        isSponsored: false
+    },
+    {
+        id: 6, title: "Ankara'da 3+1 Diye Aldığı Daire, 1+1 Çıktı!", snippet: "Almanya’da yaşayan Mehmet Ü., Ankara’da 140 metrekare olarak satın aldığı dairenin aslında 78 metrekare ve 1+1 olduğunu fark edince şoke oldu. Konuyla ilgili dava açıldı.", image: "https://i.ibb.co/MxBPdvqN/image.png", link: "https://www.ensonhaber.com/3-sayfa/ankarada-31-diye-aldigi-daire-11-cikti", 
+        isReal: true, 
+        explanation: "Ah be Mehmet abi! Bu haber maalesef gerçek. Almanya'dan gelip Ankara'da 'Geniş geniş otururum' diye aldığı ev, kuş yuvası çıkmış resmen. 3+1 diye al, 1+1 çıksın... Tam 'Türkiye'de emlakçılık' fıkrası gibi ama yaşanmış. Basında da bayağı konuşuldu bu olay." , 
+        teyzeDedikodusu: "Kızım duydun mu o Ankara'daki olayı? Adamcağız Almanya'dan gelmiş, üç oda bir salon diye ev almış, bir bakmışlar kuş yuvası kadar! Olacak iş değil ama oluyor işte. Bu emlakçılara da hiç güven olmuyor vallahi.",
+        displaySourceName: "Hürriyet", displaySourceLink: "https://www.hurriyet.com.tr/gundem/4-yil-sonra-ogrendi-hayatinin-sokunu-yasadi-3-1-olarak-satin-aldigi-ev-1-1-cikti-42788236", isSponsored: false
+    },
+    {
+        id: 7, title: "Denizli Honaz Belediyesi, Şehir Sakinlerini Uyanmak İçin Yeni Horoz Uygulamasıyla Tanıştırdı!", snippet: "Uykucu vatandaşlara doğal çözüm: Belediye, sabahları klasik alarm seslerinden şikayet edenler için 'horozlu uyandırma hizmeti' başlattı. Gerçek horozlar, belirlenen adreslere sabah 06.30’da götürülüyor.", image: "https://i.ibb.co/qQ9kDcB/image.png", link: "#horozlu-uyandirici", 
+        isReal: false, 
+        explanation: "Hahaha, bu çok iyiymiş ama tabii ki uydurma! Denizli'de belediye 'Alarmla uyanamayanlara horoz yolluyoruz' dese ortalık yıkılırdı herhalde. Sabahın köründe kapına horoz gelmesi... Mizah sitelerinde falan döner anca böyle şeyler, gerçek hayatta yok (şimdilik!).", 
+        fakeNewsAnalysis: "Belediyelerin sıra dışı hizmetler sunduğuna dair esprili haberler sıkça üretilir. Bu haberdeki lojistik zorluklar ve pratik olmaması, gerçekliğine dair şüphe uyandırır.", 
+        teyzeDedikodusu: "Ayol Denizli'nin horozu meşhurdur meşhur olmasına da, belediye kapı kapı horoz mu dağıtacakmış sabahın köründe uyandırmak için? Kim uğraşır onunla canım, versinler birer çalar saat, olsun bitsin. Bu işte bir bit yeniği var gibi.",
+        isSponsored: false 
+    },
+    {
+        id: 8, title: "Sivaslı Çiftçi, 9 Deve Kuşu Alarak Babasının Hayalini Gerçekleştirdi", snippet: "Sivas'ta yaşayan Berat Öksüz, babasının yıllar önceki deve kuşu besleme hayalini gerçekleştirdi. 'Bayağı şaşıran oluyor çünkü Sivas’ta görmedikleri bir şey' diyerek duygularını paylaştı.", image: "https://i.ibb.co/YTwYG3LT/image.png", link: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi", 
+        isReal: true, 
+        explanation: "Bu da capcanlı gerçek! Sivaslı bir çiftçi, babasının 'Ah bir deve kuşu çiftliğim olsa' hayalini gerçekleştirmiş. Yiğidin harman olduğu yerde deve kuşu ne arar demeyin, Sivaslı şaşırtmayı sever. Adam yapmış valla, görenler de 'Vay be!' diyormuş.",
+        teyzeDedikodusu: "Valla Sivaslılar da pek bir enteresan oluyor, yiğidin harman olduğu yer derler. Babasının hayali diye deve kuşu almış besliyormuş. E ne güzel işte, herkes tavuk besleyecek değil ya! Ben bir komşumda görmüştüm, pek heybetli hayvanlardı.",
+        displaySourceName: "En Son Haber", displaySourceLink: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi", isSponsored: false 
+    }
 ];
+
+let komsuTeyzeJokerAvailable = true; 
 
 let currentQuestionIndex = 0; let score = 0; let currentStreak = 0;
 let timerInterval; let timeLeft = 15; const TIME_PER_QUESTION = 15;
@@ -386,26 +441,19 @@ let profilePopupTimeoutId = null;
 function saveGamePlayedState() { localStorage.setItem('fakeOrTakeGamePlayed_tr', JSON.stringify(gamePlayedAtLeastOnce)); }
 
 function updateActiveNav(activeScreenId) {
-    const navLinkElements = [
-        homeNavHome, homeNavScores, homeNavProfile,
-        gameNavHome, gameNavGame, gameNavScores
-    ];
-
+    const navLinkElements = [ homeNavHome, homeNavScores, homeNavProfile, gameNavHome, gameNavGame, gameNavScores ];
     navLinkElements.forEach(navEl => {
         if (navEl) {
             navEl.classList.remove('nav-item-active');
             const icon = navEl.querySelector('.nav-icon');
             if (icon && !icon.classList.contains('material-symbols-outlined')) {
-                icon.classList.remove('material-icons');
-                icon.classList.add('material-icons-outlined');
+                icon.classList.remove('material-icons'); icon.classList.add('material-icons-outlined');
             }
         }
     });
-
     let elementsToActivate = [];
     const isHomeFooterVisible = homeNavHome && homeNavHome.offsetParent !== null;
     const isGameFooterVisible = gameNavGame && gameNavGame.offsetParent !== null;
-
     if (activeScreenId === 'homeScreen') {
         if (isHomeFooterVisible) elementsToActivate.push(homeNavHome);
         if (isGameFooterVisible) elementsToActivate.push(gameNavHome);
@@ -415,44 +463,33 @@ function updateActiveNav(activeScreenId) {
         if (isHomeFooterVisible) elementsToActivate.push(homeNavScores);
         if (isGameFooterVisible) elementsToActivate.push(gameNavScores);
         if (!isHomeFooterVisible && !isGameFooterVisible && resultsScreen && !resultsScreen.classList.contains('hidden')) {
-             elementsToActivate.push(homeNavScores); // Fallback for results screen if footers somehow hidden
+             elementsToActivate.push(homeNavScores); 
         }
-    } else if (activeScreenId === 'profileScreen') { // Though profile screen isn't fully implemented
+    } else if (activeScreenId === 'profileScreen') { 
         if (isHomeFooterVisible && homeNavProfile) elementsToActivate.push(homeNavProfile);
     }
-
-
     elementsToActivate.forEach(activeEl => {
         if (activeEl) {
             activeEl.classList.add('nav-item-active');
             const icon = activeEl.querySelector('.nav-icon');
             if (icon && !icon.classList.contains('material-symbols-outlined')) {
-                icon.classList.remove('material-icons-outlined');
-                icon.classList.add('material-icons');
+                icon.classList.remove('material-icons-outlined'); icon.classList.add('material-icons');
             }
         }
     });
 }
 
-
 function showScreen(screen) {
     const allScreens = [homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen];
-    const allPopups = [timeUpPopup, modal, aboutModal];
+    const allPopups = [timeUpPopup, modal, aboutModal, teyzeHintPopup];
     allScreens.forEach(s => { if (s) { s.classList.add('hidden'); s.classList.remove('flex'); }});
     allPopups.forEach(p => { if (p) { p.classList.add('hidden'); p.classList.remove('flex'); }});
-
     if(screen){
         screen.classList.remove('hidden');
-        // Ensure only main screens or popups that use flex get it.
-        if (allScreens.includes(screen) || allPopups.includes(screen)) { screen.classList.add('flex');} // Popups like howToPlayModal use flex
+        if (allScreens.includes(screen) || allPopups.includes(screen)) { screen.classList.add('flex');} 
         if (allScreens.includes(screen)) { updateActiveNav(screen.id); }
-    } else {
-        updateActiveNav(null); // No screen active
-    }
-    // Scroll to top for main screen transitions, not for modals/popups.
-    if (!allPopups.includes(screen) && screen !== modal && screen !== aboutModal) { // Check against specific modal vars
-        window.scrollTo(0,0);
-    }
+    } else { updateActiveNav(null); }
+    if (!allPopups.includes(screen) && screen !== modal && screen !== aboutModal) { window.scrollTo(0,0); }
 }
 
 function resetCardState(isNewCard = false) { if (!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.classList.remove('fly-out-left', 'fly-out-right', 'enter-anim', 'active', 'swiping'); newsCard.style.animation = ''; if (isNewCard) { newsCard.classList.add('enter-anim'); newsCard.style.opacity = '0'; newsCard.style.transform = 'translateY(60px) scale(0.95) rotateX(-15deg)'; } else { newsCard.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)'; newsCard.style.transform = 'translateX(0px) rotate(0deg)'; newsCard.style.opacity = '1'; newsCard.style.visibility = 'visible'; } swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible');}
@@ -461,100 +498,46 @@ function animateCardIn() { if (!newsCard) return; void newsCard.offsetWidth; new
 function updateUIForNewQuestion() {
     if (!newsCard || !newsImage || !newsTitle || !newsSnippet || !currentQuestionDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter || !timerSeconds) return;
     resetCardState(true);
-    if (currentQuestionIndex >= newsData.length) {
-        endGame();
-        return;
-    }
+    if (currentQuestionIndex >= newsData.length) { endGame(); return; }
     const question = newsData[currentQuestionIndex];
-
-    // Sponsorlu içerik için ana kart sınıfını güncelle
-    if (question.isSponsored) {
-        newsCard.classList.add('sponsored-news-card');
-    } else {
-        newsCard.classList.remove('sponsored-news-card');
-    }
-    // .sponsored-badge'in görünürlüğü CSS ile .sponsored-news-card varlığına göre yönetilir.
-
+    if (question.isSponsored) { newsCard.classList.add('sponsored-news-card'); } else { newsCard.classList.remove('sponsored-news-card'); }
     if (animateInTimeoutId) { clearTimeout(animateInTimeoutId); animateInTimeoutId = null; }
-    if (newsImage) newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; // Placeholder
+    if (newsImage) newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; 
     if (newsImage && question.image) {
         const img = new Image();
-        img.onload = () => {
-            newsImage.src = question.image;
-            animateInTimeoutId = setTimeout(animateCardIn, 30);
-        };
-        img.onerror = () => {
-            console.warn("Haber resmi yüklenemedi:", question.image);
-            newsImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='100%' height='100%' fill='%23e2e8f0'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='0.5px' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E"; // Fallback SVG
-            animateInTimeoutId = setTimeout(animateCardIn, 30);
-        };
+        img.onload = () => { newsImage.src = question.image; animateInTimeoutId = setTimeout(animateCardIn, 30); };
+        img.onerror = () => { console.warn("Haber resmi yüklenemedi:", question.image); newsImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='100%' height='100%' fill='%23e2e8f0'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='0.5px' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E"; animateInTimeoutId = setTimeout(animateCardIn, 30); };
         img.src = question.image;
-    } else { // No image URL provided
-        newsImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='100%' height='100%' fill='%23e2e8f0'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='0.5px' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E";
-        animateInTimeoutId = setTimeout(animateCardIn, 30);
-    }
-    newsTitle.textContent = question.title;
-    newsSnippet.textContent = question.snippet;
-    currentQuestionDisplay.textContent = currentQuestionIndex + 1;
-    totalQuestionsDisplay.textContent = newsData.length;
-    streakCounter.textContent = currentStreak;
-    progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`;
+    } else { newsImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='100%' height='100%' fill='%23e2e8f0'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='0.5px' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E"; animateInTimeoutId = setTimeout(animateCardIn, 30); }
+    newsTitle.textContent = question.title; newsSnippet.textContent = question.snippet;
+    currentQuestionDisplay.textContent = currentQuestionIndex + 1; totalQuestionsDisplay.textContent = newsData.length;
+    streakCounter.textContent = currentStreak; progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`;
     timerSeconds.classList.remove('timer-pulse', 'text-red-500');
-    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse');
-    if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
+    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse'); if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
 }
 
 function startTimer() {
     if(!timerSeconds || !timerMinutes || !timerMinutesBox || !timerSecondsBox) return;
-    timeLeft = TIME_PER_QUESTION;
-    timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
-    timerMinutes.textContent = "00";
-    timerSeconds.classList.remove('timer-pulse', 'text-red-500');
-    timerMinutesBox.classList.remove('timer-box-pulse');
-    timerSecondsBox.classList.remove('timer-box-pulse');
-
+    timeLeft = TIME_PER_QUESTION; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft; timerMinutes.textContent = "00";
+    timerSeconds.classList.remove('timer-pulse', 'text-red-500'); timerMinutesBox.classList.remove('timer-box-pulse'); timerSecondsBox.classList.remove('timer-box-pulse');
     clearInterval(timerInterval);
     timerInterval = setInterval(() => {
-        timeLeft--;
-        timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
-
-        if (timeLeft <= 3 && timeLeft > 0) { // Stricter condition for box pulse
-            timerSeconds.classList.add('timer-pulse', 'text-red-500');
-            timerMinutesBox.classList.add('timer-box-pulse');
-            timerSecondsBox.classList.add('timer-box-pulse');
-        } else if (timeLeft <= 5 && timeLeft > 0) { // Only pulse text for 5-4 seconds
-             timerSeconds.classList.add('timer-pulse','text-red-500');
-             timerMinutesBox.classList.remove('timer-box-pulse');
-             timerSecondsBox.classList.remove('timer-box-pulse');
-        }
-        else { // Remove all pulse effects if time is > 5
-            timerSeconds.classList.remove('timer-pulse', 'text-red-500');
-            timerMinutesBox.classList.remove('timer-box-pulse');
-            timerSecondsBox.classList.remove('timer-box-pulse');
-        }
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            showTimeUpPopup();
-        }
+        timeLeft--; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
+        if (timeLeft <= 3 && timeLeft > 0) { timerSeconds.classList.add('timer-pulse', 'text-red-500'); timerMinutesBox.classList.add('timer-box-pulse'); timerSecondsBox.classList.add('timer-box-pulse');
+        } else if (timeLeft <= 5 && timeLeft > 0) { timerSeconds.classList.add('timer-pulse','text-red-500'); timerMinutesBox.classList.remove('timer-box-pulse'); timerSecondsBox.classList.remove('timer-box-pulse');
+        } else { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); timerMinutesBox.classList.remove('timer-box-pulse'); timerSecondsBox.classList.remove('timer-box-pulse'); }
+        if (timeLeft <= 0) { clearInterval(timerInterval); showTimeUpPopup(); }
     }, 1000);
 }
 
 function showTimeUpPopup() {
     if (!timeUpPopup) return;
-    timeUpPopup.classList.remove('hidden');
-    timeUpPopup.classList.add('flex'); // Ensure it's flex for centering
+    timeUpPopup.classList.remove('hidden'); timeUpPopup.classList.add('flex'); 
     if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); }
-    timeUpAutoCloseTimeoutId = setTimeout(() => {
-        if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) { handleAnswer(null); }
-    }, 1200); // Auto proceed after 1.2 seconds
+    timeUpAutoCloseTimeoutId = setTimeout(() => { if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) { handleAnswer(null); } }, 1200); 
 }
 
-if (timeUpOkButton) {
-    timeUpOkButton.addEventListener('click', () => {
-        if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); timeUpAutoCloseTimeoutId = null; }
-        handleAnswer(null); // Proceed immediately
-    });
-}
+if (timeUpOkButton) { timeUpOkButton.addEventListener('click', () => { if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); timeUpAutoCloseTimeoutId = null; } handleAnswer(null); }); }
 
 function processSwipeDecision(isRealChoice) { if(!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = 'none'; if (isRealChoice) { newsCard.classList.add('fly-out-right'); swipeRealIndicator.classList.add('visible'); } else { newsCard.classList.add('fly-out-left'); swipeFakeIndicator.classList.add('visible'); } setTimeout(() => { handleAnswer(isRealChoice); }, 400); }
 
@@ -562,38 +545,34 @@ function handleAnswer(userChoiceIsReal) {
     if (!scoreDisplay || !feedbackTitleElement || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
     clearInterval(timerInterval);
     if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); }
-    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse');
-    if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
-
+    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse'); if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
     if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); timeUpAutoCloseTimeoutId = null; }
     if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) { timeUpPopup.classList.add('hidden'); timeUpPopup.classList.remove('flex');}
-
-    const currentQuestion = newsData[currentQuestionIndex];
-    const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
-
-    if (userChoiceIsReal !== null && wasCorrect) { score++; currentStreak++;
-    } else if (userChoiceIsReal !== null && !wasCorrect) { currentStreak = 0; }
-    if(userChoiceIsReal === null) currentStreak = 0; // Time up counts as wrong for streak
-
+    const currentQuestion = newsData[currentQuestionIndex]; const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
+    if (userChoiceIsReal !== null && wasCorrect) { score++; currentStreak++; } else if (userChoiceIsReal !== null && !wasCorrect) { currentStreak = 0; }
+    if(userChoiceIsReal === null) currentStreak = 0; 
     scoreDisplay.textContent = score; streakCounter.textContent = currentStreak;
-    // Reset classes before adding new ones
-    feedbackIcon.className = "material-icons-outlined feedback-content-appear"; // Base classes
-    feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-xl mb-6 sm:mb-8 feedback-content-appear"; // Base classes
-    feedbackTitleElement.classList.add("feedback-content-appear"); // Ensure animation class is present
-    feedbackSourceSection.classList.add('hidden'); // Hide by default
-    let feedbackStr = "";
-
-    if (userChoiceIsReal === null) { // Time's up
+    feedbackIcon.className = "material-icons-outlined feedback-content-appear"; 
+    feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-xl mb-6 sm:mb-8 feedback-content-appear text-left"; 
+    feedbackTitleElement.classList.add("feedback-content-appear"); feedbackSourceSection.classList.add('hidden'); 
+    let feedbackStr = ""; let detailedFakeAnalysisContent = ""; 
+    if (!currentQuestion.isReal && currentQuestion.fakeNewsAnalysis) {
+        detailedFakeAnalysisContent = `<div class="mt-4 pt-3 border-t border-slate-200"><h4 class="text-sm font-semibold text-slate-700 mb-1">Neden Sahte Olabilir? İnceleme:</h4><p class="text-xs text-slate-600 italic">${currentQuestion.fakeNewsAnalysis}</p></div>`;
+    }
+    if (userChoiceIsReal === null) { 
         feedbackTitleElement.textContent = "Süre Bitti!"; feedbackIcon.textContent = "timer_off"; feedbackIcon.classList.add('timeup-icon'); feedbackBox.classList.add('incorrect-feedback');
         feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`;
+        feedbackStr += detailedFakeAnalysisContent; 
     } else if (wasCorrect) {
         feedbackTitleElement.textContent = "Bildin!"; feedbackIcon.textContent = "check_circle"; feedbackIcon.classList.add('status-icon-correct'); feedbackBox.classList.add('correct-feedback');
         feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin.");
-    } else { // Incorrect answer
+        if (!currentQuestion.isReal) { feedbackStr += detailedFakeAnalysisContent; }
+    } else { 
         feedbackTitleElement.textContent = "Tekrar dene!"; feedbackIcon.textContent = "cancel"; feedbackIcon.classList.add('status-icon-incorrect'); feedbackBox.classList.add('incorrect-feedback');
         feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`;
+        if (!currentQuestion.isReal) { feedbackStr += detailedFakeAnalysisContent; }
     }
-    feedbackText.innerHTML = feedbackStr;
+    feedbackText.innerHTML = feedbackStr; 
     if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) {
         feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden');
     }
@@ -607,250 +586,163 @@ if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextSte
 
 function startGame() {
     if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) { console.error("Oyun başlatma için UI elementleri eksik"); return; }
-    gameStartTime = Date.now();
-    currentQuestionIndex = 0; score = 0; currentStreak = 0;
-    // Shuffle newsData array for variability each game - Optional
-    // newsData.sort(() => 0.5 - Math.random()); // Uncomment to shuffle
-    scoreDisplay.textContent = score;
-    streakCounter.textContent = currentStreak;
-    totalQuestionsDisplay.textContent = newsData.length;
-    progressBar.style.width = '0%';
-    showScreen(gameScreenDiv);
-    updateUIForNewQuestion();
-    startTimer();
+    gameStartTime = Date.now(); currentQuestionIndex = 0; score = 0; currentStreak = 0;
+    
+    komsuTeyzeJokerAvailable = true;
+    if (komsuTeyzeJokerBtn) {
+        komsuTeyzeJokerBtn.disabled = false;
+        komsuTeyzeJokerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        komsuTeyzeJokerBtn.innerHTML = `
+            <div class="w-6 h-6 mr-2 rounded-full bg-slate-300 flex items-center justify-center overflow-hidden">
+                <img src="https://i.ibb.co/QFxchd2v/old-woman-3554891.png" alt="Naciye Teyze" class="w-full h-full object-cover">
+            </div>
+            Naciye Teyze'ye Sor!`;
+    }
+
+    scoreDisplay.textContent = score; streakCounter.textContent = currentStreak;
+    totalQuestionsDisplay.textContent = newsData.length; progressBar.style.width = '0%';
+    showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer();
 }
+
+if (komsuTeyzeJokerBtn && teyzeHintPopup && teyzeHintText && closeTeyzeHintPopupBtn) {
+    komsuTeyzeJokerBtn.addEventListener('click', () => {
+        if (!komsuTeyzeJokerAvailable) { return; }
+        if (currentQuestionIndex >= newsData.length || timeLeft <= 0) { return; }
+
+        const currentQuestion = newsData[currentQuestionIndex];
+        let selectedHint = "";
+
+        if (currentQuestion.teyzeDedikodusu) {
+            selectedHint = currentQuestion.teyzeDedikodusu;
+        } else {
+            selectedHint = "Ayol bu haber hakkında da ne diyeceğimi bilemedim şimdi, kafam bir karıştı ki sorma gitsin!";
+            console.warn(`Naciye Teyze Dedikodusu for news ID ${currentQuestion.id} is missing!`);
+        }
+
+        teyzeHintText.textContent = selectedHint;
+        teyzeHintPopup.classList.remove('hidden');
+        teyzeHintPopup.classList.add('flex');
+
+        komsuTeyzeJokerAvailable = false;
+        komsuTeyzeJokerBtn.disabled = true;
+        komsuTeyzeJokerBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        komsuTeyzeJokerBtn.innerHTML = `
+            <div class="w-6 h-6 mr-2 rounded-full bg-slate-400 flex items-center justify-center overflow-hidden opacity-70">
+                <img src="https://i.ibb.co/QFxchd2v/old-woman-3554891.png" alt="Naciye Teyze" class="w-full h-full object-cover">
+            </div>
+            Naciye Teyze Dinleniyor`;
+    });
+
+    closeTeyzeHintPopupBtn.addEventListener('click', () => {
+        teyzeHintPopup.classList.add('hidden');
+        teyzeHintPopup.classList.remove('flex');
+    });
+
+    teyzeHintPopup.addEventListener('click', (event) => {
+        if (event.target === teyzeHintPopup) {
+            teyzeHintPopup.classList.add('hidden');
+            teyzeHintPopup.classList.remove('flex');
+        }
+    });
+} else {
+    console.error("Naciye Teyze Jokeri için gerekli HTML elementleri (buton veya popup) bulunamadı!");
+}
+
 
 function populateLeaderboard() {
     if (!leaderboardEntriesContainer || !newsData || newsData.length === 0) return;
-    leaderboardEntriesContainer.innerHTML = ''; // Clear previous entries
-
-    // Define bot personalities and their scoring tendencies
-    const botNamesAndPersonalities = [
-        { name: "Fatih Mandalina", scoreMultiplier: 0.92 }, { name: "İsmail Büyükyaya", scoreMultiplier: 0.88 },
-        { name: "Cüneyt Sazdemir", scoreMultiplier: 0.95 }, { name: "Nevşin Bambu", scoreMultiplier: 0.85 },
-        { name: "Ahmet Haktan", scoreMultiplier: 0.78 }, { name: "Enver Taysever", scoreMultiplier: 0.90 },
-        { name: "Ece Döner", scoreMultiplier: 0.82 }, { name: "Deniz Zeybek", scoreMultiplier: 0.75 },
-        { name: "Yılmaz Özil", scoreMultiplier: 0.97 }, { name: "Fatih Ortaylı", scoreMultiplier: 0.80 }
-    ];
-
-    // Generate bot scores
-    let botEntries = botNamesAndPersonalities.map(bot => ({
-        name: bot.name,
-        // Score calculation: a base random score + a part influenced by their multiplier
-        score: Math.min(newsData.length, Math.max(0, Math.floor(Math.random() * (newsData.length / 1.8) + (newsData.length * bot.scoreMultiplier * 0.45)))),
-        isPlayer: false
-    }));
-    // Shuffle bots and boost a few to make leaderboard more dynamic
-    botEntries.sort(() => 0.5 - Math.random()); // Shuffle bots
-    const numBotsToBoost = Math.min(3, botEntries.length); // Boost up to 3 bots
-    for (let i = 0; i < numBotsToBoost; i++) {
-        botEntries[i].score = Math.max(botEntries[i].score, Math.floor(newsData.length * (0.65 + Math.random() * 0.3))); // Ensure some higher scores
-    }
-
-
-    // Player's score entry (use 0 if game hasn't been played yet for the leaderboard on home screen)
+    leaderboardEntriesContainer.innerHTML = ''; 
+    const botNamesAndPersonalities = [ { name: "Fatih Mandalina", scoreMultiplier: 0.92 }, { name: "İsmail Büyükyaya", scoreMultiplier: 0.88 }, { name: "Cüneyt Sazdemir", scoreMultiplier: 0.95 }, { name: "Nevşin Bambu", scoreMultiplier: 0.85 }, { name: "Ahmet Haktan", scoreMultiplier: 0.78 }, { name: "Enver Taysever", scoreMultiplier: 0.90 }, { name: "Ece Döner", scoreMultiplier: 0.82 }, { name: "Deniz Zeybek", scoreMultiplier: 0.75 }, { name: "Yılmaz Özil", scoreMultiplier: 0.97 }, { name: "Fatih Ortaylı", scoreMultiplier: 0.80 } ];
+    let botEntries = botNamesAndPersonalities.map(bot => ({ name: bot.name, score: Math.min(newsData.length, Math.max(0, Math.floor(Math.random() * (newsData.length / 1.8) + (newsData.length * bot.scoreMultiplier * 0.45)))), isPlayer: false }));
+    botEntries.sort(() => 0.5 - Math.random()); 
+    const numBotsToBoost = Math.min(3, botEntries.length); 
+    for (let i = 0; i < numBotsToBoost; i++) { botEntries[i].score = Math.max(botEntries[i].score, Math.floor(newsData.length * (0.65 + Math.random() * 0.3))); }
     const playerScoreEntry = { name: "SEN", score: (gamePlayedAtLeastOnce ? score : 0), isPlayer: true };
     let allEntries = [...botEntries, playerScoreEntry];
-
-    // Sort entries: by score (desc), then player first, then by name (asc)
-    allEntries.sort((a, b) => {
-        if (b.score === a.score) {
-            if (a.isPlayer) return -1; // Player comes first in ties
-            if (b.isPlayer) return 1;
-            return a.name.localeCompare(b.name); // Then sort by name
-        }
-        return b.score - a.score; // Primary sort by score
-    });
-
-    // Logic to display top entries and player's rank if not in top
-    const maxEntriesToShow = 7;
-    let displayEntries = [];
-
-    if (allEntries.length <= maxEntriesToShow) {
-        displayEntries = [...allEntries];
+    allEntries.sort((a, b) => { if (b.score === a.score) { if (a.isPlayer) return -1; if (b.isPlayer) return 1; return a.name.localeCompare(b.name); } return b.score - a.score; });
+    const maxEntriesToShow = 7; let displayEntries = [];
+    if (allEntries.length <= maxEntriesToShow) { displayEntries = [...allEntries];
     } else {
         const playerRankGlobal = allEntries.findIndex(entry => entry.isPlayer);
-        // If player is in the top N-1 (leaving space for potential ellipsis)
-        if (playerRankGlobal < maxEntriesToShow -1 ) {
-            displayEntries = allEntries.slice(0, maxEntriesToShow);
+        if (playerRankGlobal < maxEntriesToShow -1 ) { displayEntries = allEntries.slice(0, maxEntriesToShow);
         } else {
-            // Player is further down, show top N-2, ellipsis, then player
-            displayEntries = allEntries.slice(0, maxEntriesToShow - 2);
-            displayEntries.push({ name: "...", score: -1, isPlayer: false, isEllipsis: true }); // Ellipsis entry
-            // Ensure player entry is added if not already included by slice
-            if (!displayEntries.some(e=> e.isPlayer && e.name === playerScoreEntry.name)) {
-                 displayEntries.push(playerScoreEntry);
-            }
+            displayEntries = allEntries.slice(0, maxEntriesToShow - 2); displayEntries.push({ name: "...", score: -1, isPlayer: false, isEllipsis: true }); 
+            if (!displayEntries.some(e=> e.isPlayer && e.name === playerScoreEntry.name)) { displayEntries.push(playerScoreEntry); }
         }
-        // Final check: if player was pushed and it made the list too long, re-evaluate.
-        // This logic can get complex if player is exactly at Nth or (N-1)th position with ellipsis.
-        // The goal is to show player, and if they are low, show ...
-        // If displayEntries now has more than maxEntriesToShow (e.g. N-2 + ellipsis + player = N), it's fine.
-        // If player was very low, and list is like Top N-2 + Ellipsis + Player, it's fine.
-        // If after adding player, the list is like Top N-2 + Player (no Ellipsis needed as player is close), remove ellipsis
         if (displayEntries.some(e => e.isEllipsis) && displayEntries.findIndex(e => e.isPlayer) === displayEntries.findIndex(e => e.isEllipsis) -1 ) {
-            displayEntries = displayEntries.filter(e => !e.isEllipsis); // Remove ellipsis if player is right after top N-2
-            if(displayEntries.length < maxEntriesToShow && allEntries.length > maxEntriesToShow) {
-                 // If there's space, add one more non-player entry from original sorted list
-                 const nextEntry = allEntries.find(ae => !displayEntries.some(de => de.name === ae.name && de.score === ae.score));
-                 if(nextEntry) displayEntries.push(nextEntry);
-            }
+            displayEntries = displayEntries.filter(e => !e.isEllipsis); 
+            if(displayEntries.length < maxEntriesToShow && allEntries.length > maxEntriesToShow) { const nextEntry = allEntries.find(ae => !displayEntries.some(de => de.name === ae.name && de.score === ae.score)); if(nextEntry) displayEntries.push(nextEntry); }
         }
     }
-    // Re-sort displayEntries to ensure order, especially if ellipsis and player were manually added.
-     displayEntries.sort((a, b) => {
-        if(a.isEllipsis) return 1; // Ellipsis should be sorted towards its logical place (handled by slicing mostly)
-        if(b.isEllipsis) return -1;
-        if (b.score === a.score) {
-            if (a.isPlayer) return -1;
-            if (b.isPlayer) return 1;
-            return a.name.localeCompare(b.name);
-        }
-        return b.score - a.score;
-    });
-    // Ensure displayEntries doesn't exceed maxEntriesToShow unless player is the one making it exceed slightly
+    displayEntries.sort((a, b) => { if(a.isEllipsis) return 1; if(b.isEllipsis) return -1; if (b.score === a.score) { if (a.isPlayer) return -1; if (b.isPlayer) return 1; return a.name.localeCompare(b.name); } return b.score - a.score; });
     if (displayEntries.length > maxEntriesToShow) {
         const playerInDisplay = displayEntries.some(e => e.isPlayer);
         if (playerInDisplay && displayEntries.findIndex(e => e.isPlayer) >= maxEntriesToShow -1) {
-             // Player is at the end or makes it slightly longer, try to keep player.
-             // Slice to N-1, then add player if not present.
-             let tempEntries = displayEntries.slice(0, maxEntriesToShow -1);
-             if (!tempEntries.some(e=>e.isPlayer)) tempEntries.push(playerScoreEntry);
-             displayEntries = tempEntries;
-             // Resort again after this manipulation
-             displayEntries.sort((a, b) => { /* same sort logic */ if (b.score === a.score) { if (a.isPlayer) return -1; if (b.isPlayer) return 1; return a.name.localeCompare(b.name); } return b.score - a.score; });
-        } else {
-            displayEntries = displayEntries.slice(0, maxEntriesToShow);
-        }
+             let tempEntries = displayEntries.slice(0, maxEntriesToShow -1); if (!tempEntries.some(e=>e.isPlayer)) tempEntries.push(playerScoreEntry); displayEntries = tempEntries;
+             displayEntries.sort((a, b) => { if (b.score === a.score) { if (a.isPlayer) return -1; if (b.isPlayer) return 1; return a.name.localeCompare(b.name); } return b.score - a.score; });
+        } else { displayEntries = displayEntries.slice(0, maxEntriesToShow); }
     }
-
-
     displayEntries.forEach((entry) => {
-        const entryDiv = document.createElement('div');
-        entryDiv.className = 'flex items-center justify-between rounded-lg p-4 transition-all text-sm sm:text-base shadow-sm'; // Base classes for all entries
-        
-        if(entry.isEllipsis) {
-            entryDiv.innerHTML = `<p class="text-center w-full text-slate-500 text-xs">...</p>`;
-            leaderboardEntriesContainer.appendChild(entryDiv);
-            return; // Skip further processing for ellipsis
-        }
-
-        const leftPart = document.createElement('div');
-        leftPart.className = 'flex items-center gap-3';
-
-        const rankDisplaySpan = document.createElement('span');
-        // Find the actual rank in the *full* sorted list
-        const actualRank = allEntries.findIndex(e => e.name === entry.name && e.score === entry.score && e.isPlayer === entry.isPlayer) + 1;
-        let rankText = `${actualRank}.`;
-        let rankIconClass = 'text-slate-600'; // Default rank color
-
+        const entryDiv = document.createElement('div'); entryDiv.className = 'flex items-center justify-between rounded-lg p-4 transition-all text-sm sm:text-base shadow-sm'; 
+        if(entry.isEllipsis) { entryDiv.innerHTML = `<p class="text-center w-full text-slate-500 text-xs">...</p>`; leaderboardEntriesContainer.appendChild(entryDiv); return; }
+        const leftPart = document.createElement('div'); leftPart.className = 'flex items-center gap-3';
+        const rankDisplaySpan = document.createElement('span'); const actualRank = allEntries.findIndex(e => e.name === entry.name && e.score === entry.score && e.isPlayer === entry.isPlayer) + 1;
+        let rankText = `${actualRank}.`; let rankIconClass = 'text-slate-600'; 
         if (actualRank === 1) { rankText = '🥇'; rankIconClass = 'text-amber-400';}
-        else if (actualRank === 2) { rankText = '🥈'; rankIconClass = 'text-slate-400';} // Changed to silver
-        else if (actualRank === 3) { rankText = '🥉'; rankIconClass = 'text-orange-400';} // Changed to bronze (e.g. #CD7F32 or Tailwind's orange)
-
-
-        if (entry.isPlayer) {
-            entryDiv.classList.add('bg-indigo-100', 'text-indigo-700', 'ring-2', 'ring-offset-2', 'ring-offset-indigo-100', 'ring-indigo-500', 'shadow-md');
-            rankDisplaySpan.className = `text-xl font-semibold ${rankIconClass}`; // Player rank styling
-            rankDisplaySpan.innerHTML = `${(actualRank > 3) ? '★ ' : ''}${rankText}`; // Star for player if not top 3
-        } else {
-            entryDiv.classList.add('bg-slate-100', 'hover:bg-slate-200/80'); // Bot entry styling
-            rankDisplaySpan.className = `text-lg sm:text-xl font-semibold ${actualRank <=3 ? rankIconClass : 'text-slate-600'}`;
-            rankDisplaySpan.innerHTML = rankText;
-        }
+        else if (actualRank === 2) { rankText = '🥈'; rankIconClass = 'text-slate-400';} 
+        else if (actualRank === 3) { rankText = '🥉'; rankIconClass = 'text-orange-400';} 
+        if (entry.isPlayer) { entryDiv.classList.add('bg-indigo-100', 'text-indigo-700', 'ring-2', 'ring-offset-2', 'ring-offset-indigo-100', 'ring-indigo-500', 'shadow-md'); rankDisplaySpan.className = `text-xl font-semibold ${rankIconClass}`; rankDisplaySpan.innerHTML = `${(actualRank > 3) ? '★ ' : ''}${rankText}`; 
+        } else { entryDiv.classList.add('bg-slate-100', 'hover:bg-slate-200/80'); rankDisplaySpan.className = `text-lg sm:text-xl font-semibold ${actualRank <=3 ? rankIconClass : 'text-slate-600'}`; rankDisplaySpan.innerHTML = rankText; }
         leftPart.appendChild(rankDisplaySpan);
-
-        const nameP = document.createElement('p');
-        nameP.className = `font-medium ${entry.isPlayer ? 'text-indigo-800' : 'text-slate-700'}`;
-        nameP.textContent = entry.name;
-        leftPart.appendChild(nameP);
-        
-        const scoreP = document.createElement('p');
-        scoreP.className = `font-semibold ${entry.isPlayer ? 'text-indigo-800' : 'text-slate-700'}`;
-        scoreP.textContent = `${entry.score}/${newsData.length}`;
-        
-        entryDiv.appendChild(leftPart);
-        entryDiv.appendChild(scoreP);
-        leaderboardEntriesContainer.appendChild(entryDiv);
+        const nameP = document.createElement('p'); nameP.className = `font-medium ${entry.isPlayer ? 'text-indigo-800' : 'text-slate-700'}`; nameP.textContent = entry.name; leftPart.appendChild(nameP);
+        const scoreP = document.createElement('p'); scoreP.className = `font-semibold ${entry.isPlayer ? 'text-indigo-800' : 'text-slate-700'}`; scoreP.textContent = `${entry.score}/${newsData.length}`;
+        entryDiv.appendChild(leftPart); entryDiv.appendChild(scoreP); leaderboardEntriesContainer.appendChild(entryDiv);
     });
 }
 
-
 function endGame() {
     if (!timeTakenValue || !finalScoreValue || !highScoreDisplay) return;
-    gamePlayedAtLeastOnce = true; // Mark that the game has been played
-    saveGamePlayedState();
-    clearInterval(timerInterval);
+    gamePlayedAtLeastOnce = true; saveGamePlayedState(); clearInterval(timerInterval);
     if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); }
-    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse');
-    if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
-
-    const gameEndTimeVariable = Date.now();
-    const timeDiff = gameEndTimeVariable - (gameStartTime || gameEndTimeVariable) ; // gameStartTime might be undefined if game ended prematurely
+    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse'); if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
+    const gameEndTimeVariable = Date.now(); const timeDiff = gameEndTimeVariable - (gameStartTime || gameEndTimeVariable) ; 
     const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000);
-    
     if (timeTakenValue) timeTakenValue.textContent = `${mins} dakika ${secs} saniye`;
     if (finalScoreValue) finalScoreValue.textContent = `${score}/${newsData.length}`;
-    
     let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
     if (score > hs) { hs = score; localStorage.setItem('fakeOrTakeHighScore_tr', hs); }
     if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${newsData.length}`;
-    
-    populateLeaderboard(); // Populate with the latest score
-    showScreen(resultsScreen);
+    populateLeaderboard(); showScreen(resultsScreen);
 }
 
-function resetGame() { // Called when navigating away from game or results
-    clearInterval(timerInterval); // Stop timer
-    if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); }
-    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse');
-    if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
-    // Don't reset score or currentQuestionIndex here, startGame handles it
-}
+function resetGame() { clearInterval(timerInterval); if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); } if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse'); if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse'); }
 function navigateToHome() { resetGame(); showScreen(homeScreenDiv); }
-
 function navigateToResults() {
-    resetGame(); // Stop game-related processes
-    // Update display based on whether the game has been played at all
+    resetGame(); 
     if (!gamePlayedAtLeastOnce) {
-        if (finalScoreValue) finalScoreValue.textContent = "0/0"; // Show 0/0 if no game played
-        if (timeTakenValue) timeTakenValue.textContent = "-";     // No time taken
-        let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
-        let totalQDisplay = newsData && newsData.length > 0 ? newsData.length : "X"; // Handle if newsData is empty
+        if (finalScoreValue) finalScoreValue.textContent = "0/0"; if (timeTakenValue) timeTakenValue.textContent = "-";   
+        let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0; let totalQDisplay = newsData && newsData.length > 0 ? newsData.length : "X"; 
         if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${totalQDisplay}`;
     } else {
-        // If game has been played, these values would have been set by endGame
-        // But if navigating directly to results, ensure they are current
         if (finalScoreValue) finalScoreValue.textContent = `${score}/${newsData.length}`; 
-        let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
-        if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${newsData.length}`;
-        // timeTakenValue is only relevant after a game session, so it might be stale if navigating directly
-        // Consider what to display for timeTakenValue if navigating here without playing.
+        let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0; if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${newsData.length}`;
     }
-    populateLeaderboard(); // Always populate leaderboard
-    showScreen(resultsScreen);
+    populateLeaderboard(); showScreen(resultsScreen);
 }
-
 
 function unifiedSwipeStart(e) {
     if (!newsCard || newsCard.classList.contains('fly-out-left') || newsCard.classList.contains('fly-out-right')) return;
-    if (animateInTimeoutId) { clearTimeout(animateInTimeoutId); animateInTimeoutId = null; } // Clear pending animation
-    // If card is in enter-animation, force it to be interactable immediately
-    if (newsCard.classList.contains('enter-anim') || (newsCard.style.animation && newsCard.style.animation !== 'none')) {
-        newsCard.classList.remove('enter-anim', 'active');
-        newsCard.style.animation = 'none'; // Stop current animation
-        newsCard.style.visibility = 'visible'; // Make sure it's visible
-    }
-    newsCard.style.opacity = '1'; newsCard.style.transform = ''; // Reset any leftover transforms/opacity
-    isSwiping = true; isMouseSwiping = (e.type === 'mousedown');
-    swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX;
+    if (animateInTimeoutId) { clearTimeout(animateInTimeoutId); animateInTimeoutId = null; } 
+    if (newsCard.classList.contains('enter-anim') || (newsCard.style.animation && newsCard.style.animation !== 'none')) { newsCard.classList.remove('enter-anim', 'active'); newsCard.style.animation = 'none'; newsCard.style.visibility = 'visible'; }
+    newsCard.style.opacity = '1'; newsCard.style.transform = ''; 
+    isSwiping = true; isMouseSwiping = (e.type === 'mousedown'); swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX;
     newsCard.style.transition = 'none'; newsCard.classList.add('swiping');
     if (isMouseSwiping) { document.addEventListener('mousemove', unifiedSwipeMove); document.addEventListener('mouseup', unifiedSwipeEnd); }
 }
 function unifiedSwipeMove(e) {
     if (!isSwiping || !newsCard) return;
     swipeCurrentX = isMouseSwiping ? e.pageX : e.touches[0].pageX; let diffX = swipeCurrentX - swipeStartX;
-    if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) { e.preventDefault(); } // Prevent scroll on touch
+    if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) { e.preventDefault(); } 
     let rotation = diffX * CARD_ROTATION_FACTOR; rotation = Math.max(-CARD_MAX_ROTATION, Math.min(CARD_MAX_ROTATION, rotation));
     const newTransform = `translateX(${diffX}px) rotate(${rotation}deg)`;
     requestAnimationFrame(() => { if (isSwiping) { newsCard.style.transform = newTransform; } });
@@ -861,101 +753,60 @@ function unifiedSwipeMove(e) {
 function unifiedSwipeEnd(e) {
     if (!isSwiping || !newsCard) return;
     if (isMouseSwiping) { document.removeEventListener('mousemove', unifiedSwipeMove); document.removeEventListener('mouseup', unifiedSwipeEnd); }
-    isSwiping = false; isMouseSwiping = false; newsCard.classList.remove('swiping');
-    let diffX = swipeCurrentX - swipeStartX;
-    if (Math.abs(diffX) > SWIPE_THRESHOLD) { // Threshold met
-        if (diffX > 0) { swipeRealIndicator.classList.add('visible'); } else { swipeFakeIndicator.classList.add('visible'); } // Ensure indicator stays for fly-out
-        processSwipeDecision(diffX > 0);
-    } else { // Threshold not met, reset card
-        resetCardState(false); // Reset to center without new card animation
-    }
-    swipeStartX = 0; swipeCurrentX = 0; // Reset swipe coordinates
+    isSwiping = false; isMouseSwiping = false; newsCard.classList.remove('swiping'); let diffX = swipeCurrentX - swipeStartX;
+    if (Math.abs(diffX) > SWIPE_THRESHOLD) { if (diffX > 0) { swipeRealIndicator.classList.add('visible'); } else { swipeFakeIndicator.classList.add('visible'); } processSwipeDecision(diffX > 0);
+    } else { resetCardState(false); }
+    swipeStartX = 0; swipeCurrentX = 0; 
 }
-if (newsCard) {
-    newsCard.addEventListener('mousedown', unifiedSwipeStart);
-    newsCard.addEventListener('touchstart', unifiedSwipeStart, { passive: true }); // Passive true for start
-    newsCard.addEventListener('touchmove', unifiedSwipeMove, { passive: false }); // Passive false for move to allow preventDefault
-    newsCard.addEventListener('touchend', unifiedSwipeEnd);
-    newsCard.addEventListener('touchcancel', unifiedSwipeEnd); // Handle unexpected touch end
+if (newsCard) { newsCard.addEventListener('mousedown', unifiedSwipeStart); newsCard.addEventListener('touchstart', unifiedSwipeStart, { passive: true }); newsCard.addEventListener('touchmove', unifiedSwipeMove, { passive: false }); newsCard.addEventListener('touchend', unifiedSwipeEnd); newsCard.addEventListener('touchcancel', unifiedSwipeEnd); 
 } else { console.error("Haber kartı (newsCard) DOM'da bulunamadı! Swipe çalışmayacak."); }
 
 async function handleShareResults() {
     if (!newsData || newsData.length === 0) { alert("Paylaşılacak bir sonuç bulunamadı."); return; }
-    const currentScoreForShare = gamePlayedAtLeastOnce ? score : 0; // Use 0 if game not played
+    const currentScoreForShare = gamePlayedAtLeastOnce ? score : 0; 
     const shareText = `Fake or Take?'de ${currentScoreForShare}/${newsData.length} yaptım! Sen de bu haberlerin gerçek mi sahte mi olduğunu tahmin etmeye çalış. Challenge'a var mısın? 😎`;
     const shareUrl = window.location.href; const shareTitle = "Fake or Take? - Skor Yarışması!";
     if (navigator.share) {
         try { await navigator.share({ title: shareTitle, text: shareText, url: shareUrl }); console.log('Sonuç başarıyla paylaşıldı!'); }
-        catch (error) { console.error('Paylaşım sırasında hata oluştu:', error); if (error.name !== 'AbortError') { /* Only alert if not user abort */ alert('Paylaşım sırasında bir hata oluştu.');} }
-    } else { // Fallback to clipboard
+        catch (error) { console.error('Paylaşım sırasında hata oluştu:', error); if (error.name !== 'AbortError') { alert('Paylaşım sırasında bir hata oluştu.');} }
+    } else { 
         try { await navigator.clipboard.writeText(`${shareTitle}\n${shareText}\n${shareUrl}`); alert('Paylaşım özelliği bu tarayıcıda desteklenmiyor. Skorun ve davet mesajın panoya kopyalandı, istediğin yerde paylaşabilirsin!'); }
         catch (err) { alert('Paylaşım özelliği bu tarayıcıda desteklenmiyor ve metin panoya kopyalanamadı. Lütfen skoru manuel olarak paylaşın.'); console.error('Panoya kopyalama başarısız:', err); }
     }
 }
 
-// Modal handlers
-if (howToPlayButton && modal && closeModalButton) {
-    const openHowToPlayModal = () => { if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); } };
-    const closeHowToPlayModal = () => { if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); } };
-    howToPlayButton.addEventListener('click', openHowToPlayModal);
-    closeModalButton.addEventListener('click', closeHowToPlayModal);
-    modal.addEventListener('click', (event) => { if (event.target === modal) { closeHowToPlayModal(); } }); // Close on backdrop click
+if (howToPlayButton && modal && closeModalButton) { const openHowToPlayModal = () => { if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); } }; const closeHowToPlayModal = () => { if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); } }; howToPlayButton.addEventListener('click', openHowToPlayModal); closeModalButton.addEventListener('click', closeHowToPlayModal); modal.addEventListener('click', (event) => { if (event.target === modal) { closeHowToPlayModal(); } }); 
 } else { console.error("Modal ('Nasıl Oynanır') elementleri bulunamadı."); }
 
-if (aboutBtn && aboutModal && closeAboutModalBtn) {
-    const openAboutModal = () => { if (aboutModal) { aboutModal.classList.remove('hidden'); aboutModal.classList.add('flex'); } };
-    const closeAboutModal = () => { if (aboutModal) { aboutModal.classList.add('hidden'); aboutModal.classList.remove('flex'); } };
-    aboutBtn.addEventListener('click', openAboutModal);
-    closeAboutModalBtn.addEventListener('click', closeAboutModal);
-    aboutModal.addEventListener('click', (event) => { if (event.target === aboutModal) { closeAboutModal(); } }); // Close on backdrop click
+if (aboutBtn && aboutModal && closeAboutModalBtn) { const openAboutModal = () => { if (aboutModal) { aboutModal.classList.remove('hidden'); aboutModal.classList.add('flex'); } }; const closeAboutModal = () => { if (aboutModal) { aboutModal.classList.add('hidden'); aboutModal.classList.remove('flex'); } }; aboutBtn.addEventListener('click', openAboutModal); closeAboutModalBtn.addEventListener('click', closeAboutModal); aboutModal.addEventListener('click', (event) => { if (event.target === aboutModal) { closeAboutModal(); } }); 
 } else { console.error("Hakkında Modal elementleri bulunamadı."); }
 
-// Profile Popup handler (dummy)
 if (homeNavProfile && profileDisabledPopup) {
     homeNavProfile.addEventListener('click', (e) => {
-        e.preventDefault(); // It's an anchor, prevent navigation
-        if (profilePopupTimeoutId) { clearTimeout(profilePopupTimeoutId); } // Clear existing timeout
-        profileDisabledPopup.classList.remove('opacity-0', 'pointer-events-none');
-        profileDisabledPopup.classList.add('opacity-100');
+        e.preventDefault(); if (profilePopupTimeoutId) { clearTimeout(profilePopupTimeoutId); } 
+        profileDisabledPopup.classList.remove('opacity-0', 'pointer-events-none'); profileDisabledPopup.classList.add('opacity-100');
         profilePopupTimeoutId = setTimeout(() => {
-            profileDisabledPopup.classList.remove('opacity-100');
-            profileDisabledPopup.classList.add('opacity-0');
-            // Delay adding pointer-events-none to allow fade-out transition
-            setTimeout(() => {
-                // Only add if it's still meant to be hidden (not re-triggered)
-                if (!profileDisabledPopup.classList.contains('opacity-100')) {
-                    profileDisabledPopup.classList.add('pointer-events-none');
-                }
-            }, 300); // Match transition duration
-            profilePopupTimeoutId = null; // Clear timeout ID
-        }, 2500); // Popup visible for 2.5s
+            profileDisabledPopup.classList.remove('opacity-100'); profileDisabledPopup.classList.add('opacity-0');
+            setTimeout(() => { if (!profileDisabledPopup.classList.contains('opacity-100')) { profileDisabledPopup.classList.add('pointer-events-none'); } }, 300); 
+            profilePopupTimeoutId = null; 
+        }, 2500); 
     });
 }
 
-// Button listeners
 if (playNowButton) { playNowButton.addEventListener('click', startGame); }
-if (closeGameButton) { closeGameButton.addEventListener('click', navigateToHome); } // From game screen
+if (closeGameButton) { closeGameButton.addEventListener('click', navigateToHome); } 
 if(shareResultsBtn) shareResultsBtn.addEventListener('click', handleShareResults);
-if(playAgainBtn) playAgainBtn.addEventListener('click', startGame); // From results screen
-if(backToHomeResultsBtn) backToHomeResultsBtn.addEventListener('click', navigateToHome); // From results screen
-if(closeResultsHeaderBtn) closeResultsHeaderBtn.addEventListener('click', navigateToHome); // From results screen header
+if(playAgainBtn) playAgainBtn.addEventListener('click', startGame); 
+if(backToHomeResultsBtn) backToHomeResultsBtn.addEventListener('click', navigateToHome); 
+if(closeResultsHeaderBtn) closeResultsHeaderBtn.addEventListener('click', navigateToHome); 
 
-// Navigation listeners
 [homeNavHome, gameNavHome].forEach(el => el?.addEventListener('click', (e) => { e.preventDefault(); navigateToHome(); }));
 [homeNavScores, gameNavScores, leaderboardBtnHome].forEach(el => el?.addEventListener('click', (e) => { e.preventDefault(); navigateToResults(); }));
 
+if (!gamePlayedAtLeastOnce) { if (finalScoreValue) finalScoreValue.textContent = "0/0"; if (timeTakenValue) timeTakenValue.textContent = "-"; let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0; let totalQDisplay = newsData && newsData.length > 0 ? newsData.length : "X"; if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${totalQDisplay}`; }
 
-// Initial setup for results screen if no game played yet
-if (!gamePlayedAtLeastOnce) {
-    if (finalScoreValue) finalScoreValue.textContent = "0/0";
-    if (timeTakenValue) timeTakenValue.textContent = "-";
-    let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
-    let totalQDisplay = newsData && newsData.length > 0 ? newsData.length : "X";
-    if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${totalQDisplay}`;
-}
-
-showScreen(homeScreenDiv); // Initial screen
-if(document.body) document.body.classList.remove('loading'); // Remove loading class once ready
+showScreen(homeScreenDiv); 
+if(document.body) document.body.classList.remove('loading'); 
 
 });
 </script>
