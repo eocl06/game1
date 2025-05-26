@@ -631,10 +631,10 @@ if (komsuTeyzeJokerBtn && teyzeHintPopup && teyzeHintText && closeTeyzeHintPopup
         komsuTeyzeJokerBtn.disabled = true;
         komsuTeyzeJokerBtn.classList.add('opacity-50', 'cursor-not-allowed');
         komsuTeyzeJokerBtn.innerHTML = `
-            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/40 flex items-center justify-center overflow-hidden mr-2">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden mr-2"> {/* Pasif durumda ikon arkaplanı daha opak */}
                 <img src="https://i.ibb.co/QFxchd2v/old-woman-3554891.png" alt="Naciye Teyze" class="w-full h-full object-cover">
             </div>
-            <span class="text-xs sm:text-sm text-center">Naciye Teyze Güne Gitti</span>`;
+            <span class="text-xs sm:text-sm text-center">Naciye Teyze Güne Gitti!</span>`;
     });
 
     closeTeyzeHintPopupBtn.addEventListener('click', () => {
