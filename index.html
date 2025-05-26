@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-<title>Fake or Take? - Gerçek mi Sahte mi?</title>
+<title>FakeBreak, Gerçek mi Fake mi?</title>
 <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <style>
@@ -118,9 +118,9 @@ html, body {
 <header id="homeHeader" class="bg-white shadow-md sticky top-0 z-20">
 <div class="container mx-auto px-4 py-3 flex items-center justify-between">
   <div class="w-7 h-7 flex justify-start items-center">
-    <img src="https://i.ibb.co/hRJ4WqKc/Group-8695.png" alt="Fake or Take? Logo" class="max-w-full max-h-full object-contain">
+    <img src="https://i.ibb.co/hRJ4WqKc/Group-8695.png" alt="FakeBreak Logo" class="max-w-full max-h-full object-contain">
   </div>
-  <h1 class="text-xl font-bold text-slate-800 text-center flex-1">Fake or Take?</h1>
+  <h1 class="text-xl font-bold text-slate-800 text-center flex-1">FakeBreak</h1>
   <div class="w-10 flex justify-end items-center">
     <button id="aboutBtn" class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5667F8] focus:ring-opacity-50 btn-animated">
       <span class="material-icons">info_outline</span>
@@ -130,7 +130,7 @@ html, body {
 </header>
 <main id="homeMain" class="flex-grow container mx-auto px-6 py-8 text-center overflow-y-auto">
 <div class="max-w-md mx-auto">
-<img alt="Fake or Take? Uygulama İkonu" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
+<img alt="FakeBreak Uygulama İkonu" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
 <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">Gerçek Bir Gündem Kurdu musun?</h2>
 <p class="text-lg sm:text-xl text-slate-600 mb-10">Öyleyse hodri meydan! "Bu kadar da olmaz!" dediğin anlar olacak, eminiz. Ama acaba hangisi gerçek, hangisi aldatmaca?</p>
 <div class="space-y-4">
@@ -238,7 +238,7 @@ Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong
 </button>
 </div>
 <div class="text-slate-600 space-y-3 lexend-font">
-<p>Fake or Take?'e hoş geldiniz!</p>
+<p>FakeBreak'e hoş geldiniz!</p>
 <p>1. Ekranda beliren haber kartını dikkatlice okuyun.</p>
 <p>2. Haberin <strong>GERÇEK</strong> olduğuna inanıyorsanız kartı <strong>SAĞA</strong> doğru kaydırın.</p>
 <p>3. Haberin <strong>SAHTE</strong> olduğuna inanıyorsanız kartı <strong>SOLA</strong> doğru kaydırın.</p>
@@ -908,8 +908,8 @@ if (newsCard) {
 async function handleShareResults() {
     if (!newsData || newsData.length === 0) { alert("Paylaşılacak bir sonuç bulunamadı."); return; }
     const currentScoreForShare = gamePlayedAtLeastOnce ? score : 0; // Use 0 if game not played
-    const shareText = `Fake or Take?'de ${currentScoreForShare}/${newsData.length} yaptım! Sen de bu haberlerin gerçek mi sahte mi olduğunu tahmin etmeye çalış. Challenge'a var mısın? 😎`;
-    const shareUrl = window.location.href; const shareTitle = "Fake or Take? - Skor Yarışması!";
+    const shareText = `FakeBreak'de ${currentScoreForShare}/${newsData.length} yaptım! Sen de bu haberlerin gerçek mi sahte mi olduğunu tahmin etmeye çalış. Challenge'a var mısın? 😎`;
+    const shareUrl = window.location.href; const shareTitle = "FakeBreak - Skor Yarışması!";
     if (navigator.share) {
         try { await navigator.share({ title: shareTitle, text: shareText, url: shareUrl }); console.log('Sonuç başarıyla paylaşıldı!'); }
         catch (error) { console.error('Paylaşım sırasında hata oluştu:', error); if (error.name !== 'AbortError') { /* Only alert if not user abort */ alert('Paylaşım sırasında bir hata oluştu.');} }
