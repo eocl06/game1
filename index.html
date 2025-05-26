@@ -88,7 +88,7 @@ body.loading #appRoot > .main-screen-view { opacity: 0; transform: scale(0.98); 
     align-self: flex-start; /* Metin bloğunun başında sola yaslı */
     line-height: 1; /* Dikey hizalamayı iyileştirmek için */
     /* `card-gradient` div'indeki `space-y-1 sm:space-y-2`
-       etiket ile başlık arasında zaten boşluk bırakacaktır. */
+        etiket ile başlık arasında zaten boşluk bırakacaktır. */
 }
 
 .sponsored-news-card .sponsored-badge {
@@ -105,6 +105,13 @@ html, body {
 </style>
 </head>
 <body class="bg-slate-100 lexend-font loading">
+
+<div id="unsupportedDeviceOverlay" style="display: none; position: fixed; inset: 0; background-color: rgba(30, 41, 59, 0.95); color: white; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 9999; font-family: 'Lexend', sans-serif; padding: 20px;">
+    <span class="material-icons" style="font-size: 64px; margin-bottom: 20px;">stay_primary_portrait</span>
+    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">Desteklenmeyen Ekran Boyutu</h2>
+    <p style="font-size: 18px;">Bu oyun en iyi mobil cihazlarda deneyimlenir.<br>Lütfen oyunu telefonunuzda veya daha küçük bir ekranda açmayı deneyin.</p>
+</div>
+
 <div id="appRoot" class="relative flex size-full flex-col group/design-root overflow-x-hidden">
 
 <div id="homeScreen" class="main-screen-view flex flex-col h-full">
@@ -296,6 +303,7 @@ Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 const appRoot = document.getElementById('appRoot');
+const unsupportedDeviceOverlay = document.getElementById('unsupportedDeviceOverlay'); // Yeni eklendi
 const homeScreenDiv = document.getElementById('homeScreen');
 const playNowButton = document.getElementById('playNowBtn');
 const howToPlayButton = document.getElementById('howToPlayBtn');
@@ -352,11 +360,29 @@ const gameNavGame = document.getElementById('gameNavGame');
 const gameNavScores = document.getElementById('gameNavScores');
 const profileDisabledPopup = document.getElementById('profileDisabledPopup');
 
-if (!appRoot || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen || !aboutModal || !profileDisabledPopup || !newsTitle || !feedbackTitleElement || !timerMinutesBox || !timerSecondsBox) {
+// Element varlık kontrolü (unsupportedDeviceOverlay eklendi)
+if (!appRoot || !unsupportedDeviceOverlay || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen || !aboutModal || !profileDisabledPopup || !newsTitle || !feedbackTitleElement || !timerMinutesBox || !timerSecondsBox) {
 console.error("Kritik HTML elementlerinden biri veya birkaçı DOM'da bulunamadı! Lütfen ID'leri kontrol edin.");
 if(document.body) document.body.innerHTML = "<p style='color:red; text-align:center; font-size:20px; margin-top:50px;'>Kritik bir hata oluştu. Lütfen geliştirici konsolunu kontrol edin.</p>";
 return;
 }
+
+// Ekran boyutu kontrol fonksiyonu
+function checkScreenSize() {
+    const MAX_SUPPORTED_WIDTH = 768; // Maksimum desteklenen genişlik (örneğin tabletler ve daha büyükleri hariç)
+    if (window.innerWidth > MAX_SUPPORTED_WIDTH) {
+        unsupportedDeviceOverlay.style.display = 'flex';
+        appRoot.style.display = 'none';
+    } else {
+        unsupportedDeviceOverlay.style.display = 'none';
+        appRoot.style.display = 'flex'; // appRoot'un orijinal display değeri
+    }
+}
+
+// İlk kontrol ve resize listener
+checkScreenSize();
+window.addEventListener('resize', checkScreenSize);
+
 
 const newsData = [
 {id: 1, title: "Düğün konvoyunun yolunu İHA ile kestiler!", snippet: "Sakarya’nın Arifiye ilçesinde TEKNOFEST’e hazırlanan üniversiteli gençler, geliştirdikleri İnsansız Hava Aracı (İHA) ile sıra dışı bir geleneğe imza attı.", image: "https://i.ibb.co/2YZS2NvT/image.png", link: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", isReal: true, explanation: "Valla gerçek! Sakarya'da üniversiteli gençler TEKNOFEST için yaptıkları İHA ile 'Durun bakalım, önce bizim bahşiş!' demişler resmen. Teknoloji ve gelenek böyle de birleşiyormuş demek ki, helal olsun gençlerimize.", displaySourceName: "Milliyet", displaySourceLink: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", isSponsored: false},
@@ -691,9 +717,9 @@ function populateLeaderboard() {
         if (displayEntries.some(e => e.isEllipsis) && displayEntries.findIndex(e => e.isPlayer) === displayEntries.findIndex(e => e.isEllipsis) -1 ) {
             displayEntries = displayEntries.filter(e => !e.isEllipsis); // Remove ellipsis if player is right after top N-2
             if(displayEntries.length < maxEntriesToShow && allEntries.length > maxEntriesToShow) {
-                 // If there's space, add one more non-player entry from original sorted list
-                 const nextEntry = allEntries.find(ae => !displayEntries.some(de => de.name === ae.name && de.score === ae.score));
-                 if(nextEntry) displayEntries.push(nextEntry);
+                // If there's space, add one more non-player entry from original sorted list
+                const nextEntry = allEntries.find(ae => !displayEntries.some(de => de.name === ae.name && de.score === ae.score));
+                if(nextEntry) displayEntries.push(nextEntry);
             }
         }
     }
