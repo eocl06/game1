@@ -1,1459 +1,989 @@
-
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
 <meta charset="utf-8"/>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
 <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
-
 <link as="style" href="https://fonts.googleapis.com/css2?display=swap&family=Lexend%3Awght%40400%3B500%3B600%3B700%3B800%3B900&family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
-
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
-
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-
 <title>FakeBreak, Gerçek mi Fake mi?</title>
-
 <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
-
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
-
 <style>
-
 .material-icons, .material-icons-outlined { font-size: 28px; vertical-align: middle; }
-
 .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 24px; vertical-align: middle; }
-
 .btn-primary { background-color: #5667F8; color: white; }
-
 .btn-primary:hover { background-color: #4C5DF8; }
-
 .btn-secondary { background-color: #E5E7EB; color: #1F2937; }
-
 .btn-secondary:hover { background-color: #D1D5DB; }
-
 .lexend-font { font-family: 'Lexend', "Noto Sans", sans-serif; }
-
 .card-gradient { background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0.9) 100%); }
-
 .primary-color-text { color: #5667F8; }
-
 .primary-color-bg { background-color: #5667F8; }
-
 .news-button-disabled { opacity: 0.6; pointer-events: none; }
-
 .correct-feedback { background-color: #EBF9F0; border-left: 4px solid #34D399; }
-
 .incorrect-feedback { background-color: #FEE2E2; border-left: 4px solid #F87171; }
-
 .status-icon-correct { color: #34D399; }
-
 .status-icon-incorrect { color: #F87171; }
-
 .timeup-icon { color: #F59E0B; }
 
-
-
 #appRoot { overflow-y: hidden; }
-
 body.loading #appRoot > .main-screen-view { opacity: 0; transform: scale(0.98); transition: none !important; }
-
 .main-screen-view { opacity: 1; transform: translateY(0) scale(1); transition: opacity 0.4s ease-out, transform 0.4s ease-out; }
-
 .main-screen-view.hidden { opacity: 0 !important; transform: scale(0.98) !important; pointer-events: none; display: none !important; }
 
-
-
 .nav-item-active span.nav-icon { color: #5667F8; transform: scale(1.1); }
-
 .nav-item-active span.nav-text { color: #5667F8; font-weight: 600; }
-
 .btn-animated { transition: transform 0.1s ease-in-out, background-color 0.1s; }
-
 .btn-animated:active { transform: scale(0.96); }
-
 .feedback-content-appear { animation: scaleUpSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
 @keyframes scaleUpSpring { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
 
-
-
 .timer-pulse { animation: pulseTimerWarn 1s infinite ease-in-out; }
-
 @keyframes pulseTimerWarn { 0%, 100% { transform: scale(1); color: inherit; } 50% { transform: scale(1.15); color: #ef4444; } }
 
-
-
 .timer-box-pulse { animation: pulseTimerBoxWarn 1s infinite ease-in-out; }
-
 @keyframes pulseTimerBoxWarn {
-
-  0%, 100% { background-color: #E5E7EB; /* slate-200, original timer box bg */ }
-
-  50% { background-color: #FEE2E2; /* red-100 */ }
-
+  0%, 100% { background-color: #E5E7EB; /* slate-200, original timer box bg */ }
+  50% { background-color: #FEE2E2; /* red-100 */ }
 }
-
-
-
 
 
 #newsCardContainer { position: relative; width: 100%; max-width: calc(100% - 2rem); margin-left: auto; margin-right: auto; aspect-ratio: 3 / 4; min-height: 380px; sm:min-height: 450px; overflow: visible; }
-
 #newsCard { position: absolute; top: 0; left: 0; right: 0; bottom: 0; cursor: grab; user-select: none; touch-action: pan-y; transition: transform 0.3s ease-out; will-change: transform, opacity; background-color: #f3f4f6; border-radius: 1rem; overflow:hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); }
-
 #newsCard.swiping { cursor: grabbing; transition: none; }
-
 .swipe-decision-indicator { position: absolute; top: 30px; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 1.25rem; font-weight: 700; color: white; border: 2px solid rgba(255,255,255,0.8); opacity: 0; transform: rotate(-15deg) scale(0.8); transition: opacity 0.3s ease-out, transform 0.3s ease-out; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-
 .swipe-decision-indicator.real-indicator { background-color: rgba(5, 150, 105, 0.9); left: 30px; transform: rotate(-25deg) scale(0.8); }
-
 .swipe-decision-indicator.fake-indicator { background-color: rgba(220, 38, 38, 0.9); right: 30px; transform: rotate(25deg) scale(0.8); }
-
 .swipe-decision-indicator.visible { opacity: 1; transform: rotate(-15deg) scale(1.1); }
-
 .swipe-decision-indicator.fake-indicator.visible { transform: rotate(15deg) scale(1.1); }
 
-
-
 @keyframes cardFlyOutLeftAnim { 0% { transform: translateX(0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translateX(-130vw) rotate(-40deg) scale(0.7); opacity: 0; } }
-
 @keyframes cardFlyOutRightAnim { 0% { transform: translateX(0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translateX(130vw) rotate(40deg) scale(0.7); opacity: 0; } }
-
 #newsCard.fly-out-left { animation: cardFlyOutLeftAnim 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
-
 #newsCard.fly-out-right { animation: cardFlyOutRightAnim 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
 
-
-
 @keyframes cardEnterAnim { to { transform: translateY(0) scale(1) rotateX(0deg); opacity: 1; } }
-
 #newsCard.enter-anim { visibility: hidden; opacity: 0; transform: translateY(60px) scale(0.95) rotateX(-15deg); }
-
 #newsCard.enter-anim.active { visibility: visible; animation: cardEnterAnim 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-
-
 
 .modal-backdrop { background-color: rgba(30, 41, 59, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 
-
-
 /* SPONSORLU KART STİLLERİ */
-
 .sponsored-news-card {
-
-    border: 3px solid #FFBF00; /* Canlı altın sarısı kenarlık */
-
+    border: 3px solid #FFBF00; /* Canlı altın sarısı kenarlık */
 }
-
-
 
 .sponsored-badge {
-
-    display: none; /* Varsayılan olarak gizli */
-
-    background-color: rgba(255, 191, 0, 0.95); /* Altın sarısı arka plan */
-
-    color: #1F2937; /* Koyu gri (Tailwind slate-800) */
-
-    padding: 3px 8px;
-
-    border-radius: 0.375rem; /* Tailwind rounded-md */
-
-    font-size: 0.6rem;  /* Çok küçük */
-
-    font-weight: 700;    /* Kalın */
-
-    text-transform: uppercase;
-
-    align-self: flex-start; /* Metin bloğunun başında sola yaslı */
-
-    line-height: 1; /* Dikey hizalamayı iyileştirmek için */
-
+    display: none; /* Varsayılan olarak gizli */
+    background-color: rgba(255, 191, 0, 0.95); /* Altın sarısı arka plan */
+    color: #1F2937; /* Koyu gri (Tailwind slate-800) */
+    padding: 3px 8px;
+    border-radius: 0.375rem; /* Tailwind rounded-md */
+    font-size: 0.6rem;  /* Çok küçük */
+    font-weight: 700;   /* Kalın */
+    text-transform: uppercase;
+    align-self: flex-start; /* Metin bloğunun başında sola yaslı */
+    line-height: 1; /* Dikey hizalamayı iyileştirmek için */
+    /* `card-gradient` div'indeki `space-y-1 sm:space-y-2`
+        etiket ile başlık arasında zaten boşluk bırakacaktır. */
 }
-
-
 
 .sponsored-news-card .sponsored-badge {
-
-    display: inline-block; /* Sponsorlu kartlarda görünür yap */
-
+    display: inline-block; /* Sponsorlu kartlarda görünür yap */
 }
-
 /* SPONSORLU KART STİLLERİ BİTİŞ */
 
-
-
 html, body {
-
-  height: 100%;
-
-  overflow: hidden;
-
-  margin: 0;
-
-  padding: 0;
-
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
-
 </style>
-
 </head>
-
 <body class="bg-slate-100 lexend-font loading">
 
-
-
 <div id="unsupportedDeviceOverlay" style="display: none; position: fixed; inset: 0; background-color: rgba(30, 41, 59, 0.95); color: white; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 9999; font-family: 'Lexend', sans-serif; padding: 20px;">
-
-    <span class="material-icons" style="font-size: 64px; margin-bottom: 20px;">stay_primary_portrait</span>
-
-   <h2 style="font-size: 24px; font-weight: bold; margin-bottom: -8px;">Yok artık, masaüstünden mi girdin?!😏</h2>
-
+    <span class="material-icons" style="font-size: 64px; margin-bottom: 20px;">stay_primary_portrait</span>
+   <h2 style="font-size: 24px; font-weight: bold; margin-bottom: -8px;">Yok artık, masaüstünden mi girdin?!😏</h2>
   <p style="font-size: 18px;">Bu oyun koca koca ekranlara değil, minnoş mobil cihazlara göre yapıldı!</p>
-
 </div>
-
-
 
 <div id="appRoot" class="relative flex size-full flex-col group/design-root overflow-x-hidden">
 
-
-
 <div id="homeScreen" class="main-screen-view flex flex-col h-full">
-
 <header id="homeHeader" class="bg-white shadow-md sticky top-0 z-20">
-
 <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-
-  <div class="w-7 h-7 flex justify-start items-center">
-
-    <img src="https://i.ibb.co/hRJ4WqKc/Group-8695.png" alt="FakeBreak Logo" class="max-w-full max-h-full object-contain">
-
-  </div>
-
-  <h1 class="text-xl font-bold text-slate-800 text-center flex-1">FakeBreak</h1>
-
-  <div class="w-10 flex justify-end items-center">
-
-    <button id="aboutBtn" class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5667F8] focus:ring-opacity-50 btn-animated">
-
-      <span class="material-icons">info_outline</span>
-
-    </button>
-
-  </div>
-
+  <div class="w-7 h-7 flex justify-start items-center">
+    <img src="https://i.ibb.co/hRJ4WqKc/Group-8695.png" alt="FakeBreak Logo" class="max-w-full max-h-full object-contain">
+  </div>
+  <h1 class="text-xl font-bold text-slate-800 text-center flex-1">FakeBreak</h1>
+  <div class="w-10 flex justify-end items-center">
+    <button id="aboutBtn" class="flex items-center justify-center rounded-full h-10 w-10 text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5667F8] focus:ring-opacity-50 btn-animated">
+      <span class="material-icons">info_outline</span>
+    </button>
+  </div>
 </div>
-
 </header>
-
 <main id="homeMain" class="flex-grow container mx-auto px-6 py-8 text-center overflow-y-auto">
-
 <div class="max-w-md mx-auto">
-
 <img alt="FakeBreak Uygulama İkonu" class="w-24 h-24 mx-auto mb-6 rounded-2xl shadow-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-fyUmZiKE_nHNvrPBkaFU8b7xUACLQqHF6tcg8JvnK5Q6c6jPl3YmzTHiKo_1obIExV7JX4I7-RwqTrwTlDjr3jOk6evMGA_LsZZJqffZTDzErZ_HID38KBy94n4llusld-zy1HQGA6Vh60LEgx5n42La1umYxi6ix0kaC2sMngn_puvstBZscr-hOff8pSDIQZ6mr68JnYKwqbxfEF-BKh-Ra7riGUwcTQ9ACW7YYGk29y9OHCMUBDyMu4TRx8h8D9O5pafdDLfV"/>
-
 <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">Gerçek Bir Gündem Kurdu musun?</h2>
-
 <p class="text-lg sm:text-xl text-slate-600 mb-10">Öyleyse hodri meydan! "Bu kadar da olmaz!" dediğin anlar olacak, eminiz. Ama acaba hangisi gerçek, hangisi aldatmaca?</p>
-
 <div class="space-y-4">
-
 <button id="playNowBtn" class="btn-primary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5667F8] transition-all duration-150">
-
 <span class="material-icons mr-2 nav-icon">play_arrow</span>Hemen Oyna
-
 </button>
-
 <button id="leaderboardBtnHome" class="btn-secondary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-all duration-150">
-
 <span class="material-icons-outlined mr-2 nav-icon">leaderboard</span>Skorları Gör
-
 </button>
-
 <button id="howToPlayBtn" class="btn-secondary btn-animated w-full flex items-center justify-center rounded-xl h-14 px-6 text-lg font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-all duration-150">
-
 <span class="material-icons-outlined mr-2 nav-icon">help_outline</span>Nasıl Oynanır?
-
 </button>
-
 </div>
-
 </div>
-
 </main>
-
 <footer id="homeFooter" class="bg-white border-t border-slate-200 sticky bottom-0 z-20 shadow-top">
-
 <nav class="container mx-auto px-4 h-16 flex justify-around items-center">
-
 <a id="homeNavHome" href="#" class="flex-1 flex flex-col items-center justify-center text-slate-500 hover:text-[#5667F8] hover:bg-slate-100 transition-all duration-150 p-2 rounded-lg nav-link">
-
 <span class="material-icons-outlined nav-icon">home</span><span class="text-xs font-medium nav-text">Ana Sayfa</span>
-
 </a>
-
 <a id="homeNavScores" href="#" class="flex-1 flex flex-col items-center justify-center text-slate-500 hover:text-[#5667F8] hover:bg-slate-100 transition-all duration-150 p-2 rounded-lg nav-link">
-
 <span class="material-icons-outlined nav-icon">bar_chart</span><span class="text-xs font-medium nav-text">Skorlar</span>
-
 </a>
-
 <a id="homeNavProfile" href="#" class="flex-1 flex flex-col items-center justify-center text-slate-500 hover:text-[#5667F8] hover:bg-slate-100 transition-all duration-150 p-2 rounded-lg nav-link">
-
 <span class="material-icons-outlined nav-icon">person_outline</span><span class="text-xs font-medium nav-text">Profil</span>
-
 </a>
-
 </nav>
-
 </footer>
-
 </div>
-
-
 
 <div id="gameScreen" class="main-screen-view hidden flex-col h-full">
-
 <div class="relative flex size-full flex-col bg-slate-50 group/design-root overflow-x-hidden lexend-font">
-
 <header class="sticky top-0 z-20 bg-white shadow-md">
-
 <div class="flex items-center p-4 pb-3 justify-between">
-
-  <button id="closeGameBtn" class="text-gray-700 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5667F8] btn-animated transition-colors duration-150">
-
-    <span class="material-icons-outlined">close</span>
-
-  </button>
-
-  <h1 class="text-gray-900 text-xl font-semibold leading-tight tracking-tight text-center">Gerçek mi Sahte mi?</h1>
-
-  <div class="size-10"></div>
-
+  <button id="closeGameBtn" class="text-gray-700 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5667F8] btn-animated transition-colors duration-150">
+    <span class="material-icons-outlined">close</span>
+  </button>
+  <h1 class="text-gray-900 text-xl font-semibold leading-tight tracking-tight text-center">Gerçek mi Sahte mi?</h1>
+  <div class="size-10"></div>
 </div>
-
 <div class="px-4 pb-3">
-
 <div class="flex items-center justify-between mb-1.5">
-
 <p class="text-gray-700 text-sm font-medium">Soru <span id="currentQuestionDisplay" class="font-bold text-gray-900">1</span>/<span id="totalQuestionsDisplay">7</span></p>
-
 <div class="flex items-center gap-3">
-
 <p class="text-gray-700 text-sm font-medium">Skor: <span id="scoreDisplay" class="font-bold text-gray-900">0</span></p>
-
 <p class="text-gray-700 text-sm font-medium">Seri: <span id="streakCounter" class="font-bold text-gray-900">0</span> 🔥</p>
-
 </div>
-
 </div>
-
 <div class="h-3 rounded-full bg-gray-300">
-
 <div id="progressBar" class="h-3 rounded-full primary-color-bg transition-all duration-300 ease-out" style="width: 0%;"></div>
-
 </div>
-
 </div>
-
 </header>
-
 <main class="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center space-y-6">
-
 <div class="flex gap-3 justify-center">
-
 <div class="flex flex-col items-center gap-1.5">
-
 <div id="timerMinutesBox" class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-slate-200 shadow-inner">
-
 <p id="timerMinutes" class="text-gray-900 text-xl sm:text-2xl font-bold">00</p>
-
 </div><p class="text-gray-600 text-xs font-medium">Dakika</p>
-
 </div>
-
 <div class="flex items-center text-gray-400 text-xl sm:text-2xl font-bold pt-1 pb-5">:</div>
-
 <div class="flex flex-col items-center gap-1.5">
-
 <div id="timerSecondsBox" class="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-slate-200 shadow-inner">
-
 <p id="timerSeconds" class="text-gray-900 text-xl sm:text-2xl font-bold">15</p> </div><p class="text-gray-600 text-xs font-medium">Saniye</p>
-
 </div>
-
 </div>
-
 <div id="newsCardContainer" class="relative w-full max-w-sm sm:max-w-md aspect-[3/4] rounded-2xl shadow-2xl">
-
 <div id="swipeRealIndicator" class="swipe-decision-indicator real-indicator">GERÇEK</div>
-
 <div id="swipeFakeIndicator" class="swipe-decision-indicator fake-indicator">SAHTE</div>
-
 <div id="newsCard" class="absolute inset-0 rounded-2xl overflow-hidden bg-slate-200">
-
-    <img id="newsImage" alt="Haber Makalesi Resmi" class="absolute inset-0 h-full w-full object-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/>
-
-    <div class="absolute inset-0 card-gradient flex flex-col justify-end p-3 sm:p-5 space-y-1 sm:space-y-2">
-
-        <span class="sponsored-badge">SPONSORLU</span>
-
-        <h2 id="newsTitle" class="text-white text-xl sm:text-2xl font-bold leading-tight drop-shadow-lg">Haber Başlığı</h2>
-
-        <p id="newsSnippet" class="text-gray-200 text-xs sm:text-sm font-normal leading-relaxed line-clamp-3 sm:line-clamp-4 drop-shadow-md">Haber metni...</p>
-
-    </div>
-
+    <img id="newsImage" alt="Haber Makalesi Resmi" class="absolute inset-0 h-full w-full object-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/>
+    <div class="absolute inset-0 card-gradient flex flex-col justify-end p-3 sm:p-5 space-y-1 sm:space-y-2">
+        <span class="sponsored-badge">SPONSORLU</span>
+        <h2 id="newsTitle" class="text-white text-xl sm:text-2xl font-bold leading-tight drop-shadow-lg">Haber Başlığı</h2>
+        <p id="newsSnippet" class="text-gray-200 text-xs sm:text-sm font-normal leading-relaxed line-clamp-3 sm:line-clamp-4 drop-shadow-md">Haber metni...</p>
+    </div>
 </div>
-
 </div>
-
 <div class="text-center text-slate-500/80 mt-4 text-sm px-4">
-
 Karar vermek için haber kartını <strong>sağa (GERÇEK)</strong> veya <strong>sola (SAHTE)</strong> doğru kaydırın.
-
 </div>
-
 </main>
-
 <nav class="sticky bottom-0 bg-white border-t border-gray-200 pb-safe z-20 shadow-top">
-
 <div class="flex justify-around items-center h-16">
-
 <a id="gameNavHome" href="#" class="nav-link flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text hover:bg-gray-100 transition-all duration-150 w-1/3 p-2 rounded-lg">
-
 <span class="material-icons-outlined nav-icon text-2xl">cottage</span><span class="text-xs font-medium nav-text">Ana Sayfa</span>
-
 </a>
-
 <a id="gameNavGame" href="#" class="nav-link flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text hover:bg-gray-100 transition-all duration-150 w-1/3 p-2 rounded-lg">
-
 <span class="material-icons-outlined nav-icon text-2xl">gamepad</span><span class="text-xs font-medium nav-text">Oyun</span>
-
 </a>
-
 <a id="gameNavScores" href="#" class="nav-link flex flex-col items-center justify-center gap-0.5 text-gray-500 hover:primary-color-text hover:bg-gray-100 transition-all duration-150 w-1/3 p-2 rounded-lg">
-
 <span class="material-icons-outlined nav-icon text-2xl">leaderboard</span><span class="text-xs font-medium nav-text">Skorlar</span>
-
 </a>
-
 </div>
-
 </nav>
-
 </div>
-
 </div>
-
-
 
 <div id="howToPlayModal" class="fixed inset-0 items-center justify-center p-4 hidden z-50 modal-backdrop">
-
 <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto feedback-content-appear">
-
 <div class="flex justify-between items-center mb-4">
-
 <h3 class="text-2xl font-bold text-slate-800 lexend-font">Nasıl Oynanır?</h3>
-
 <button id="closeModalBtn" class="text-slate-500 hover:text-slate-700 btn-animated p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#5667F8] transition-colors duration-150">
-
 <span class="material-icons">close</span>
-
 </button>
-
 </div>
-
 <div class="text-slate-600 space-y-3 lexend-font">
-
 <p>FakeBreak'e hoş geldiniz!</p>
-
 <p>1. Ekranda beliren haber kartını dikkatlice okuyun.</p>
-
 <p>2. Haberin <strong>GERÇEK</strong> olduğuna inanıyorsanız kartı <strong>SAĞA</strong> doğru kaydırın.</p>
-
 <p>3. Haberin <strong>SAHTE</strong> olduğuna inanıyorsanız kartı <strong>SOLA</strong> doğru kaydırın.</p>
-
 <p>Haber okuryazarlığınızı test edin ve ne kadar yüksek puan alabileceğinizi görün!</p>
-
 </div>
-
 </div>
-
 </div>
-
-
 
 <div id="aboutModal" class="fixed inset-0 items-center justify-center p-4 hidden z-50 modal-backdrop">
-
 <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-auto feedback-content-appear">
-
 <div class="flex justify-between items-center mb-4">
-
-  <h3 class="text-2xl font-bold text-slate-800 lexend-font">Hakkında</h3>
-
-  <button id="closeAboutModalBtn" class="text-slate-500 hover:text-slate-700 btn-animated p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#5667F8] transition-colors duration-150">
-
-    <span class="material-icons">close</span>
-
-  </button>
-
+  <h3 class="text-2xl font-bold text-slate-800 lexend-font">Hakkında</h3>
+  <button id="closeAboutModalBtn" class="text-slate-500 hover:text-slate-700 btn-animated p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#5667F8] transition-colors duration-150">
+    <span class="material-icons">close</span>
+  </button>
 </div>
-
 <div class="text-slate-600 space-y-3 lexend-font">
-
-    <p>Her gün sadece bizim coğrafyada olabileceğine inandığımız, “bu da ancak burada olur” dedirten olaylarla karşılaşıyoruz. İşte bu oyun, ülkemizin kendine has gündemini, bitmek bilmeyen sürprizlerini ve eşsiz mizah anlayışını yansıtmak amacıyla tamamen eğlence için geliştirilmiştir.</p>
-
-    <p>Geliştirici: Gemini + ChatGPT</p>
-
-    <p class="text-sm text-slate-500">(Konsept & Prompt Whisperer: Emre Öcal)</p>
-
+    <p>Her gün sadece bizim coğrafyada olabileceğine inandığımız, “bu da ancak burada olur” dedirten olaylarla karşılaşıyoruz. İşte bu oyun, ülkemizin kendine has gündemini, bitmek bilmeyen sürprizlerini ve eşsiz mizah anlayışını yansıtmak amacıyla tamamen eğlence için geliştirilmiştir.</p>
+    <p>Geliştirici: Gemini + ChatGPT</p>
+    <p class="text-sm text-slate-500">(Konsept & Prompt Whisperer: Emre Öcal)</p>
 </div>
-
 </div>
-
 </div>
-
-
 
 <div id="profileDisabledPopup" class="fixed bottom-[15%] left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-sm py-2.5 px-5 sm:py-3 sm:px-6 rounded-lg shadow-xl z-[100] opacity-0 transition-all duration-300 ease-out pointer-events-none">
-
-    Boşuna basma, işlevi yok. Dolu gözüksün diye koydum 😎
-
+    Boşuna basma, işlevi yok. Dolu gözüksün diye koydum 😎
 </div>
-
-
 
 <div id="timeUpPopup" class="fixed inset-0 items-center justify-center p-4 hidden z-40 modal-backdrop">
-
 <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-xs sm:max-w-sm w-full text-center feedback-content-appear">
-
 <span class="material-icons-outlined timeup-icon mb-4" style="font-size: 48px;">timer_off</span>
-
 <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mb-3">Süren Doldu!</h3>
-
 <p class="text-slate-600 mb-6 text-sm sm:text-base">Bu soru için cevap süreniz sona erdi.</p>
-
 <button id="timeUpOkButton" class="w-full rounded-full h-11 px-6 btn-primary hover:bg-[#4C5DF8] text-lg font-semibold transition-colors btn-animated focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5667F8]">Tamam</button>
-
 </div>
-
 </div>
-
-
 
 <div id="feedbackScreen" class="main-screen-view hidden bg-slate-100 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto h-full">
-
 <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-3xl items-center justify-end p-3 sm:p-4"> <button id="closeFeedbackBtn" class="flex items-center justify-center rounded-full text-slate-700 hover:bg-slate-100 p-2 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 btn-animated transition-colors duration-150"> <span class="material-icons-outlined">close</span> </button> </div> </header> <main class="flex-grow px-4 sm:px-6 py-6 sm:py-8"> <div class="mx-auto max-w-md text-center feedback-content-appear"> <div class="mb-6 sm:mb-8"> <span id="feedbackIcon" class="material-icons-outlined" style="font-size: 56px sm:font-size: 64px;"></span> <h2 id="feedbackTitle" class="mt-3 sm:mt-4 text-2xl sm:text-3xl font-bold text-slate-800"></h2> </div> <div id="feedbackBox" class="rounded-lg bg-white p-5 sm:p-6 shadow-xl mb-6 sm:mb-8"> <p id="feedbackText" class="text-slate-700 text-sm sm:text-base leading-relaxed"></p> </div> <div id="feedbackSourceSection" class="hidden rounded-lg bg-white p-5 sm:p-6 shadow-xl text-left"> <h3 class="text-lg sm:text-xl font-semibold text-slate-800 mb-3">Kaynak İncelemesi</h3> <a id="feedbackSourceLinkTag" class="flex items-center gap-3 text-slate-600 hover:text-blue-600 transition-colors group" href="#" target="_blank" rel="noopener noreferrer"> <div class="flex items-center justify-center rounded-lg bg-slate-100 group-hover:bg-blue-100 p-3 shrink-0 transition-colors"> <span class="material-icons-outlined text-slate-500 group-hover:text-blue-600">link</span> </div> <p id="feedbackSourceName" class="text-sm sm:text-base font-medium flex-1 truncate"></p> <span class="material-icons-outlined text-slate-400 group-hover:text-blue-500 text-lg">arrow_forward_ios</span> </a> </div> </div> </main> <footer class="sticky bottom-0 bg-white border-t border-slate-200 p-4 shadow-top"> <div class="mx-auto max-w-md"> <button id="feedbackNextButton" class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 btn-primary text-white text-lg font-semibold leading-normal tracking-[0.015em] hover:bg-[#4C5DF8] transition-colors focus:outline-none focus:ring-2 focus:ring-[#5667F8] focus:ring-offset-2 btn-animated"> <span class="truncate">Sonraki Soru</span> </button> </div> </footer>
-
 </div>
-
-
 
 <div id="resultsScreen" class="main-screen-view hidden bg-slate-100 fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto h-full"> <header class="sticky top-0 z-10 bg-white shadow-sm"> <div class="mx-auto flex max-w-7xl items-center justify-between p-4"> <button id="closeResultsHeaderBtn" class="text-slate-700 hover:text-slate-900 p-2 rounded-full btn-animated focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#5667F8] transition-colors duration-150"> <span class="material-symbols-outlined">close</span> </button> <h1 class="text-xl font-semibold text-slate-900">Sonuçlar</h1> <div class="w-8 sm:w-10"></div> </div> </header> <main class="flex-1 overflow-y-auto px-6 py-8"> <div class="mx-auto max-w-md text-center"> <div class="mb-8 rounded-xl bg-white p-6 shadow-xl feedback-content-appear"> <h2 class="text-4xl sm:text-5xl font-bold text-slate-800">Skorun: <span id="finalScoreValue" class="text-[#5667F8]">0/0</span></h2> <p class="mt-2 text-slate-600">En Yüksek Skor: <span id="highScoreDisplay" class="font-medium text-slate-700">0/0</span></p> <p class="mt-1 text-slate-600">Harcanan Süre: <span id="timeTakenValue" class="font-medium text-slate-700">0 dakika 0 saniye</span></p>
-
 <h4 class="text-lg font-semibold text-slate-700 mt-6 mb-3 hidden">Başarımlar</h4>
-
 <div id="achievementsDisplay" class="space-y-2 hidden"> </div>
-
 </div> <div class="rounded-xl bg-white p-6 shadow-xl mt-8"> <div class="flex items-center justify-between mb-6"> <h3 class="text-2xl font-semibold text-slate-800">Liderlik Tablosu</h3> <span class="material-symbols-outlined text-yellow-500 !text-3xl">emoji_events</span> </div> <div id="leaderboardEntriesContainer" class="space-y-3"> </div> </div> </div> </main>
-
 <footer class="sticky bottom-0 bg-white/90 backdrop-blur-sm p-4 shadow-[0_-2px_10px_rgba(0,0,0,0.08)]">
-
-  <div class="mx-auto flex max-w-md flex-col gap-3">
-
-    <button id="shareResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#27AE60] px-5 text-base font-bold text-white tracking-wide shadow-md hover:bg-[#219653] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#27AE60] btn-animated transition-colors duration-150">
-
-        <span class="material-symbols-outlined mr-2">share</span>Sonucu Paylaş
-
-    </button>
-
-    <button id="playAgainBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#E0E7FF] px-5 text-base font-bold text-[#3730A3] tracking-wide shadow-md hover:bg-[#C7D2FE] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A5B4FC] btn-animated transition-colors duration-150">
-
-        <span class="material-symbols-outlined mr-2">replay</span>Tekrar Oyna
-
-    </button>
-
-    <button id="backToHomeResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-slate-200 px-5 text-base font-bold text-slate-700 tracking-wide shadow-md hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 btn-animated transition-colors duration-150">
-
-        <span class="material-symbols-outlined mr-2">home</span>Ana Sayfaya Dön
-
-    </button>
-
-  </div>
-
+  <div class="mx-auto flex max-w-md flex-col gap-3">
+    <button id="shareResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#27AE60] px-5 text-base font-bold text-white tracking-wide shadow-md hover:bg-[#219653] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#27AE60] btn-animated transition-colors duration-150">
+        <span class="material-symbols-outlined mr-2">share</span>Sonucu Paylaş
+    </button>
+    <button id="playAgainBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-[#E0E7FF] px-5 text-base font-bold text-[#3730A3] tracking-wide shadow-md hover:bg-[#C7D2FE] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A5B4FC] btn-animated transition-colors duration-150">
+        <span class="material-symbols-outlined mr-2">replay</span>Tekrar Oyna
+    </button>
+    <button id="backToHomeResultsBtn" class="flex h-12 w-full items-center justify-center rounded-full bg-slate-200 px-5 text-base font-bold text-slate-700 tracking-wide shadow-md hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 btn-animated transition-colors duration-150">
+        <span class="material-symbols-outlined mr-2">home</span>Ana Sayfaya Dön
+    </button>
+  </div>
 </footer>
-
+</div>
 </div>
 
-</div>
-
-
-
-<script type="module">
-
-// Import the functions you need from the SDKs you need
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-// YENİ: Firebase Database fonksiyonları import edildi
-
-import { getDatabase, ref, set, query, limitToLast, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-
-
-const firebaseConfig = {
-
-  apiKey: "AIzaSyD_Zy5_Qw01R-ak9xngnVb3q7MJNqG8YTg",
-
-  authDomain: "fakebreak-scores.firebaseapp.com",
-
-  databaseURL: "https://fakebreak-scores-default-rtdb.firebaseio.com",
-
-  projectId: "fakebreak-scores",
-
-  storageBucket: "fakebreak-scores.appspot.com",
-
-  messagingSenderId: "275811392849",
-
-  appId: "1:275811392849:web:d4821bb5cfbae373e78770",
-
-  measurementId: "G-S9CJFT5PK4"
-
-};
-
-
-
-// Initialize Firebase
-
-const app = initializeApp(firebaseConfig);
-
-const db = getDatabase(app);
-
-
-
-// Skoru Firebase'e kaydetme fonksiyonu
-
-function saveScoreToFirebase(playerName, currentScore, totalQuestions) {
-
-  const timestamp = Date.now();
-
-  const scoreRef = ref(db, 'scores/' + timestamp); // scores path'i altına timestamp ile kayıt
-
-  set(scoreRef, {
-
-    name: playerName,
-
-    score: currentScore,
-
-    total: totalQuestions,
-
-    date: new Date().toISOString() // ISO formatında tarih
-
-  })
-
-  .then(() => {
-
-    console.log("Skor başarıyla Firebase'e kaydedildi!");
-
-  })
-
-  .catch((error) => {
-
-    console.error("Skor Firebase'e kaydedilirken hata oluştu: ", error);
-
-  });
-
-}
-
-
-
-
-
+<script>
 document.addEventListener('DOMContentLoaded', () => {
-
 const appRoot = document.getElementById('appRoot');
-
-const unsupportedDeviceOverlay = document.getElementById('unsupportedDeviceOverlay');
-
+const unsupportedDeviceOverlay = document.getElementById('unsupportedDeviceOverlay'); // Yeni eklendi
 const homeScreenDiv = document.getElementById('homeScreen');
-
 const playNowButton = document.getElementById('playNowBtn');
-
 const howToPlayButton = document.getElementById('howToPlayBtn');
-
 const leaderboardBtnHome = document.getElementById('leaderboardBtnHome');
-
 const modal = document.getElementById('howToPlayModal');
-
 const closeModalButton = document.getElementById('closeModalBtn');
-
 const aboutBtn = document.getElementById('aboutBtn');
-
 const aboutModal = document.getElementById('aboutModal');
-
 const closeAboutModalBtn = document.getElementById('closeAboutModalBtn');
-
 const gameScreenDiv = document.getElementById('gameScreen');
-
 const closeGameButton = document.getElementById('closeGameBtn');
-
 const currentQuestionDisplay = document.getElementById('currentQuestionDisplay');
-
 const totalQuestionsDisplay = document.getElementById('totalQuestionsDisplay');
-
 const scoreDisplay = document.getElementById('scoreDisplay');
-
 const streakCounter = document.getElementById('streakCounter');
-
 const progressBar = document.getElementById('progressBar');
-
 const timerMinutes = document.getElementById('timerMinutes');
-
 const timerSeconds = document.getElementById('timerSeconds');
-
 const timerMinutesBox = document.getElementById('timerMinutesBox');
-
 const timerSecondsBox = document.getElementById('timerSecondsBox');
-
 const newsCardContainer = document.getElementById('newsCardContainer');
-
 const newsCard = document.getElementById('newsCard');
-
 const newsImage = document.getElementById('newsImage');
-
 const newsTitle = document.getElementById('newsTitle');
-
 const newsSnippet = document.getElementById('newsSnippet');
-
 const swipeRealIndicator = document.getElementById('swipeRealIndicator');
-
 const swipeFakeIndicator = document.getElementById('swipeFakeIndicator');
-
 const timeUpPopup = document.getElementById('timeUpPopup');
-
 const timeUpOkButton = document.getElementById('timeUpOkButton');
-
 const feedbackScreen = document.getElementById('feedbackScreen');
-
 const closeFeedbackBtn = document.getElementById('closeFeedbackBtn');
-
 const feedbackIcon = document.getElementById('feedbackIcon');
-
 const feedbackTitleElement = document.getElementById('feedbackTitle');
-
 const feedbackBox = document.getElementById('feedbackBox');
-
 const feedbackText = document.getElementById('feedbackText');
-
 const feedbackSourceSection = document.getElementById('feedbackSourceSection');
-
 const feedbackSourceLinkTag = document.getElementById('feedbackSourceLinkTag');
-
 const feedbackSourceName = document.getElementById('feedbackSourceName');
-
 const feedbackNextButton = document.getElementById('feedbackNextButton');
-
 const resultsScreen = document.getElementById('resultsScreen');
-
 const finalScoreValue = document.getElementById('finalScoreValue');
-
 const highScoreDisplay = document.getElementById('highScoreDisplay');
-
 const timeTakenValue = document.getElementById('timeTakenValue');
-
-const leaderboardEntriesContainer = document.getElementById('leaderboardEntriesContainer'); // Bu zaten tanımlı olmalı
-
+const leaderboardEntriesContainer = document.getElementById('leaderboardEntriesContainer');
 const playAgainBtn = document.getElementById('playAgainBtn');
-
 const backToHomeResultsBtn = document.getElementById('backToHomeResultsBtn');
-
 const closeResultsHeaderBtn = document.getElementById('closeResultsHeaderBtn');
-
 const shareResultsBtn = document.getElementById('shareResultsBtn');
-
 const homeNavHome = document.getElementById('homeNavHome');
-
 const homeNavScores = document.getElementById('homeNavScores');
-
 const homeNavProfile = document.getElementById('homeNavProfile');
-
 const gameNavHome = document.getElementById('gameNavHome');
-
 const gameNavGame = document.getElementById('gameNavGame');
-
 const gameNavScores = document.getElementById('gameNavScores');
-
 const profileDisabledPopup = document.getElementById('profileDisabledPopup');
 
-
-
-// Element varlık kontrolü
-
-if (!appRoot || !unsupportedDeviceOverlay || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen || !aboutModal || !profileDisabledPopup || !newsTitle || !feedbackTitleElement || !timerMinutesBox || !timerSecondsBox || !leaderboardEntriesContainer) {
-
+// Element varlık kontrolü (unsupportedDeviceOverlay eklendi)
+if (!appRoot || !unsupportedDeviceOverlay || !homeScreenDiv || !gameScreenDiv || !newsCard || !newsCardContainer || !modal || !timeUpPopup || !feedbackScreen || !resultsScreen || !aboutModal || !profileDisabledPopup || !newsTitle || !feedbackTitleElement || !timerMinutesBox || !timerSecondsBox) {
 console.error("Kritik HTML elementlerinden biri veya birkaçı DOM'da bulunamadı! Lütfen ID'leri kontrol edin.");
-
 if(document.body) document.body.innerHTML = "<p style='color:red; text-align:center; font-size:20px; margin-top:50px;'>Kritik bir hata oluştu. Lütfen geliştirici konsolunu kontrol edin.</p>";
-
 return;
-
 }
-
-
 
 // Ekran boyutu kontrol fonksiyonu
-
 function checkScreenSize() {
-
-    const MAX_SUPPORTED_WIDTH = 768;
-
-    if (window.innerWidth > MAX_SUPPORTED_WIDTH) {
-
-        unsupportedDeviceOverlay.style.display = 'flex';
-
-        appRoot.style.display = 'none';
-
-    } else {
-
-        unsupportedDeviceOverlay.style.display = 'none';
-
-        appRoot.style.display = 'flex';
-
-    }
-
+    const MAX_SUPPORTED_WIDTH = 768; // Maksimum desteklenen genişlik (örneğin tabletler ve daha büyükleri hariç)
+    if (window.innerWidth > MAX_SUPPORTED_WIDTH) {
+        unsupportedDeviceOverlay.style.display = 'flex';
+        appRoot.style.display = 'none';
+    } else {
+        unsupportedDeviceOverlay.style.display = 'none';
+        appRoot.style.display = 'flex'; // appRoot'un orijinal display değeri
+    }
 }
 
+// İlk kontrol ve resize listener
 checkScreenSize();
-
 window.addEventListener('resize', checkScreenSize);
 
 
-
-
-
 const newsData = [
-
 {id: 1, title: "Düğün konvoyunun yolunu İHA ile kestiler!", snippet: "Sakarya’nın Arifiye ilçesinde TEKNOFEST’e hazırlanan üniversiteli gençler, geliştirdikleri İnsansız Hava Aracı (İHA) ile sıra dışı bir geleneğe imza attı.", image: "https://i.ibb.co/2YZS2NvT/image.png", link: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", isReal: true, explanation: "Valla gerçek! Sakarya'da üniversiteli gençler TEKNOFEST için yaptıkları İHA ile 'Durun bakalım, önce bizim bahşiş!' demişler resmen. Teknoloji ve gelenek böyle de birleşiyormuş demek ki, helal olsun gençlerimize.", displaySourceName: "Milliyet", displaySourceLink: "https://www.milliyet.com.tr/gundem/dugun-konvoyunu-iha-ile-kestiler-boyle-yol-kesme-gelenegi-gorulmedi-7377522", isSponsored: false},
-
 {id: 2, title: "Bursalı işletmeci Etiyopya'lı kabileye kebabı sevdirdi!", snippet: "Keçiden Adana yapınca kabile ayağa kalktı, o günden beri herkes ona “enişte” diyor.", image: "https://i.ibb.co/mVmKVnC0/Screenshot-2025-05-25-at-16-12-45.png", link: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262", isReal: true, explanation: "Bu da gerçek çıktı! Bursalı bir aşçı almış eline satırı, Etiyopya'da bir kabileyi Adana kebabıyla tanıştırmış. Kabile o kadar beğenmiş ki, bizimkine 'enişte' demeye başlamışlar. Düşünsene, Etiyopya'da 'Enişte, bir Adana çek!' diyorlar.", displaySourceName: "Milliyet", displaySourceLink: "https://www.milliyet.com.tr/pembenar/etiyopyali-kabileye-kebabi-sevdiren-bursali-bana-herkes-burada-eniste-diyor-7368262", isSponsored: false},
-
 {id: 3, title: "Muhtar, köyde yapay zekâ ile düğün organize etti: 'Davulcuya Gerek Kalmadı!'", snippet: "Çorum'un Bayat ilçesine bağlı bir köyde muhtar, köydeki genç çift için ChatGPT'den düğün organizasyonu planladı. Halay sırasını bile yapay zekâ belirledi.", image: "https://i.ibb.co/4RZqspXY/image.png", link: "#muhtar-chatgpt-dugun", isReal: false, explanation: "Yok artık, bu tamamen uydurma! Çorum'da muhtar ChatGPT'ye düğün planlatmış da, halay sırasını bile o belirlemiş falan... Kulağa komik geliyor ama maalesef (ya da neyse ki) böyle bir şey yaşanmamış. Sosyal medyada geyiği dönmüştür kesin, ama haber değeri yok, sallamasyon.", isSponsored: false},
-
 {id: 4, title: "BYD'nin en büyüğü Tang tam tamına 7 kişilikmiş!", snippet: "Geniş İç Hacmi Görenleri Şaşırtan araca tam 7 kişilik bir aile rahatça sığabilen araç 'bu kadar da rahat olur mu?' dedirtiyor.", image: "https://i.ibb.co/mFSdLh8X/image.png", link: "^byd-tang", isReal: true, explanation: "Evet, bu haber gerçekten doğru! BYD'nin Tang modeli tam 7 koltuklu ve içi acayip geniş, yani büyük aileler ya da arkadaş grupları için süper rahat. Elektrikli olması, havalı tasarımı ve teknolojik sürüş özellikleriyle Tang, Türkiye'deki SUV'lara yeni bir soluk getiriyor. ", displaySourceName: "Hemen Keşfet!", displaySourceLink: "https://www.bydauto.com.tr/tang", isSponsored: true},
-
 {id: 5, title: "İstanbul'da yeni trafik uygulaması: Kornaya fazla basana ehliyet dondurma cezası!", snippet: "İBB'nin başlattığı pilot uygulamada, trafikte 3 saniyeden uzun süre korna çalan sürücülerin ehliyetine 1 hafta el konuluyor. Tepkiler karışık.", image: "https://i.ibb.co/RpB72wQm/image.png", link: "#korna-cezasi-kurgu", isReal: false, explanation: "Keşke gerçek olsa diyenler olabilir ama bu haber de maalesef gerçek değil. İstanbul trafiğinde kornaya abananın ehliyetine el koymak... Güzel fikir ama şimdilik sadece hayal. Olsa kimse şaşırmazdı o ayrı konu tabii, o kornalarla az çekmedik!", isSponsored: false},
-
 {id: 6, title: "Ankara'da 3+1 diye aldığı daire, 1+1 çıktı!", snippet: "Almanya’da yaşayan Mehmet Ü., Ankara’da 140 metrekare olarak satın aldığı dairenin aslında 78 metrekare ve 1+1 olduğunu fark edince şoke oldu. Konuyla ilgili dava açıldı.", image: "https://i.ibb.co/MxBPdvqN/image.png", link: "https://www.ensonhaber.com/3-sayfa/ankarada-31-diye-aldigi-daire-11-cikti", isReal: true, explanation: "Ah be Mehmet abi! Bu haber maalesef gerçek. Almanya'dan gelip Ankara'da 'Geniş geniş otururum' diye aldığı ev, kuş yuvası çıkmış resmen. 3+1 diye al, 1+1 çıksın... Tam 'Türkiye'de emlakçılık' fıkrası gibi ama yaşanmış. Basında da bayağı konuşuldu bu olay." , displaySourceName: "Hürriyet", displaySourceLink: "https://www.hurriyet.com.tr/gundem/4-yil-sonra-ogrendi-hayatinin-sokunu-yasadi-3-1-olarak-satin-aldigi-ev-1-1-cikti-42788236", isSponsored: false},
-
 {id: 7, title: "Denizli Honaz Belediyesi, şehir sakinlerini uyanmak için yeni horoz uygulamasıyla tanıştırdı!", snippet: "Uykucu vatandaşlara doğal çözüm: Belediye, sabahları klasik alarm seslerinden şikayet edenler için 'horozlu uyandırma hizmeti' başlattı. Gerçek horozlar, belirlenen adreslere sabah 06.30’da götürülüyor.", image: "https://i.ibb.co/qQ9kDcB/image.png", link: "#horozlu-uyandirici", isReal: false, explanation: "Hahaha, bu çok iyiymiş ama tabii ki uydurma! Denizli'de belediye 'Alarmla uyanamayanlara horoz yolluyoruz' dese ortalık yıkılırdı herhalde. Sabahın köründe kapına horoz gelmesi... Mizah sitelerinde falan döner anca böyle şeyler, gerçek hayatta yok (şimdilik!).", isSponsored: false },
-
 {id: 8, title: "Sivaslı çiftçi, 9 deve kuşu alarak babasının hayalini gerçekleştirdi", snippet: "Sivas'ta yaşayan Berat Öksüz, babasının yıllar önceki deve kuşu besleme hayalini gerçekleştirdi. 'Bayağı şaşıran oluyor çünkü Sivas’ta görmedikleri bir şey' diyerek duygularını paylaştı.", image: "https://i.ibb.co/YTwYG3LT/image.png", link: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi", isReal: true, explanation: "Bu da capcanlı gerçek! Sivaslı bir çiftçi, babasının 'Ah bir deve kuşu çiftliğim olsa' hayalini gerçekleştirmiş. Yiğidin harman olduğu yerde deve kuşu ne arar demeyin, Sivaslı şaşırtmayı sever. Adam yapmış valla, görenler de 'Vay be!' diyormuş.",displaySourceName: "En Son Haber", displaySourceLink: "https://www.ensonhaber.com/3-sayfa/sivasli-ciftci-babasinin-hayalini-gerceklestirdi", isSponsored: false }
-
 ];
 
-
-
 let currentQuestionIndex = 0; let score = 0; let currentStreak = 0;
-
 let timerInterval; let timeLeft = 15; const TIME_PER_QUESTION = 15;
-
 let gameStartTime;
-
 let gamePlayedAtLeastOnce = JSON.parse(localStorage.getItem('fakeOrTakeGamePlayed_tr')) || false;
 
-
-
 let isSwiping = false; let isMouseSwiping = false;
-
 let swipeStartX = 0; let swipeCurrentX = 0;
-
 const SWIPE_THRESHOLD = 70;
-
 const CARD_MAX_ROTATION = 20;
-
 const CARD_ROTATION_FACTOR = CARD_MAX_ROTATION / 160;
-
 let animateInTimeoutId = null;
-
 let timeUpAutoCloseTimeoutId = null;
-
 let profilePopupTimeoutId = null;
-
-
 
 function saveGamePlayedState() { localStorage.setItem('fakeOrTakeGamePlayed_tr', JSON.stringify(gamePlayedAtLeastOnce)); }
 
-
-
 function updateActiveNav(activeScreenId) {
-
-    const navLinkElements = [ homeNavHome, homeNavScores, homeNavProfile, gameNavHome, gameNavGame, gameNavScores ];
-
-    navLinkElements.forEach(navEl => {
-
-        if (navEl) {
-
-            navEl.classList.remove('nav-item-active');
-
-            const icon = navEl.querySelector('.nav-icon');
-
-            if (icon && !icon.classList.contains('material-symbols-outlined')) {
-
-                icon.classList.remove('material-icons'); icon.classList.add('material-icons-outlined');
-
-            }
-
-        }
-
-    });
-
-    let elementsToActivate = [];
-
-    const isHomeFooterVisible = homeNavHome && homeNavHome.offsetParent !== null;
-
-    const isGameFooterVisible = gameNavGame && gameNavGame.offsetParent !== null;
-
-    if (activeScreenId === 'homeScreen') {
-
-        if (isHomeFooterVisible) elementsToActivate.push(homeNavHome);
-
-        if (isGameFooterVisible) elementsToActivate.push(gameNavHome);
-
-    } else if (activeScreenId === 'gameScreen') {
-
-        if (isGameFooterVisible) elementsToActivate.push(gameNavGame);
-
-    } else if (activeScreenId === 'resultsScreen') {
-
-        if (isHomeFooterVisible) elementsToActivate.push(homeNavScores);
-
-        if (isGameFooterVisible) elementsToActivate.push(gameNavScores);
-
-        if (!isHomeFooterVisible && !isGameFooterVisible && resultsScreen && !resultsScreen.classList.contains('hidden')) {
-
-             elementsToActivate.push(homeNavScores);
-
-        }
-
-    } else if (activeScreenId === 'profileScreen') {
-
-        if (isHomeFooterVisible && homeNavProfile) elementsToActivate.push(homeNavProfile);
-
-    }
-
-    elementsToActivate.forEach(activeEl => {
-
-        if (activeEl) {
-
-            activeEl.classList.add('nav-item-active');
-
-            const icon = activeEl.querySelector('.nav-icon');
-
-            if (icon && !icon.classList.contains('material-symbols-outlined')) {
-
-                icon.classList.remove('material-icons-outlined'); icon.classList.add('material-icons');
-
-            }
-
-        }
-
-    });
-
-}
-
-
-
-function showScreen(screen) {
-
-    [homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen].forEach(s => { if (s) { s.classList.add('hidden'); s.classList.remove('flex'); }});
-
-    [timeUpPopup, modal, aboutModal].forEach(p => { if (p) { p.classList.add('hidden'); p.classList.remove('flex'); }});
-
-    if(screen){
-
-        screen.classList.remove('hidden');
-
-        if ([homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen, timeUpPopup, modal, aboutModal].includes(screen)) { screen.classList.add('flex');}
-
-        if ([homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen].includes(screen)) { updateActiveNav(screen.id); }
-
-    } else { updateActiveNav(null); }
-
-    if (![timeUpPopup, modal, aboutModal].includes(screen)) { window.scrollTo(0,0); }
-
-}
-
-
-
-function resetCardState(isNewCard = false) { if (!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.classList.remove('fly-out-left', 'fly-out-right', 'enter-anim', 'active', 'swiping'); newsCard.style.animation = ''; if (isNewCard) { newsCard.classList.add('enter-anim'); newsCard.style.opacity = '0'; newsCard.style.transform = 'translateY(60px) scale(0.95) rotateX(-15deg)'; } else { newsCard.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)'; newsCard.style.transform = 'translateX(0px) rotate(0deg)'; newsCard.style.opacity = '1'; newsCard.style.visibility = 'visible'; } swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible');}
-
-function animateCardIn() { if (!newsCard) return; void newsCard.offsetWidth; newsCard.classList.add('active'); }
-
-
-
-function updateUIForNewQuestion() {
-
-    if (!newsCard || !newsImage || !newsTitle || !newsSnippet || !currentQuestionDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter || !timerSeconds) return;
-
-    resetCardState(true);
-
-    if (currentQuestionIndex >= newsData.length) { endGame(); return; }
-
-    const question = newsData[currentQuestionIndex];
-
-    if (question.isSponsored) { newsCard.classList.add('sponsored-news-card'); } else { newsCard.classList.remove('sponsored-news-card'); }
-
-    if (animateInTimeoutId) { clearTimeout(animateInTimeoutId); animateInTimeoutId = null; }
-
-    if (newsImage) newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-
-    if (newsImage && question.image) {
-
-        const img = new Image();
-
-        img.onload = () => { newsImage.src = question.image; animateInTimeoutId = setTimeout(animateCardIn, 30); };
-
-        img.onerror = () => { console.warn("Haber resmi yüklenemedi:", question.image); newsImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='100%' height='100%' fill='%23e2e8f0'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='0.5px' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E"; animateInTimeoutId = setTimeout(animateCardIn, 30); };
-
-        img.src = question.image;
-
-    } else { newsImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='100%' height='100%' fill='%23e2e8f0'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='0.5px' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E"; animateInTimeoutId = setTimeout(animateCardIn, 30); }
-
-    newsTitle.textContent = question.title; newsSnippet.textContent = question.snippet;
-
-    currentQuestionDisplay.textContent = currentQuestionIndex + 1; totalQuestionsDisplay.textContent = newsData.length;
-
-    streakCounter.textContent = currentStreak; progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`;
-
-    timerSeconds.classList.remove('timer-pulse', 'text-red-500');
-
-    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse'); if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
-
-}
-
-
-
-function startTimer() {
-
-    if(!timerSeconds || !timerMinutes || !timerMinutesBox || !timerSecondsBox) return;
-
-    timeLeft = TIME_PER_QUESTION;
-
-    timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft; timerMinutes.textContent = "00";
-
-    timerSeconds.classList.remove('timer-pulse', 'text-red-500');
-
-    timerMinutesBox.classList.remove('timer-box-pulse'); timerSecondsBox.classList.remove('timer-box-pulse');
-
-    clearInterval(timerInterval);
-
-    timerInterval = setInterval(() => {
-
-        timeLeft--; timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
-
-        if (timeLeft <= 3 && timeLeft > 0) { timerSeconds.classList.add('timer-pulse', 'text-red-500'); timerMinutesBox.classList.add('timer-box-pulse'); timerSecondsBox.classList.add('timer-box-pulse');
-
-        } else if (timeLeft <= 5 && timeLeft > 0) { timerSeconds.classList.add('timer-pulse','text-red-500'); timerMinutesBox.classList.remove('timer-box-pulse'); timerSecondsBox.classList.remove('timer-box-pulse');
-
-        } else { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); timerMinutesBox.classList.remove('timer-box-pulse'); timerSecondsBox.classList.remove('timer-box-pulse'); }
-
-        if (timeLeft <= 0) { clearInterval(timerInterval); showTimeUpPopup(); }
-
-    }, 1000);
-
-}
-
-
-
-function showTimeUpPopup() {
-
-    if (!timeUpPopup) return; timeUpPopup.classList.remove('hidden'); timeUpPopup.classList.add('flex');
-
-    if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); }
-
-    timeUpAutoCloseTimeoutId = setTimeout(() => { if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) { handleAnswer(null); } }, 1200);
-
-}
-
-if (timeUpOkButton) { timeUpOkButton.addEventListener('click', () => { if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); timeUpAutoCloseTimeoutId = null; } handleAnswer(null); }); }
-
-
-
-function processSwipeDecision(isRealChoice) { if(!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = 'none'; if (isRealChoice) { newsCard.classList.add('fly-out-right'); swipeRealIndicator.classList.add('visible'); } else { newsCard.classList.add('fly-out-left'); swipeFakeIndicator.classList.add('visible'); } setTimeout(() => { handleAnswer(isRealChoice); }, 400); }
-
-
-
-function handleAnswer(userChoiceIsReal) {
-
-    if (!scoreDisplay || !feedbackTitleElement || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
-
-    clearInterval(timerInterval); if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); } if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse'); if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
-
-    if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); timeUpAutoCloseTimeoutId = null; } if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) { timeUpPopup.classList.add('hidden'); timeUpPopup.classList.remove('flex');}
-
-    const currentQuestion = newsData[currentQuestionIndex]; const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
-
-    if (userChoiceIsReal !== null && wasCorrect) { score++; currentStreak++; } else if (userChoiceIsReal !== null && !wasCorrect) { currentStreak = 0; } if(userChoiceIsReal === null) currentStreak = 0;
-
-    scoreDisplay.textContent = score; streakCounter.textContent = currentStreak;
-
-    feedbackIcon.className = "material-icons-outlined feedback-content-appear"; feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-xl mb-6 sm:mb-8 feedback-content-appear";
-
-    feedbackTitleElement.classList.add("feedback-content-appear"); feedbackSourceSection.classList.add('hidden'); let feedbackStr = "";
-
-    if (userChoiceIsReal === null) { feedbackTitleElement.textContent = "Süre Bitti!"; feedbackIcon.textContent = "timer_off"; feedbackIcon.classList.add('timeup-icon'); feedbackBox.classList.add('incorrect-feedback'); feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`;
-
-    } else if (wasCorrect) { feedbackTitleElement.textContent = "Bildin!"; feedbackIcon.textContent = "check_circle"; feedbackIcon.classList.add('status-icon-correct'); feedbackBox.classList.add('correct-feedback'); feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin.");
-
-    } else { feedbackTitleElement.textContent = "Tekrar dene!"; feedbackIcon.textContent = "cancel"; feedbackIcon.classList.add('status-icon-incorrect'); feedbackBox.classList.add('incorrect-feedback'); feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`; }
-
-    feedbackText.innerHTML = feedbackStr;
-
-    if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) { feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden'); }
-
-    feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru";
-
-    showScreen(feedbackScreen);
-
-}
-
-
-
-function proceedToNextStep() { if (!progressBar) return; currentQuestionIndex++; progressBar.style.width = `${(currentQuestionIndex / newsData.length) * 100}%`; if (currentQuestionIndex < newsData.length) { showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); } else { endGame(); }}
-
-if(feedbackNextButton) feedbackNextButton.addEventListener('click', proceedToNextStep);
-
-if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextStep);
-
-
-
-function startGame() {
-
-    if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) { console.error("Oyun başlatma için UI elementleri eksik"); return; }
-
-    gameStartTime = Date.now(); currentQuestionIndex = 0; score = 0; currentStreak = 0;
-
-    scoreDisplay.textContent = score; streakCounter.textContent = currentStreak; totalQuestionsDisplay.textContent = newsData.length; progressBar.style.width = '0%';
-
-    showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer();
-
-}
-
-
-
-// YENİ: populateLeaderboard fonksiyonu Firebase'den veri çekecek şekilde güncellendi
-
-function populateLeaderboard() {
-    if (!leaderboardEntriesContainer) {
-        console.error("Liderlik tablosu konteyneri bulunamadı!");
-        return;
+    const navLinkElements = [
+        homeNavHome, homeNavScores, homeNavProfile,
+        gameNavHome, gameNavGame, gameNavScores
+    ];
+
+    navLinkElements.forEach(navEl => {
+        if (navEl) {
+            navEl.classList.remove('nav-item-active');
+            const icon = navEl.querySelector('.nav-icon');
+            if (icon && !icon.classList.contains('material-symbols-outlined')) {
+                icon.classList.remove('material-icons');
+                icon.classList.add('material-icons-outlined');
+            }
+        }
+    });
+
+    let elementsToActivate = [];
+    const isHomeFooterVisible = homeNavHome && homeNavHome.offsetParent !== null;
+    const isGameFooterVisible = gameNavGame && gameNavGame.offsetParent !== null;
+
+    if (activeScreenId === 'homeScreen') {
+        if (isHomeFooterVisible) elementsToActivate.push(homeNavHome);
+        if (isGameFooterVisible) elementsToActivate.push(gameNavHome);
+    } else if (activeScreenId === 'gameScreen') {
+        if (isGameFooterVisible) elementsToActivate.push(gameNavGame);
+    } else if (activeScreenId === 'resultsScreen') {
+        if (isHomeFooterVisible) elementsToActivate.push(homeNavScores);
+        if (isGameFooterVisible) elementsToActivate.push(gameNavScores);
+        if (!isHomeFooterVisible && !isGameFooterVisible && resultsScreen && !resultsScreen.classList.contains('hidden')) {
+             elementsToActivate.push(homeNavScores); // Fallback for results screen if footers somehow hidden
+        }
+    } else if (activeScreenId === 'profileScreen') { // Though profile screen isn't fully implemented
+        if (isHomeFooterVisible && homeNavProfile) elementsToActivate.push(homeNavProfile);
     }
 
-    // 1. Konteyneri başlangıçta gizle ve içini temizle
-    leaderboardEntriesContainer.classList.add('hidden'); // Tailwind CSS class'ı ile gizle
-    leaderboardEntriesContainer.innerHTML = ''; // "Yükleniyor..." mesajı olmayacak
 
-    // Son 10 skoru (timestamp'e göre en yeni) çek, sonra istemcide puana göre sırala
-    const scoresQuery = query(ref(db, 'scores'), limitToLast(10));
-
-    get(scoresQuery).then((snapshot) => {
-        leaderboardEntriesContainer.innerHTML = ''; // İçeriği doldurmadan önce tekrar temizle (önemli)
-
-        if (snapshot.exists()) {
-            const fetchedScores = [];
-            snapshot.forEach((childSnapshot) => {
-                const entry = childSnapshot.val();
-                // Gelen veride 'score' ve 'total' alanlarının olduğundan emin olalım
-                if (entry && typeof entry.score !== 'undefined' && typeof entry.total !== 'undefined' && entry.name) {
-                    fetchedScores.push(entry);
-                }
-            });
-
-            if (fetchedScores.length === 0) {
-                leaderboardEntriesContainer.innerHTML = '<p class="text-slate-500 text-center py-4">Henüz skor bulunmuyor.</p>';
-            } else {
-                // Skorları önce puana göre (çoktan aza), sonra tarihe göre (yeniden eskiye) sırala
-                fetchedScores.sort((a, b) => {
-                    if (b.score === a.score) {
-                        return new Date(b.date).getTime() - new Date(a.date).getTime(); // Daha yeni tarih önce
-                    }
-                    return b.score - a.score; // Daha yüksek skor önce
-                });
-
-                // En fazla 7 skor göster (isteğe bağlı)
-                const displayScores = fetchedScores.slice(0, 7);
-
-                displayScores.forEach((entry, index) => {
-                    const entryDiv = document.createElement('div');
-                    entryDiv.className = 'flex items-center justify-between rounded-lg p-4 transition-all text-sm sm:text-base shadow-sm';
-
-                    const leftPart = document.createElement('div');
-                    leftPart.className = 'flex items-center gap-3';
-
-                    const rankDisplaySpan = document.createElement('span');
-                    let rankText = `${index + 1}.`;
-                    let rankIconClass = 'text-slate-600'; // Varsayılan rank rengi
-
-                    if (index === 0) { rankText = '🥇'; rankIconClass = 'text-amber-400';}
-                    else if (index === 1) { rankText = '🥈'; rankIconClass = 'text-slate-400';}
-                    else if (index === 2) { rankText = '🥉'; rankIconClass = 'text-orange-400';}
-
-                    if (entry.name === "SEN") { // Oyuncunun skoru ise farklı stil uygula
-                        entryDiv.classList.add('bg-indigo-100', 'text-indigo-700', 'ring-2', 'ring-offset-2', 'ring-offset-indigo-100', 'ring-indigo-500', 'shadow-md');
-                        rankDisplaySpan.className = `text-xl font-semibold ${rankIconClass}`;
-                        rankDisplaySpan.innerHTML = `${(index > 2) ? '★ ' : ''}${rankText}`; // İlk 3 dışındaysa yıldız ekle
-                    } else {
-                        entryDiv.classList.add('bg-slate-100', 'hover:bg-slate-200/80');
-                        rankDisplaySpan.className = `text-lg sm:text-xl font-semibold ${index <=2 ? rankIconClass : 'text-slate-600'}`;
-                        rankDisplaySpan.innerHTML = rankText;
-                    }
-                    leftPart.appendChild(rankDisplaySpan);
-
-                    const nameP = document.createElement('p');
-                    nameP.className = `font-medium ${entry.name === "SEN" ? 'text-indigo-800' : 'text-slate-700'}`;
-                    nameP.textContent = entry.name;
-                    leftPart.appendChild(nameP);
-                    
-                    const scoreP = document.createElement('p');
-                    scoreP.className = `font-semibold ${entry.name === "SEN" ? 'text-indigo-800' : 'text-slate-700'}`;
-                    scoreP.textContent = `${entry.score}/${entry.total}`;
-                    
-                    entryDiv.appendChild(leftPart);
-                    entryDiv.appendChild(scoreP);
-                    leaderboardEntriesContainer.appendChild(entryDiv);
-                });
+    elementsToActivate.forEach(activeEl => {
+        if (activeEl) {
+            activeEl.classList.add('nav-item-active');
+            const icon = activeEl.querySelector('.nav-icon');
+            if (icon && !icon.classList.contains('material-symbols-outlined')) {
+                icon.classList.remove('material-icons-outlined');
+                icon.classList.add('material-icons');
             }
-        } else {
-            leaderboardEntriesContainer.innerHTML = '<p class="text-slate-500 text-center py-4">Henüz skor bulunmuyor.</p>';
         }
-        // 2. Veri yüklendikten veya mesajlar hazırlandıktan sonra konteyneri göster
-        leaderboardEntriesContainer.classList.remove('hidden');
-    }).catch((error) => {
-        console.error("Firebase'den skorlar çekilirken hata:", error);
-        leaderboardEntriesContainer.innerHTML = '<p class="text-red-500 text-center py-4">Liderlik tablosu yüklenirken bir hata oluştu.</p>';
-        // Hata durumunda da konteyneri göster ki kullanıcı hatayı görsün
-        leaderboardEntriesContainer.classList.remove('hidden');
     });
 }
 
 
+function showScreen(screen) {
+    const allScreens = [homeScreenDiv, gameScreenDiv, feedbackScreen, resultsScreen];
+    const allPopups = [timeUpPopup, modal, aboutModal];
+    allScreens.forEach(s => { if (s) { s.classList.add('hidden'); s.classList.remove('flex'); }});
+    allPopups.forEach(p => { if (p) { p.classList.add('hidden'); p.classList.remove('flex'); }});
+
+    if(screen){
+        screen.classList.remove('hidden');
+        // Ensure only main screens or popups that use flex get it.
+        if (allScreens.includes(screen) || allPopups.includes(screen)) { screen.classList.add('flex');} // Popups like howToPlayModal use flex
+        if (allScreens.includes(screen)) { updateActiveNav(screen.id); }
+    } else {
+        updateActiveNav(null); // No screen active
+    }
+    // Scroll to top for main screen transitions, not for modals/popups.
+    if (!allPopups.includes(screen) && screen !== modal && screen !== aboutModal) { // Check against specific modal vars
+        window.scrollTo(0,0);
+    }
+}
+
+function resetCardState(isNewCard = false) { if (!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.classList.remove('fly-out-left', 'fly-out-right', 'enter-anim', 'active', 'swiping'); newsCard.style.animation = ''; if (isNewCard) { newsCard.classList.add('enter-anim'); newsCard.style.opacity = '0'; newsCard.style.transform = 'translateY(60px) scale(0.95) rotateX(-15deg)'; } else { newsCard.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)'; newsCard.style.transform = 'translateX(0px) rotate(0deg)'; newsCard.style.opacity = '1'; newsCard.style.visibility = 'visible'; } swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible');}
+function animateCardIn() { if (!newsCard) return; void newsCard.offsetWidth; newsCard.classList.add('active'); }
+
+function updateUIForNewQuestion() {
+    if (!newsCard || !newsImage || !newsTitle || !newsSnippet || !currentQuestionDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter || !timerSeconds) return;
+    resetCardState(true);
+    if (currentQuestionIndex >= newsData.length) {
+        endGame();
+        return;
+    }
+    const question = newsData[currentQuestionIndex];
+
+    // Sponsorlu içerik için ana kart sınıfını güncelle
+    if (question.isSponsored) {
+        newsCard.classList.add('sponsored-news-card');
+    } else {
+        newsCard.classList.remove('sponsored-news-card');
+    }
+    // .sponsored-badge'in görünürlüğü CSS ile .sponsored-news-card varlığına göre yönetilir.
+
+    if (animateInTimeoutId) { clearTimeout(animateInTimeoutId); animateInTimeoutId = null; }
+    if (newsImage) newsImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; // Placeholder
+    if (newsImage && question.image) {
+        const img = new Image();
+        img.onload = () => {
+            newsImage.src = question.image;
+            animateInTimeoutId = setTimeout(animateCardIn, 30);
+        };
+        img.onerror = () => {
+            console.warn("Haber resmi yüklenemedi:", question.image);
+            newsImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='100%' height='100%' fill='%23e2e8f0'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='0.5px' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E"; // Fallback SVG
+            animateInTimeoutId = setTimeout(animateCardIn, 30);
+        };
+        img.src = question.image;
+    } else { // No image URL provided
+        newsImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 4'%3E%3Crect width='100%' height='100%' fill='%23e2e8f0'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='0.5px' fill='%2394a3b8'%3ENo Image%3C/text%3E%3C/svg%3E";
+        animateInTimeoutId = setTimeout(animateCardIn, 30);
+    }
+    newsTitle.textContent = question.title;
+    newsSnippet.textContent = question.snippet;
+    currentQuestionDisplay.textContent = currentQuestionIndex + 1;
+    totalQuestionsDisplay.textContent = newsData.length;
+    streakCounter.textContent = currentStreak;
+    progressBar.style.width = `${((currentQuestionIndex) / newsData.length) * 100}%`;
+    timerSeconds.classList.remove('timer-pulse', 'text-red-500');
+    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse');
+    if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
+}
+
+function startTimer() {
+    if(!timerSeconds || !timerMinutes || !timerMinutesBox || !timerSecondsBox) return;
+    timeLeft = TIME_PER_QUESTION;
+    timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
+    timerMinutes.textContent = "00";
+    timerSeconds.classList.remove('timer-pulse', 'text-red-500');
+    timerMinutesBox.classList.remove('timer-box-pulse');
+    timerSecondsBox.classList.remove('timer-box-pulse');
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerSeconds.textContent = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
+
+        if (timeLeft <= 3 && timeLeft > 0) { // Stricter condition for box pulse
+            timerSeconds.classList.add('timer-pulse', 'text-red-500');
+            timerMinutesBox.classList.add('timer-box-pulse');
+            timerSecondsBox.classList.add('timer-box-pulse');
+        } else if (timeLeft <= 5 && timeLeft > 0) { // Only pulse text for 5-4 seconds
+             timerSeconds.classList.add('timer-pulse','text-red-500');
+             timerMinutesBox.classList.remove('timer-box-pulse');
+             timerSecondsBox.classList.remove('timer-box-pulse');
+        }
+        else { // Remove all pulse effects if time is > 5
+            timerSeconds.classList.remove('timer-pulse', 'text-red-500');
+            timerMinutesBox.classList.remove('timer-box-pulse');
+            timerSecondsBox.classList.remove('timer-box-pulse');
+        }
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            showTimeUpPopup();
+        }
+    }, 1000);
+}
+
+function showTimeUpPopup() {
+    if (!timeUpPopup) return;
+    timeUpPopup.classList.remove('hidden');
+    timeUpPopup.classList.add('flex'); // Ensure it's flex for centering
+    if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); }
+    timeUpAutoCloseTimeoutId = setTimeout(() => {
+        if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) { handleAnswer(null); }
+    }, 1200); // Auto proceed after 1.2 seconds
+}
+
+if (timeUpOkButton) {
+    timeUpOkButton.addEventListener('click', () => {
+        if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); timeUpAutoCloseTimeoutId = null; }
+        handleAnswer(null); // Proceed immediately
+    });
+}
+
+function processSwipeDecision(isRealChoice) { if(!newsCard || !swipeRealIndicator || !swipeFakeIndicator) return; newsCard.style.transition = 'none'; if (isRealChoice) { newsCard.classList.add('fly-out-right'); swipeRealIndicator.classList.add('visible'); } else { newsCard.classList.add('fly-out-left'); swipeFakeIndicator.classList.add('visible'); } setTimeout(() => { handleAnswer(isRealChoice); }, 400); }
+
+function handleAnswer(userChoiceIsReal) {
+    if (!scoreDisplay || !feedbackTitleElement || !feedbackIcon || !feedbackBox || !feedbackText || !feedbackSourceSection || !feedbackSourceName || !feedbackSourceLinkTag || !streakCounter || !timerSeconds) return;
+    clearInterval(timerInterval);
+    if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); }
+    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse');
+    if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
+
+    if (timeUpAutoCloseTimeoutId) { clearTimeout(timeUpAutoCloseTimeoutId); timeUpAutoCloseTimeoutId = null; }
+    if (timeUpPopup && !timeUpPopup.classList.contains('hidden')) { timeUpPopup.classList.add('hidden'); timeUpPopup.classList.remove('flex');}
+
+    const currentQuestion = newsData[currentQuestionIndex];
+    const wasCorrect = userChoiceIsReal === currentQuestion.isReal;
+
+    if (userChoiceIsReal !== null && wasCorrect) { score++; currentStreak++;
+    } else if (userChoiceIsReal !== null && !wasCorrect) { currentStreak = 0; }
+    if(userChoiceIsReal === null) currentStreak = 0; // Time up counts as wrong for streak
+
+    scoreDisplay.textContent = score; streakCounter.textContent = currentStreak;
+    // Reset classes before adding new ones
+    feedbackIcon.className = "material-icons-outlined feedback-content-appear"; // Base classes
+    feedbackBox.className = "rounded-lg bg-white p-5 sm:p-6 shadow-xl mb-6 sm:mb-8 feedback-content-appear"; // Base classes
+    feedbackTitleElement.classList.add("feedback-content-appear"); // Ensure animation class is present
+    feedbackSourceSection.classList.add('hidden'); // Hide by default
+    let feedbackStr = "";
+
+    if (userChoiceIsReal === null) { // Time's up
+        feedbackTitleElement.textContent = "Süre Bitti!"; feedbackIcon.textContent = "timer_off"; feedbackIcon.classList.add('timeup-icon'); feedbackBox.classList.add('incorrect-feedback');
+        feedbackStr = `Bu soru için süreniz doldu. Doğru cevap: <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> idi.<br><br>${currentQuestion.explanation || ''}`;
+    } else if (wasCorrect) {
+        feedbackTitleElement.textContent = "Bildin!"; feedbackIcon.textContent = "check_circle"; feedbackIcon.classList.add('status-icon-correct'); feedbackBox.classList.add('correct-feedback');
+        feedbackStr = currentQuestion.explanation || (currentQuestion.isReal ? "Bu haber gerçekten doğru." : "Bu haberin sahte olduğunu doğru tespit ettin.");
+    } else { // Incorrect answer
+        feedbackTitleElement.textContent = "Tekrar dene!"; feedbackIcon.textContent = "cancel"; feedbackIcon.classList.add('status-icon-incorrect'); feedbackBox.classList.add('incorrect-feedback');
+        feedbackStr = `Doğru cevap <strong>${currentQuestion.isReal ? 'GERÇEK' : 'SAHTE'}</strong> olmalıydı.<br><br>${currentQuestion.explanation || ''}`;
+    }
+    feedbackText.innerHTML = feedbackStr;
+    if (currentQuestion.displaySourceName && currentQuestion.displaySourceLink) {
+        feedbackSourceName.textContent = currentQuestion.displaySourceName; feedbackSourceLinkTag.href = currentQuestion.displaySourceLink; feedbackSourceSection.classList.remove('hidden');
+    }
+    feedbackNextButton.textContent = (currentQuestionIndex >= newsData.length - 1) ? "Sonuçları Gör" : "Sonraki Soru";
+    showScreen(feedbackScreen);
+}
+
+function proceedToNextStep() { if (!progressBar) return; currentQuestionIndex++; progressBar.style.width = `${(currentQuestionIndex / newsData.length) * 100}%`; if (currentQuestionIndex < newsData.length) { showScreen(gameScreenDiv); updateUIForNewQuestion(); startTimer(); } else { endGame(); }}
+if(feedbackNextButton) feedbackNextButton.addEventListener('click', proceedToNextStep);
+if(closeFeedbackBtn) closeFeedbackBtn.addEventListener('click', proceedToNextStep);
+
+function startGame() {
+    if (!scoreDisplay || !totalQuestionsDisplay || !progressBar || !streakCounter) { console.error("Oyun başlatma için UI elementleri eksik"); return; }
+    gameStartTime = Date.now();
+    currentQuestionIndex = 0; score = 0; currentStreak = 0;
+    // Shuffle newsData array for variability each game - Optional
+    // newsData.sort(() => 0.5 - Math.random()); // Uncomment to shuffle
+    scoreDisplay.textContent = score;
+    streakCounter.textContent = currentStreak;
+    totalQuestionsDisplay.textContent = newsData.length;
+    progressBar.style.width = '0%';
+    showScreen(gameScreenDiv);
+    updateUIForNewQuestion();
+    startTimer();
+}
+
+function populateLeaderboard() {
+    if (!leaderboardEntriesContainer || !newsData || newsData.length === 0) return;
+    leaderboardEntriesContainer.innerHTML = ''; // Clear previous entries
+
+    // Define bot personalities and their scoring tendencies
+    const botNamesAndPersonalities = [
+        { name: "Fatih Mandalina", scoreMultiplier: 0.92 }, { name: "İsmail Büyükyaya", scoreMultiplier: 0.88 },
+        { name: "Cüneyt Sazdemir", scoreMultiplier: 0.95 }, { name: "Nevşin Bambu", scoreMultiplier: 0.85 },
+        { name: "Ahmet Haktan", scoreMultiplier: 0.78 }, { name: "Enver Taysever", scoreMultiplier: 0.90 },
+        { name: "Ece Döner", scoreMultiplier: 0.82 }, { name: "Deniz Zeybek", scoreMultiplier: 0.75 },
+        { name: "Yılmaz Özil", scoreMultiplier: 0.97 }, { name: "Fatih Ortaylı", scoreMultiplier: 0.80 }
+    ];
+
+    // Generate bot scores
+    let botEntries = botNamesAndPersonalities.map(bot => ({
+        name: bot.name,
+        // Score calculation: a base random score + a part influenced by their multiplier
+        score: Math.min(newsData.length, Math.max(0, Math.floor(Math.random() * (newsData.length / 1.8) + (newsData.length * bot.scoreMultiplier * 0.45)))),
+        isPlayer: false
+    }));
+    // Shuffle bots and boost a few to make leaderboard more dynamic
+    botEntries.sort(() => 0.5 - Math.random()); // Shuffle bots
+    const numBotsToBoost = Math.min(3, botEntries.length); // Boost up to 3 bots
+    for (let i = 0; i < numBotsToBoost; i++) {
+        botEntries[i].score = Math.max(botEntries[i].score, Math.floor(newsData.length * (0.65 + Math.random() * 0.3))); // Ensure some higher scores
+    }
+
+
+    // Player's score entry (use 0 if game hasn't been played yet for the leaderboard on home screen)
+    const playerScoreEntry = { name: "SEN", score: (gamePlayedAtLeastOnce ? score : 0), isPlayer: true };
+    let allEntries = [...botEntries, playerScoreEntry];
+
+    // Sort entries: by score (desc), then player first, then by name (asc)
+    allEntries.sort((a, b) => {
+        if (b.score === a.score) {
+            if (a.isPlayer) return -1; // Player comes first in ties
+            if (b.isPlayer) return 1;
+            return a.name.localeCompare(b.name); // Then sort by name
+        }
+        return b.score - a.score; // Primary sort by score
+    });
+
+    // Logic to display top entries and player's rank if not in top
+    const maxEntriesToShow = 7;
+    let displayEntries = [];
+
+    if (allEntries.length <= maxEntriesToShow) {
+        displayEntries = [...allEntries];
+    } else {
+        const playerRankGlobal = allEntries.findIndex(entry => entry.isPlayer);
+        // If player is in the top N-1 (leaving space for potential ellipsis)
+        if (playerRankGlobal < maxEntriesToShow -1 ) {
+            displayEntries = allEntries.slice(0, maxEntriesToShow);
+        } else {
+            // Player is further down, show top N-2, ellipsis, then player
+            displayEntries = allEntries.slice(0, maxEntriesToShow - 2);
+            displayEntries.push({ name: "...", score: -1, isPlayer: false, isEllipsis: true }); // Ellipsis entry
+            // Ensure player entry is added if not already included by slice
+            if (!displayEntries.some(e=> e.isPlayer && e.name === playerScoreEntry.name)) {
+                 displayEntries.push(playerScoreEntry);
+            }
+        }
+        // Final check: if player was pushed and it made the list too long, re-evaluate.
+        // This logic can get complex if player is exactly at Nth or (N-1)th position with ellipsis.
+        // The goal is to show player, and if they are low, show ...
+        // If displayEntries now has more than maxEntriesToShow (e.g. N-2 + ellipsis + player = N), it's fine.
+        // If player was very low, and list is like Top N-2 + Ellipsis + Player, it's fine.
+        // If after adding player, the list is like Top N-2 + Player (no Ellipsis needed as player is close), remove ellipsis
+        if (displayEntries.some(e => e.isEllipsis) && displayEntries.findIndex(e => e.isPlayer) === displayEntries.findIndex(e => e.isEllipsis) -1 ) {
+            displayEntries = displayEntries.filter(e => !e.isEllipsis); // Remove ellipsis if player is right after top N-2
+            if(displayEntries.length < maxEntriesToShow && allEntries.length > maxEntriesToShow) {
+                // If there's space, add one more non-player entry from original sorted list
+                const nextEntry = allEntries.find(ae => !displayEntries.some(de => de.name === ae.name && de.score === ae.score));
+                if(nextEntry) displayEntries.push(nextEntry);
+            }
+        }
+    }
+    // Re-sort displayEntries to ensure order, especially if ellipsis and player were manually added.
+     displayEntries.sort((a, b) => {
+        if(a.isEllipsis) return 1; // Ellipsis should be sorted towards its logical place (handled by slicing mostly)
+        if(b.isEllipsis) return -1;
+        if (b.score === a.score) {
+            if (a.isPlayer) return -1;
+            if (b.isPlayer) return 1;
+            return a.name.localeCompare(b.name);
+        }
+        return b.score - a.score;
+    });
+    // Ensure displayEntries doesn't exceed maxEntriesToShow unless player is the one making it exceed slightly
+    if (displayEntries.length > maxEntriesToShow) {
+        const playerInDisplay = displayEntries.some(e => e.isPlayer);
+        if (playerInDisplay && displayEntries.findIndex(e => e.isPlayer) >= maxEntriesToShow -1) {
+             // Player is at the end or makes it slightly longer, try to keep player.
+             // Slice to N-1, then add player if not present.
+             let tempEntries = displayEntries.slice(0, maxEntriesToShow -1);
+             if (!tempEntries.some(e=>e.isPlayer)) tempEntries.push(playerScoreEntry);
+             displayEntries = tempEntries;
+             // Resort again after this manipulation
+             displayEntries.sort((a, b) => { /* same sort logic */ if (b.score === a.score) { if (a.isPlayer) return -1; if (b.isPlayer) return 1; return a.name.localeCompare(b.name); } return b.score - a.score; });
+        } else {
+            displayEntries = displayEntries.slice(0, maxEntriesToShow);
+        }
+    }
+
+
+    displayEntries.forEach((entry) => {
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'flex items-center justify-between rounded-lg p-4 transition-all text-sm sm:text-base shadow-sm'; // Base classes for all entries
+        
+        if(entry.isEllipsis) {
+            entryDiv.innerHTML = `<p class="text-center w-full text-slate-500 text-xs">...</p>`;
+            leaderboardEntriesContainer.appendChild(entryDiv);
+            return; // Skip further processing for ellipsis
+        }
+
+        const leftPart = document.createElement('div');
+        leftPart.className = 'flex items-center gap-3';
+
+        const rankDisplaySpan = document.createElement('span');
+        // Find the actual rank in the *full* sorted list
+        const actualRank = allEntries.findIndex(e => e.name === entry.name && e.score === entry.score && e.isPlayer === entry.isPlayer) + 1;
+        let rankText = `${actualRank}.`;
+        let rankIconClass = 'text-slate-600'; // Default rank color
+
+        if (actualRank === 1) { rankText = '🥇'; rankIconClass = 'text-amber-400';}
+        else if (actualRank === 2) { rankText = '🥈'; rankIconClass = 'text-slate-400';} // Changed to silver
+        else if (actualRank === 3) { rankText = '🥉'; rankIconClass = 'text-orange-400';} // Changed to bronze (e.g. #CD7F32 or Tailwind's orange)
+
+
+        if (entry.isPlayer) {
+            entryDiv.classList.add('bg-indigo-100', 'text-indigo-700', 'ring-2', 'ring-offset-2', 'ring-offset-indigo-100', 'ring-indigo-500', 'shadow-md');
+            rankDisplaySpan.className = `text-xl font-semibold ${rankIconClass}`; // Player rank styling
+            rankDisplaySpan.innerHTML = `${(actualRank > 3) ? '★ ' : ''}${rankText}`; // Star for player if not top 3
+        } else {
+            entryDiv.classList.add('bg-slate-100', 'hover:bg-slate-200/80'); // Bot entry styling
+            rankDisplaySpan.className = `text-lg sm:text-xl font-semibold ${actualRank <=3 ? rankIconClass : 'text-slate-600'}`;
+            rankDisplaySpan.innerHTML = rankText;
+        }
+        leftPart.appendChild(rankDisplaySpan);
+
+        const nameP = document.createElement('p');
+        nameP.className = `font-medium ${entry.isPlayer ? 'text-indigo-800' : 'text-slate-700'}`;
+        nameP.textContent = entry.name;
+        leftPart.appendChild(nameP);
+        
+        const scoreP = document.createElement('p');
+        scoreP.className = `font-semibold ${entry.isPlayer ? 'text-indigo-800' : 'text-slate-700'}`;
+        scoreP.textContent = `${entry.score}/${newsData.length}`;
+        
+        entryDiv.appendChild(leftPart);
+        entryDiv.appendChild(scoreP);
+        leaderboardEntriesContainer.appendChild(entryDiv);
+    });
+}
+
 
 function endGame() {
+    if (!timeTakenValue || !finalScoreValue || !highScoreDisplay) return;
+    gamePlayedAtLeastOnce = true; // Mark that the game has been played
+    saveGamePlayedState();
+    clearInterval(timerInterval);
+    if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); }
+    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse');
+    if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
 
-    if (!timeTakenValue || !finalScoreValue || !highScoreDisplay) return;
-
-    gamePlayedAtLeastOnce = true; saveGamePlayedState();
-
-    clearInterval(timerInterval); if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); } if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse'); if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
-
-    const gameEndTimeVariable = Date.now(); const timeDiff = gameEndTimeVariable - (gameStartTime || gameEndTimeVariable);
-
-    const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000);
-
-    if (timeTakenValue) timeTakenValue.textContent = `${mins} dakika ${secs} saniye`;
-
-    if (finalScoreValue) finalScoreValue.textContent = `${score}/${newsData.length}`;
-
-    let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
-
-    if (score > hs) { hs = score; localStorage.setItem('fakeOrTakeHighScore_tr', hs); }
-
-    if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${newsData.length}`;
-
-    
-
-    if (newsData && newsData.length > 0) {
-
-        saveScoreToFirebase("SEN", score, newsData.length); // Oyuncu adını "SEN" olarak kaydet
-
-    }
-
-
-
-    populateLeaderboard(); // Skoru kaydettikten sonra liderlik tablosunu Firebase'den güncelle
-
-    showScreen(resultsScreen);
-
+    const gameEndTimeVariable = Date.now();
+    const timeDiff = gameEndTimeVariable - (gameStartTime || gameEndTimeVariable) ; // gameStartTime might be undefined if game ended prematurely
+    const mins = Math.floor(timeDiff / 60000); const secs = Math.floor((timeDiff % 60000) / 1000);
+    
+    if (timeTakenValue) timeTakenValue.textContent = `${mins} dakika ${secs} saniye`;
+    if (finalScoreValue) finalScoreValue.textContent = `${score}/${newsData.length}`;
+    
+    let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
+    if (score > hs) { hs = score; localStorage.setItem('fakeOrTakeHighScore_tr', hs); }
+    if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${newsData.length}`;
+    
+    populateLeaderboard(); // Populate with the latest score
+    showScreen(resultsScreen);
 }
 
-
-
-function resetGame() { clearInterval(timerInterval); if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); } if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse'); if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse'); }
-
+function resetGame() { // Called when navigating away from game or results
+    clearInterval(timerInterval); // Stop timer
+    if(timerSeconds) { timerSeconds.classList.remove('timer-pulse', 'text-red-500'); }
+    if(timerMinutesBox) timerMinutesBox.classList.remove('timer-box-pulse');
+    if(timerSecondsBox) timerSecondsBox.classList.remove('timer-box-pulse');
+    // Don't reset score or currentQuestionIndex here, startGame handles it
+}
 function navigateToHome() { resetGame(); showScreen(homeScreenDiv); }
 
-
-
 function navigateToResults() {
-
-    resetGame();
-
-    if (!gamePlayedAtLeastOnce) {
-
-        if (finalScoreValue) finalScoreValue.textContent = "0/0";
-
-        if (timeTakenValue) timeTakenValue.textContent = "-";
-
-        let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
-
-        let totalQDisplay = newsData && newsData.length > 0 ? newsData.length : "X";
-
-        if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${totalQDisplay}`;
-
-    } else {
-
-        if (finalScoreValue) finalScoreValue.textContent = `${score}/${newsData.length}`; 
-
-        let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
-
-        if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${newsData.length}`;
-
-    }
-
-    populateLeaderboard(); // Liderlik tablosunu Firebase'den yükle
-
-    showScreen(resultsScreen);
-
+    resetGame(); // Stop game-related processes
+    // Update display based on whether the game has been played at all
+    if (!gamePlayedAtLeastOnce) {
+        if (finalScoreValue) finalScoreValue.textContent = "0/0"; // Show 0/0 if no game played
+        if (timeTakenValue) timeTakenValue.textContent = "-";     // No time taken
+        let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
+        let totalQDisplay = newsData && newsData.length > 0 ? newsData.length : "X"; // Handle if newsData is empty
+        if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${totalQDisplay}`;
+    } else {
+        // If game has been played, these values would have been set by endGame
+        // But if navigating directly to results, ensure they are current
+        if (finalScoreValue) finalScoreValue.textContent = `${score}/${newsData.length}`; 
+        let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
+        if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${newsData.length}`;
+        // timeTakenValue is only relevant after a game session, so it might be stale if navigating directly
+        // Consider what to display for timeTakenValue if navigating here without playing.
+    }
+    populateLeaderboard(); // Always populate leaderboard
+    showScreen(resultsScreen);
 }
-
 
 
 function unifiedSwipeStart(e) {
-
-    if (!newsCard || newsCard.classList.contains('fly-out-left') || newsCard.classList.contains('fly-out-right')) return;
-
-    if (animateInTimeoutId) { clearTimeout(animateInTimeoutId); animateInTimeoutId = null; }
-
-    if (newsCard.classList.contains('enter-anim') || (newsCard.style.animation && newsCard.style.animation !== 'none')) { newsCard.classList.remove('enter-anim', 'active'); newsCard.style.animation = 'none'; newsCard.style.visibility = 'visible'; }
-
-    newsCard.style.opacity = '1'; newsCard.style.transform = ''; isSwiping = true; isMouseSwiping = (e.type === 'mousedown');
-
-    swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX; newsCard.style.transition = 'none'; newsCard.classList.add('swiping');
-
-    if (isMouseSwiping) { document.addEventListener('mousemove', unifiedSwipeMove); document.addEventListener('mouseup', unifiedSwipeEnd); }
-
+    if (!newsCard || newsCard.classList.contains('fly-out-left') || newsCard.classList.contains('fly-out-right')) return;
+    if (animateInTimeoutId) { clearTimeout(animateInTimeoutId); animateInTimeoutId = null; } // Clear pending animation
+    // If card is in enter-animation, force it to be interactable immediately
+    if (newsCard.classList.contains('enter-anim') || (newsCard.style.animation && newsCard.style.animation !== 'none')) {
+        newsCard.classList.remove('enter-anim', 'active');
+        newsCard.style.animation = 'none'; // Stop current animation
+        newsCard.style.visibility = 'visible'; // Make sure it's visible
+    }
+    newsCard.style.opacity = '1'; newsCard.style.transform = ''; // Reset any leftover transforms/opacity
+    isSwiping = true; isMouseSwiping = (e.type === 'mousedown');
+    swipeStartX = isMouseSwiping ? e.pageX : e.touches[0].pageX;
+    newsCard.style.transition = 'none'; newsCard.classList.add('swiping');
+    if (isMouseSwiping) { document.addEventListener('mousemove', unifiedSwipeMove); document.addEventListener('mouseup', unifiedSwipeEnd); }
 }
-
 function unifiedSwipeMove(e) {
-
-    if (!isSwiping || !newsCard) return; swipeCurrentX = isMouseSwiping ? e.pageX : e.touches[0].pageX; let diffX = swipeCurrentX - swipeStartX;
-
-    if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) { e.preventDefault(); }
-
-    let rotation = diffX * CARD_ROTATION_FACTOR; rotation = Math.max(-CARD_MAX_ROTATION, Math.min(CARD_MAX_ROTATION, rotation));
-
-    const newTransform = `translateX(${diffX}px) rotate(${rotation}deg)`; requestAnimationFrame(() => { if (isSwiping) { newsCard.style.transform = newTransform; } });
-
-    if (diffX > SWIPE_THRESHOLD / 1.8) { swipeRealIndicator.classList.add('visible'); swipeFakeIndicator.classList.remove('visible');
-
-    } else if (diffX < -SWIPE_THRESHOLD / 1.8) { swipeFakeIndicator.classList.add('visible'); swipeRealIndicator.classList.remove('visible');
-
-    } else { swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible'); }
-
+    if (!isSwiping || !newsCard) return;
+    swipeCurrentX = isMouseSwiping ? e.pageX : e.touches[0].pageX; let diffX = swipeCurrentX - swipeStartX;
+    if (e.type === 'touchmove' && Math.abs(diffX) > 5 && e.cancelable) { e.preventDefault(); } // Prevent scroll on touch
+    let rotation = diffX * CARD_ROTATION_FACTOR; rotation = Math.max(-CARD_MAX_ROTATION, Math.min(CARD_MAX_ROTATION, rotation));
+    const newTransform = `translateX(${diffX}px) rotate(${rotation}deg)`;
+    requestAnimationFrame(() => { if (isSwiping) { newsCard.style.transform = newTransform; } });
+    if (diffX > SWIPE_THRESHOLD / 1.8) { swipeRealIndicator.classList.add('visible'); swipeFakeIndicator.classList.remove('visible');
+    } else if (diffX < -SWIPE_THRESHOLD / 1.8) { swipeFakeIndicator.classList.add('visible'); swipeRealIndicator.classList.remove('visible');
+    } else { swipeRealIndicator.classList.remove('visible'); swipeFakeIndicator.classList.remove('visible'); }
 }
-
 function unifiedSwipeEnd(e) {
-
-    if (!isSwiping || !newsCard) return; if (isMouseSwiping) { document.removeEventListener('mousemove', unifiedSwipeMove); document.removeEventListener('mouseup', unifiedSwipeEnd); }
-
-    isSwiping = false; isMouseSwiping = false; newsCard.classList.remove('swiping'); let diffX = swipeCurrentX - swipeStartX;
-
-    if (Math.abs(diffX) > SWIPE_THRESHOLD) { if (diffX > 0) { swipeRealIndicator.classList.add('visible'); } else { swipeFakeIndicator.classList.add('visible'); } processSwipeDecision(diffX > 0);
-
-    } else { resetCardState(false); } swipeStartX = 0; swipeCurrentX = 0;
-
+    if (!isSwiping || !newsCard) return;
+    if (isMouseSwiping) { document.removeEventListener('mousemove', unifiedSwipeMove); document.removeEventListener('mouseup', unifiedSwipeEnd); }
+    isSwiping = false; isMouseSwiping = false; newsCard.classList.remove('swiping');
+    let diffX = swipeCurrentX - swipeStartX;
+    if (Math.abs(diffX) > SWIPE_THRESHOLD) { // Threshold met
+        if (diffX > 0) { swipeRealIndicator.classList.add('visible'); } else { swipeFakeIndicator.classList.add('visible'); } // Ensure indicator stays for fly-out
+        processSwipeDecision(diffX > 0);
+    } else { // Threshold not met, reset card
+        resetCardState(false); // Reset to center without new card animation
+    }
+    swipeStartX = 0; swipeCurrentX = 0; // Reset swipe coordinates
 }
-
-if (newsCard) { newsCard.addEventListener('mousedown', unifiedSwipeStart); newsCard.addEventListener('touchstart', unifiedSwipeStart, { passive: true }); newsCard.addEventListener('touchmove', unifiedSwipeMove, { passive: false }); newsCard.addEventListener('touchend', unifiedSwipeEnd); newsCard.addEventListener('touchcancel', unifiedSwipeEnd); } else { console.error("Haber kartı (newsCard) DOM'da bulunamadı! Swipe çalışmayacak."); }
-
-
+if (newsCard) {
+    newsCard.addEventListener('mousedown', unifiedSwipeStart);
+    newsCard.addEventListener('touchstart', unifiedSwipeStart, { passive: true }); // Passive true for start
+    newsCard.addEventListener('touchmove', unifiedSwipeMove, { passive: false }); // Passive false for move to allow preventDefault
+    newsCard.addEventListener('touchend', unifiedSwipeEnd);
+    newsCard.addEventListener('touchcancel', unifiedSwipeEnd); // Handle unexpected touch end
+} else { console.error("Haber kartı (newsCard) DOM'da bulunamadı! Swipe çalışmayacak."); }
 
 async function handleShareResults() {
-
-    if (!newsData || newsData.length === 0) { alert("Paylaşılacak bir sonuç bulunamadı."); return; }
-
-    const currentScoreForShare = gamePlayedAtLeastOnce ? score : 0;
-
-    const shareText = `FakeBreak'de ${currentScoreForShare}/${newsData.length} yaptım! Sen de bu haberlerin gerçek mi sahte mi olduğunu tahmin etmeye çalış. Challenge'a var mısın? 😎`;
-
-    const shareUrl = window.location.href; const shareTitle = "FakeBreak - Skor Yarışması!";
-
-    if (navigator.share) { try { await navigator.share({ title: shareTitle, text: shareText, url: shareUrl }); console.log('Sonuç başarıyla paylaşıldı!'); } catch (error) { console.error('Paylaşım sırasında hata oluştu:', error); if (error.name !== 'AbortError') { alert('Paylaşım sırasında bir hata oluştu.');} }
-
-    } else { try { await navigator.clipboard.writeText(`${shareTitle}\n${shareText}\n${shareUrl}`); alert('Paylaşım özelliği bu tarayıcıda desteklenmiyor. Skorun ve davet mesajın panoya kopyalandı, istediğin yerde paylaşabilirsin!'); } catch (err) { alert('Paylaşım özelliği bu tarayıcıda desteklenmiyor ve metin panoya kopyalanamadı. Lütfen skoru manuel olarak paylaşın.'); console.error('Panoya kopyalama başarısız:', err); } }
-
+    if (!newsData || newsData.length === 0) { alert("Paylaşılacak bir sonuç bulunamadı."); return; }
+    const currentScoreForShare = gamePlayedAtLeastOnce ? score : 0; // Use 0 if game not played
+    const shareText = `FakeBreak'de ${currentScoreForShare}/${newsData.length} yaptım! Sen de bu haberlerin gerçek mi sahte mi olduğunu tahmin etmeye çalış. Challenge'a var mısın? 😎`;
+    const shareUrl = window.location.href; const shareTitle = "FakeBreak - Skor Yarışması!";
+    if (navigator.share) {
+        try { await navigator.share({ title: shareTitle, text: shareText, url: shareUrl }); console.log('Sonuç başarıyla paylaşıldı!'); }
+        catch (error) { console.error('Paylaşım sırasında hata oluştu:', error); if (error.name !== 'AbortError') { /* Only alert if not user abort */ alert('Paylaşım sırasında bir hata oluştu.');} }
+    } else { // Fallback to clipboard
+        try { await navigator.clipboard.writeText(`${shareTitle}\n${shareText}\n${shareUrl}`); alert('Paylaşım özelliği bu tarayıcıda desteklenmiyor. Skorun ve davet mesajın panoya kopyalandı, istediğin yerde paylaşabilirsin!'); }
+        catch (err) { alert('Paylaşım özelliği bu tarayıcıda desteklenmiyor ve metin panoya kopyalanamadı. Lütfen skoru manuel olarak paylaşın.'); console.error('Panoya kopyalama başarısız:', err); }
+    }
 }
 
+// Modal handlers
+if (howToPlayButton && modal && closeModalButton) {
+    const openHowToPlayModal = () => { if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); } };
+    const closeHowToPlayModal = () => { if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); } };
+    howToPlayButton.addEventListener('click', openHowToPlayModal);
+    closeModalButton.addEventListener('click', closeHowToPlayModal);
+    modal.addEventListener('click', (event) => { if (event.target === modal) { closeHowToPlayModal(); } }); // Close on backdrop click
+} else { console.error("Modal ('Nasıl Oynanır') elementleri bulunamadı."); }
 
+if (aboutBtn && aboutModal && closeAboutModalBtn) {
+    const openAboutModal = () => { if (aboutModal) { aboutModal.classList.remove('hidden'); aboutModal.classList.add('flex'); } };
+    const closeAboutModal = () => { if (aboutModal) { aboutModal.classList.add('hidden'); aboutModal.classList.remove('flex'); } };
+    aboutBtn.addEventListener('click', openAboutModal);
+    closeAboutModalBtn.addEventListener('click', closeAboutModal);
+    aboutModal.addEventListener('click', (event) => { if (event.target === aboutModal) { closeAboutModal(); } }); // Close on backdrop click
+} else { console.error("Hakkında Modal elementleri bulunamadı."); }
 
-if (howToPlayButton && modal && closeModalButton) { const openHowToPlayModal = () => { if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); } }; const closeHowToPlayModal = () => { if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); } }; howToPlayButton.addEventListener('click', openHowToPlayModal); closeModalButton.addEventListener('click', closeHowToPlayModal); modal.addEventListener('click', (event) => { if (event.target === modal) { closeHowToPlayModal(); } }); } else { console.error("Modal ('Nasıl Oynanır') elementleri bulunamadı."); }
+// Profile Popup handler (dummy)
+if (homeNavProfile && profileDisabledPopup) {
+    homeNavProfile.addEventListener('click', (e) => {
+        e.preventDefault(); // It's an anchor, prevent navigation
+        if (profilePopupTimeoutId) { clearTimeout(profilePopupTimeoutId); } // Clear existing timeout
+        profileDisabledPopup.classList.remove('opacity-0', 'pointer-events-none');
+        profileDisabledPopup.classList.add('opacity-100');
+        profilePopupTimeoutId = setTimeout(() => {
+            profileDisabledPopup.classList.remove('opacity-100');
+            profileDisabledPopup.classList.add('opacity-0');
+            // Delay adding pointer-events-none to allow fade-out transition
+            setTimeout(() => {
+                // Only add if it's still meant to be hidden (not re-triggered)
+                if (!profileDisabledPopup.classList.contains('opacity-100')) {
+                    profileDisabledPopup.classList.add('pointer-events-none');
+                }
+            }, 300); // Match transition duration
+            profilePopupTimeoutId = null; // Clear timeout ID
+        }, 2500); // Popup visible for 2.5s
+    });
+}
 
-if (aboutBtn && aboutModal && closeAboutModalBtn) { const openAboutModal = () => { if (aboutModal) { aboutModal.classList.remove('hidden'); aboutModal.classList.add('flex'); } }; const closeAboutModal = () => { if (aboutModal) { aboutModal.classList.add('hidden'); aboutModal.classList.remove('flex'); } }; aboutBtn.addEventListener('click', openAboutModal); closeAboutModalBtn.addEventListener('click', closeAboutModal); aboutModal.addEventListener('click', (event) => { if (event.target === aboutModal) { closeAboutModal(); } }); } else { console.error("Hakkında Modal elementleri bulunamadı."); }
-
-if (homeNavProfile && profileDisabledPopup) { homeNavProfile.addEventListener('click', (e) => { e.preventDefault(); if (profilePopupTimeoutId) { clearTimeout(profilePopupTimeoutId); } profileDisabledPopup.classList.remove('opacity-0', 'pointer-events-none'); profileDisabledPopup.classList.add('opacity-100'); profilePopupTimeoutId = setTimeout(() => { profileDisabledPopup.classList.remove('opacity-100'); profileDisabledPopup.classList.add('opacity-0'); setTimeout(() => { if (!profileDisabledPopup.classList.contains('opacity-100')) { profileDisabledPopup.classList.add('pointer-events-none'); } }, 300); profilePopupTimeoutId = null; }, 2500); }); }
-
-
-
+// Button listeners
 if (playNowButton) { playNowButton.addEventListener('click', startGame); }
-
-if (closeGameButton) { closeGameButton.addEventListener('click', navigateToHome); }
-
+if (closeGameButton) { closeGameButton.addEventListener('click', navigateToHome); } // From game screen
 if(shareResultsBtn) shareResultsBtn.addEventListener('click', handleShareResults);
+if(playAgainBtn) playAgainBtn.addEventListener('click', startGame); // From results screen
+if(backToHomeResultsBtn) backToHomeResultsBtn.addEventListener('click', navigateToHome); // From results screen
+if(closeResultsHeaderBtn) closeResultsHeaderBtn.addEventListener('click', navigateToHome); // From results screen header
 
-if(playAgainBtn) playAgainBtn.addEventListener('click', startGame);
-
-if(backToHomeResultsBtn) backToHomeResultsBtn.addEventListener('click', navigateToHome);
-
-if(closeResultsHeaderBtn) closeResultsHeaderBtn.addEventListener('click', navigateToHome);
-
-
-
+// Navigation listeners
 [homeNavHome, gameNavHome].forEach(el => el?.addEventListener('click', (e) => { e.preventDefault(); navigateToHome(); }));
-
 [homeNavScores, gameNavScores, leaderboardBtnHome].forEach(el => el?.addEventListener('click', (e) => { e.preventDefault(); navigateToResults(); }));
 
 
-
+// Initial setup for results screen if no game played yet
 if (!gamePlayedAtLeastOnce) {
-
-    if (finalScoreValue) finalScoreValue.textContent = "0/0";
-
-    if (timeTakenValue) timeTakenValue.textContent = "-";
-
-    let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
-
-    let totalQDisplay = newsData && newsData.length > 0 ? newsData.length : "X";
-
-    if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${totalQDisplay}`;
-
+    if (finalScoreValue) finalScoreValue.textContent = "0/0";
+    if (timeTakenValue) timeTakenValue.textContent = "-";
+    let hs = parseInt(localStorage.getItem('fakeOrTakeHighScore_tr')) || 0;
+    let totalQDisplay = newsData && newsData.length > 0 ? newsData.length : "X";
+    if (highScoreDisplay) highScoreDisplay.textContent = `${hs}/${totalQDisplay}`;
 }
 
-
-
-showScreen(homeScreenDiv);
-
-if(document.body) document.body.classList.remove('loading');
-
-
+showScreen(homeScreenDiv); // Initial screen
+if(document.body) document.body.classList.remove('loading'); // Remove loading class once ready
 
 });
-
 </script>
-
 </body>
-
 </html>
