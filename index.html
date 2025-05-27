@@ -1158,178 +1158,97 @@ function startGame() {
 // YENİ: populateLeaderboard fonksiyonu Firebase'den veri çekecek şekilde güncellendi
 
 function populateLeaderboard() {
-
-    if (!leaderboardEntriesContainer) {
-
-        console.error("Liderlik tablosu konteyneri bulunamadı!");
-
-        return;
-
-    }
-
-    leaderboardEntriesContainer.innerHTML = '<p class="text-slate-500 text-center py-4">Liderlik tablosu yükleniyor...</p>';
-
-
-
-    // Son 10 skoru (timestamp'e göre en yeni) çek, sonra istemcide puana göre sırala
-
-    const scoresQuery = query(ref(db, 'scores'), limitToLast(10));
-
-
-
-    get(scoresQuery).then((snapshot) => {
-
-        leaderboardEntriesContainer.innerHTML = ''; // Yükleniyor mesajını temizle
-
-        if (snapshot.exists()) {
-
-            const fetchedScores = [];
-
-            snapshot.forEach((childSnapshot) => {
-
-                const entry = childSnapshot.val();
-
-                // Gelen veride 'score' ve 'total' alanlarının olduğundan emin olalım
-
-                if (entry && typeof entry.score !== 'undefined' && typeof entry.total !== 'undefined' && entry.name) {
-
-                    fetchedScores.push(entry);
-
-                }
-
-            });
-
-
-
-            if (fetchedScores.length === 0) {
-
-                 leaderboardEntriesContainer.innerHTML = '<p class="text-slate-500 text-center py-4">Henüz skor bulunmuyor.</p>';
-
-                 return;
-
-            }
-
-
-
-            // Skorları önce puana göre (çoktan aza), sonra tarihe göre (yeniden eskiye) sırala
-
-            fetchedScores.sort((a, b) => {
-
-                if (b.score === a.score) {
-
-                    return new Date(b.date).getTime() - new Date(a.date).getTime(); // Daha yeni tarih önce
-
-                }
-
-                return b.score - a.score; // Daha yüksek skor önce
-
-            });
-
-
-
-            // En fazla 7 skor göster (isteğe bağlı)
-
-            const displayScores = fetchedScores.slice(0, 7);
-
-
-
-            displayScores.forEach((entry, index) => {
-
-                const entryDiv = document.createElement('div');
-
-                entryDiv.className = 'flex items-center justify-between rounded-lg p-4 transition-all text-sm sm:text-base shadow-sm';
-
-
-
-                const leftPart = document.createElement('div');
-
-                leftPart.className = 'flex items-center gap-3';
-
-
-
-                const rankDisplaySpan = document.createElement('span');
-
-                let rankText = `${index + 1}.`;
-
-                let rankIconClass = 'text-slate-600'; // Varsayılan rank rengi
-
-
-
-                if (index === 0) { rankText = '🥇'; rankIconClass = 'text-amber-400';}
-
-                else if (index === 1) { rankText = '🥈'; rankIconClass = 'text-slate-400';}
-
-                else if (index === 2) { rankText = '🥉'; rankIconClass = 'text-orange-400';}
-
-
-
-                if (entry.name === "SEN") { // Oyuncunun skoru ise farklı stil uygula
-
-                    entryDiv.classList.add('bg-indigo-100', 'text-indigo-700', 'ring-2', 'ring-offset-2', 'ring-offset-indigo-100', 'ring-indigo-500', 'shadow-md');
-
-                    rankDisplaySpan.className = `text-xl font-semibold ${rankIconClass}`;
-
-                    rankDisplaySpan.innerHTML = `${(index > 2) ? '★ ' : ''}${rankText}`; // İlk 3 dışındaysa yıldız ekle
-
-                } else {
-
-                    entryDiv.classList.add('bg-slate-100', 'hover:bg-slate-200/80');
-
-                    rankDisplaySpan.className = `text-lg sm:text-xl font-semibold ${index <=2 ? rankIconClass : 'text-slate-600'}`;
-
-                    rankDisplaySpan.innerHTML = rankText;
-
-                }
-
-                leftPart.appendChild(rankDisplaySpan);
-
-
-
-                const nameP = document.createElement('p');
-
-                nameP.className = `font-medium ${entry.name === "SEN" ? 'text-indigo-800' : 'text-slate-700'}`;
-
-                nameP.textContent = entry.name;
-
-                leftPart.appendChild(nameP);
-
-                
-
-                const scoreP = document.createElement('p');
-
-                scoreP.className = `font-semibold ${entry.name === "SEN" ? 'text-indigo-800' : 'text-slate-700'}`;
-
-                scoreP.textContent = `${entry.score}/${entry.total}`;
-
-                
-
-                entryDiv.appendChild(leftPart);
-
-                entryDiv.appendChild(scoreP);
-
-                leaderboardEntriesContainer.appendChild(entryDiv);
-
-            });
-
-
-
-        } else {
-
-            leaderboardEntriesContainer.innerHTML = '<p class="text-slate-500 text-center py-4">Henüz skor bulunmuyor.</p>';
-
-        }
-
-    }).catch((error) => {
-
-        console.error("Firebase'den skorlar çekilirken hata:", error);
-
-        leaderboardEntriesContainer.innerHTML = '<p class="text-red-500 text-center py-4">Liderlik tablosu yüklenirken bir hata oluştu.</p>';
-
-    });
-
+    if (!leaderboardEntriesContainer) {
+        console.error("Liderlik tablosu konteyneri bulunamadı!");
+        return;
+    }
+
+    // 1. Konteyneri başlangıçta gizle ve içini temizle
+    leaderboardEntriesContainer.classList.add('hidden'); // Tailwind CSS class'ı ile gizle
+    leaderboardEntriesContainer.innerHTML = ''; // "Yükleniyor..." mesajı olmayacak
+
+    // Son 10 skoru (timestamp'e göre en yeni) çek, sonra istemcide puana göre sırala
+    const scoresQuery = query(ref(db, 'scores'), limitToLast(10));
+
+    get(scoresQuery).then((snapshot) => {
+        leaderboardEntriesContainer.innerHTML = ''; // İçeriği doldurmadan önce tekrar temizle (önemli)
+
+        if (snapshot.exists()) {
+            const fetchedScores = [];
+            snapshot.forEach((childSnapshot) => {
+                const entry = childSnapshot.val();
+                // Gelen veride 'score' ve 'total' alanlarının olduğundan emin olalım
+                if (entry && typeof entry.score !== 'undefined' && typeof entry.total !== 'undefined' && entry.name) {
+                    fetchedScores.push(entry);
+                }
+            });
+
+            if (fetchedScores.length === 0) {
+                leaderboardEntriesContainer.innerHTML = '<p class="text-slate-500 text-center py-4">Henüz skor bulunmuyor.</p>';
+            } else {
+                // Skorları önce puana göre (çoktan aza), sonra tarihe göre (yeniden eskiye) sırala
+                fetchedScores.sort((a, b) => {
+                    if (b.score === a.score) {
+                        return new Date(b.date).getTime() - new Date(a.date).getTime(); // Daha yeni tarih önce
+                    }
+                    return b.score - a.score; // Daha yüksek skor önce
+                });
+
+                // En fazla 7 skor göster (isteğe bağlı)
+                const displayScores = fetchedScores.slice(0, 7);
+
+                displayScores.forEach((entry, index) => {
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = 'flex items-center justify-between rounded-lg p-4 transition-all text-sm sm:text-base shadow-sm';
+
+                    const leftPart = document.createElement('div');
+                    leftPart.className = 'flex items-center gap-3';
+
+                    const rankDisplaySpan = document.createElement('span');
+                    let rankText = `${index + 1}.`;
+                    let rankIconClass = 'text-slate-600'; // Varsayılan rank rengi
+
+                    if (index === 0) { rankText = '🥇'; rankIconClass = 'text-amber-400';}
+                    else if (index === 1) { rankText = '🥈'; rankIconClass = 'text-slate-400';}
+                    else if (index === 2) { rankText = '🥉'; rankIconClass = 'text-orange-400';}
+
+                    if (entry.name === "SEN") { // Oyuncunun skoru ise farklı stil uygula
+                        entryDiv.classList.add('bg-indigo-100', 'text-indigo-700', 'ring-2', 'ring-offset-2', 'ring-offset-indigo-100', 'ring-indigo-500', 'shadow-md');
+                        rankDisplaySpan.className = `text-xl font-semibold ${rankIconClass}`;
+                        rankDisplaySpan.innerHTML = `${(index > 2) ? '★ ' : ''}${rankText}`; // İlk 3 dışındaysa yıldız ekle
+                    } else {
+                        entryDiv.classList.add('bg-slate-100', 'hover:bg-slate-200/80');
+                        rankDisplaySpan.className = `text-lg sm:text-xl font-semibold ${index <=2 ? rankIconClass : 'text-slate-600'}`;
+                        rankDisplaySpan.innerHTML = rankText;
+                    }
+                    leftPart.appendChild(rankDisplaySpan);
+
+                    const nameP = document.createElement('p');
+                    nameP.className = `font-medium ${entry.name === "SEN" ? 'text-indigo-800' : 'text-slate-700'}`;
+                    nameP.textContent = entry.name;
+                    leftPart.appendChild(nameP);
+                    
+                    const scoreP = document.createElement('p');
+                    scoreP.className = `font-semibold ${entry.name === "SEN" ? 'text-indigo-800' : 'text-slate-700'}`;
+                    scoreP.textContent = `${entry.score}/${entry.total}`;
+                    
+                    entryDiv.appendChild(leftPart);
+                    entryDiv.appendChild(scoreP);
+                    leaderboardEntriesContainer.appendChild(entryDiv);
+                });
+            }
+        } else {
+            leaderboardEntriesContainer.innerHTML = '<p class="text-slate-500 text-center py-4">Henüz skor bulunmuyor.</p>';
+        }
+        // 2. Veri yüklendikten veya mesajlar hazırlandıktan sonra konteyneri göster
+        leaderboardEntriesContainer.classList.remove('hidden');
+    }).catch((error) => {
+        console.error("Firebase'den skorlar çekilirken hata:", error);
+        leaderboardEntriesContainer.innerHTML = '<p class="text-red-500 text-center py-4">Liderlik tablosu yüklenirken bir hata oluştu.</p>';
+        // Hata durumunda da konteyneri göster ki kullanıcı hatayı görsün
+        leaderboardEntriesContainer.classList.remove('hidden');
+    });
 }
-
-
 
 
 
